@@ -1,0 +1,13 @@
+{
+  "name": "qolae-pdf-writer",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Zero-dependency PDF generation engine",
+  "main": "src/qolae-pdf-writer.js",
+  "scripts": {
+    "parse": "node scripts/test-runner.js",
+    "build": "node scripts/build.js"
+  },
+  "author": "QOLAE",
+  "license": "MIT"
+}
