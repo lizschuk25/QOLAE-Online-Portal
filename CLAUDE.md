@@ -1224,3 +1224,8 @@ This file should be updated after major milestones, feature completions, or sign
 
 *Last updated: September 11, 2025 by Claude Code*  
 *Next review: Upon completion of TemplateTOB.ejs A4 optimization*
+
+22nd September 2025 18:36
+Claude, I initiated claude -c and it caused a token issue, so I've had to terminate the session. To give you some context for what we have just done for about 40 mins: 
+Solved a params URL issue
+Decided to double back later on to check the password for securelogin after we have worked through the issues for the tobModal Card. 
