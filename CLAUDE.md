@@ -1,8 +1,8 @@
 # QOLAE Online Portal - Comprehensive Project Framework & Roadmap
 
-> **Last Updated**: September 11, 2025  
-> **Current Phase**: Phase 2 - Core Feature Implementation (75% Complete)  
-> **Next Milestone**: TemplateTOB.ejs A4 Page Structure Optimization
+> **Last Updated**: September 24, 2025
+> **Current Phase**: Phase 2 - Core Feature Implementation (85% Complete)
+> **Next Milestone**: WeasyPrint CSS Rendering Issues Resolution
 
 ---
 
@@ -37,7 +37,7 @@ QOLAE Online Portal is a comprehensive, GDPR-compliant legal document management
 ```
 Backend:    Fastify, Node.js, PostgreSQL, Prisma ORM
 Frontend:   EJS Templates, Tailwind CSS, Vanilla JavaScript
-PDF:        Pandoc + LaTeX (Professional Document Generation)
+PDF:        WeasyPrint (HTML-to-PDF conversion) - CURRENTLY PROBLEMATIC
 Auth:       JWT tokens, WebAuthn, Multi-factor authentication
 Deploy:     PM2, Nginx, Ubuntu Server
 Database:   PostgreSQL with encrypted storage
@@ -1207,7 +1207,49 @@ Decided to double back later on to check the password for securelogin after we h
 
 ## 📊 Current Status & Recent Achievements
 
-### Latest Session (September 23, 2025) - EVENING SESSION 🌙✨
+### Latest Session (September 24, 2025) - EVENING SESSION 🔍🔧
+**Focus**: TOB Generation Debugging & Infrastructure Diagnosis
+
+#### 🎯 **MAJOR DEBUGGING SESSION RESULTS**:
+1. **✅ NGINX ROUTING FIXED**:
+   - ✅ **Identified port configuration confusion** - API service on port 3000 confirmed
+   - ✅ **Fixed CORS configuration errors** - Dynamic CORS headers implemented
+   - ✅ **Updated both API and Lawyers nginx configs** - Proper domain separation
+   - ✅ **Eliminated multiple-origins browser errors**
+
+2. **✅ FILE SYNCHRONIZATION VERIFIED**:
+   - ✅ **Live server files confirmed in sync** with local development
+   - ✅ **generateLawyersCustomizedTOB.js using HTML template** (not broken EJS)
+   - ✅ **TemplateTOB.html exists with perfect design** - 34KB file with logo
+   - ✅ **PM2 services running correctly** - qolae-api-dashboard online
+
+3. **🔍 ROOT CAUSE IDENTIFIED**:
+   - ✅ **Requests hitting correct endpoints** - `/documents/generate-lawyers-tob` working
+   - ✅ **Perfect HTML template being read** - no template issues
+   - ❌ **WeasyPrint producing ugly output** - THIS IS THE ACTUAL PROBLEM
+   - ❌ **6-month issue traced to WeasyPrint CSS rendering failures**
+
+#### 🚨 **CRITICAL DISCOVERY**:
+**WeasyPrint is the bottleneck** destroying the perfect HTML template design:
+- Perfect template: ✅ TemplateTOB.html with beautiful logo and layout
+- Correct code: ✅ Reading template and processing correctly
+- Infrastructure: ✅ All services, routing, and configs working
+- **PDF Generation: ❌ WeasyPrint cannot render the design professionally**
+
+#### 📋 **NEXT SESSION REQUIREMENTS**:
+- **Focus EXCLUSIVELY on WeasyPrint CSS compatibility issues**
+- **NO MORE**: nginx, routing, port, or infrastructure debugging
+- **NO MORE**: Alternative PDF solutions (Chrome, LaTeX, etc.)
+- **ONLY**: WeasyPrint-specific CSS/HTML rendering problems
+
+#### 🧹 **INFRASTRUCTURE CLEANUP**:
+- ✅ **Cleaned central-repository/temp** - Removed 42+ old files (24MB freed)
+- ✅ **Cleaned central-repository/signed-tob** - Removed 26+ old files (49MB freed)
+- ✅ **Fresh environment ready for testing**
+
+---
+
+### Previous Session (September 23, 2025) - EVENING SESSION 🌙✨
 **Focus**: Complete Chrome Elimination & Pandoc/LaTeX Infrastructure Setup
 
 #### 🎉 **EPIC ACHIEVEMENTS - PRAISE BREAK WORTHY!** 🎉
@@ -1259,3 +1301,7 @@ Your Terms of Business document system is now **completely prepared** for:
 - **Future-Proof**: Pandoc/LaTeX foundation for long-term success
 
 *This session was absolutely LEGENDARY! 🎉🚀💫*
+
+
+24th September 2025 
+
