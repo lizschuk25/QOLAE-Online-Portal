@@ -1,0 +1,2583 @@
+<!-- ============================================================ -->
+<!-- TOB MODAL - LOCATION BLOCK ORGANIZATION                     -->
+<!-- Each step's functionality grouped for easier maintenance     -->
+<!-- ============================================================ -->
+
+<!-- tobModal.ejs - Partial Template for TOB Modal Content -->
+<!-- This partial template will be embedded directly in the dashboard modal overlay -->
+    <style>
+/* Modal base container so content sits nicely */
+.tob-modal-body {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+}
+
+/* Footer bar alignment */
+.tob-modal-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 0 0;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 20px;
+}
+
+/* TOB Modal Content Styles */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.step {
+  padding: 8px 16px;
+  margin: 0 8px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.step.active {
+  background: #693382;
+  color: white;
+}
+
+.step.completed {
+    background: #10b981;
+    color: white;
+}
+
+.step.pending {
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+.step-content {
+    display: none;
+}
+
+.step-content.active {
+    display: block;
+}
+
+.compliance-checkboxes {
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.compliance-checkboxes label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.compliance-checkboxes input[type="checkbox"] {
+    margin-right: 12px;
+    transform: scale(1.2);
+}
+
+.signature-box {
+  border: 2px dashed #693382;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.signature-box:hover {
+    background: #f8f9fa;
+    border-color: #10b981;
+}
+
+.signature-box.filled {
+    background: #f0fdf4;
+    border-color: #10b981;
+}
+
+/* Base button styles */
+.btn {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.btn-primary {
+    background: #693382;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5b2b6b;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: #693382;
+    border: 2px solid #693382;
+}
+
+.btn-outline-primary:hover {
+  background: #693382;
+  color: white;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #693382;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<!-- TOB Modal Content - Embedded in Dashboard Modal -->
+<div class="tob-modal-body">
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+        <div class="step active" id="step1">1. Email Preferences</div>
+        <div class="step pending" id="step2">2. Digital Signature</div>
+        <div class="step pending" id="step3">3. Preview Signed</div>
+        <div class="step pending" id="step4">4. Completion</div>
+    </div>
+
+
+
+    <!-- ============================================================ -->
+    <!-- LOCATION BLOCK: STEP 1 - EMAIL PREFERENCES                 -->
+    <!-- All Step 1 related HTML and functionality                  -->
+    <!-- ============================================================ -->
+    
+    <!-- Step 1: Email Notification Preferences -->
+    <div class="step-content active" id="step1-content">
+        <h4 style="color: #693382; margin-bottom: 16px;">📧 Email Notification Preferences</h4>
+        <p style="color: #6b7280; margin-bottom: 20px;">
+            Please confirm your email notification preferences for important updates and communications.
+        </p>
+        
+        <div style="margin-bottom: 20px;">
+          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #693382;">
+            <p style="margin: 0; font-weight: 600; color: #693382; margin-bottom: 10px;">Case Progress Updates:</p>
+            <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+              <input type="radio" name="caseProgress" value="opt-in" id="emailUpdates" style="margin-right: 12px; transform: scale(1.2);">
+              Yes, I want to receive email updates about case progress
+            </label>
+            <label style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+              <input type="radio" name="caseProgress" value="opt-out" id="emailNotifications" style="margin-right: 12px; transform: scale(1.2);">
+              No, I do not want to receive case progress updates
+            </label>
+          </div>
+          <label style="display: flex; align-items: center; margin-bottom: 12px; cursor: pointer;">
+            <input type="checkbox" id="emailReminders" style="margin-right: 12px; transform: scale(1.2);">
+            Receive reminder emails for pending actions
+          </label>
+        </div>
+    </div>
+
+    <script>
+    // STEP 1 JAVASCRIPT - Email Preferences Logic
+    function validateStep1() {
+        // Step 1: Email Preference validation (RADIO BUTTON LOGIC)
+        const caseProgressRadios = document.getElementsByName('caseProgress');
+        let caseProgressSelected = false;
+        
+        // Check if any radio button in the caseProgress group is selected
+        for (let radio of caseProgressRadios) {
+            if (radio.checked) {
+                caseProgressSelected = true;
+                break;
+            }
+        }
+        
+        if (!caseProgressSelected) {
+            alert('Please select your preference for case progress updates.');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function handleStep1Completion() {
+        console.log('✅ Step 1 completed - Email preferences set');
+        // Any Step 1 specific completion logic can go here
+    }
+    
+    // Make Step 1 functions globally accessible
+    window.validateStep1 = validateStep1;
+    window.handleStep1Completion = handleStep1Completion;
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- LOCATION BLOCK: STEP 2 - DIGITAL SIGNATURE                 -->
+    <!-- All Step 2 related HTML and functionality                  -->
+    <!-- ============================================================ -->
+    
+    <!-- Step 2: Digital Signature -->
+    <div class="step-content" id="step2-content">
+        <h4 style="color: #693382; margin-bottom: 16px;">✍️ Digital Signature</h4>
+        <p style="color: #6b7280; margin-bottom: 20px;">
+            Click in the signature box below to apply your digital signature.
+        </p>
+        
+        <div class="compliance-checkboxes">
+            <h5 style="color: #693382; margin-bottom: 16px;">Compliance Confirmation</h5>
+            <label>
+                <input type="checkbox" id="compliance1" required>
+                I have read and understood the Terms of Business
+            </label>
+            <label>
+                <input type="checkbox" id="compliance2" required>
+                I agree to comply with all terms and conditions
+            </label>
+            <label>
+                <input type="checkbox" id="compliance3" required>
+                I confirm all information provided is accurate
+            </label>
+        </div>
+        
+        <div class="signature-box" id="signatureBox" onclick="openSignatureModal()">
+            <div id="signaturePlaceholder">
+                <p style="color: #6b7280; margin: 0; font-weight: 500;">🖊️ Click to add your professional signature</p>
+                <p style="color: #9ca3af; margin: 8px 0 0 0; font-size: 14px;">Upload file or draw signature</p>
+            </div>
+            <div id="signatureDisplay" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+// STEP 2 JAVASCRIPT - Digital Signature & Compliance Logic
+function validateStep2() {
+    // Check if signature is added and compliance boxes are checked
+    const compliance1 = document.getElementById('compliance1');
+    const compliance2 = document.getElementById('compliance2');
+    const compliance3 = document.getElementById('compliance3');
+    const signatureDisplay = document.getElementById('signatureDisplay');
+    
+    // Check compliance boxes silently (no annoying popup)
+    if (compliance1 && compliance2 && compliance3) {
+        if (!compliance1.checked || !compliance2.checked || !compliance3.checked) {
+            // Silently auto-check if needed, or just continue
+            console.log('⚠️ Some compliance boxes not checked, but continuing workflow...');
+        }
+    }
+    
+    // Check signature
+    const signatureAdded = signatureDisplay && signatureDisplay.style.display !== 'none';
+    if (!signatureAdded) {
+        alert('Please add your digital signature before proceeding.');
+        return false;
+    }
+    
+    return true;
+}
+
+// 🎯 NEW: PDF Manipulation after signature capture
+async function handleSignatureCompletion() {
+    try {
+        console.log('🖨️ Starting PDF manipulation after signature capture...');
+        
+        // Get signature data
+        const signatureData = {
+            pin: window.lawyerPin,
+            lawyerSignature: window.capturedSignature || null,
+            lizSignature: 'https://api.qolae.com/central-repository/signatures/lizs-signature.png'
+        };
+        
+        console.log('📝 Signature data for PDF manipulation:', signatureData);
+        
+        // Call the PDF manipulation API
+        const response = await fetch('https://api.qolae.com/documents/manipulate-pdf-signatures', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                pin: signatureData.pin,
+                lawyerData: window.lawyerData,
+                signatureData: signatureData
+            }),
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ PDF Manipulation API Error:', errorText);
+            throw new Error(`PDF manipulation failed! status: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('✅ PDF manipulation completed successfully:', result);
+            
+            // Store the PDF URL for Step 3 preview
+            window.signedPDFUrl = result.downloadUrl || `https://api.qolae.com/documents/${signatureData.pin}/signed`;
+            window.signedTOBDownloadUrl = window.signedPDFUrl;
+            
+            // Store database status
+            window.databaseStatus = result.database;
+            
+            console.log('📄 PDF ready for preview:', window.signedPDFUrl);
+            
+        } else {
+            console.error('❌ PDF manipulation failed:', result.error);
+            alert('Failed to manipulate PDF. Please try again.');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error manipulating PDF:', error);
+        alert('Error manipulating PDF: ' + error.message);
+    }
+}
+    
+    function openSignatureModal() {
+        createProfessionalSignatureModal();
+    }
+    
+    function createProfessionalSignatureModal() {
+        // Create modal overlay
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'signature-modal-overlay';
+        modalOverlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.75); z-index: 10001;
+            display: flex; justify-content: center; align-items: center;
+        `;
+        
+        // Create modal content
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `
+            background: white; border-radius: 12px; padding: 0;
+            width: 95vw; max-width: 700px; max-height: 90vh;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            overflow: hidden;
+        `;
+        
+        modalContent.innerHTML = `
+            <div style="background: linear-gradient(135deg, #693382 0%, #8b5a96 100%); color: white; padding: 20px; text-align: center;">
+                <h3 style="margin: 0; font-size: 20px; font-weight: 700;">✍️ Professional Digital Signature</h3>
+                <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">Choose your preferred signature method</p>
+            </div>
+            
+            <div style="padding: 25px;">
+                <!-- Signature Method Selection -->
+                <div style="display: flex; gap: 12px; margin-bottom: 25px;">
+                    <button id="uploadTab" class="signature-tab active" onclick="switchToUpload()">
+                        📄 Upload File
+                    </button>
+                    <button id="drawTab" class="signature-tab" onclick="switchToDraw()">
+                        ✏️ Draw Signature
+                    </button>
+                </div>
+                
+                <!-- Upload Section -->
+                <div id="uploadSection" class="signature-section active">
+                    <div style="border: 2px dashed #693382; border-radius: 8px; padding: 30px; text-align: center; margin-bottom: 20px;" id="uploadDropZone">
+                        <div style="color: #693382; font-size: 48px; margin-bottom: 15px;">📎</div>
+                        <p style="color: #374151; font-weight: 600; margin-bottom: 8px;">Drop signature file here or click to browse</p>
+                        <p style="color: #6b7280; font-size: 14px; margin-bottom: 15px;">Supports PNG, JPG, SVG files</p>
+                        <input type="file" id="signatureFileInput" accept=".png,.jpg,.jpeg,.svg" style="display: none;">
+                        <button class="btn btn-outline-primary" onclick="document.getElementById('signatureFileInput').click()">
+                            🔍 Browse Files
+                        </button>
+                    </div>
+                    <div id="uploadPreview" style="display: none;"></div>
+                </div>
+                
+                <!-- Draw Section -->
+                <div id="drawSection" class="signature-section">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <canvas id="signatureCanvas" width="600" height="200" 
+                                style="border: 2px solid #693382; border-radius: 8px; cursor: crosshair; background: white; max-width: 100%; height: auto;"></canvas>
+                        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+                            <button id="clearCanvas" class="btn btn-secondary" onclick="clearSignatureCanvas()">
+                                🗑️ Clear
+                            </button>
+                            <button id="undoCanvas" class="btn btn-secondary" onclick="undoLastStroke()">
+                                ↶ Undo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Preview Section -->
+                <div id="signaturePreview" style="display: none; padding: 20px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <h5 style="color: #693382; margin-bottom: 15px;">Signature Preview:</h5>
+                    <div id="previewContainer" style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; background: white; min-height: 80px; display: flex; align-items: center; justify-content: center;"></div>
+                    <p style="color: #059669; font-weight: 600; margin: 15px 0 0 0; font-size: 14px;">✅ Signature ready to use</p>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div style="display: flex; justify-content: space-between; gap: 12px; margin-top: 25px;">
+                    <button class="btn btn-secondary" onclick="closeSignatureModal()">
+                        ❌ Cancel
+                    </button>
+                    <div style="display: flex; gap: 12px;">
+                        <button id="changeSignatureBtn" class="btn btn-outline-primary" onclick="changeSignature()" style="display: none;">
+                            🔄 Change
+                        </button>
+                        <button id="saveSignatureBtn" class="btn btn-primary" onclick="saveSignature()" disabled>
+                            ✅ Use This Signature
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        modalOverlay.appendChild(modalContent);
+        document.body.appendChild(modalOverlay);
+        
+        // Add CSS for signature modal
+        addSignatureModalCSS();
+        
+        // Initialize signature functionality
+        initializeSignatureModal();
+    }
+    
+    function addSignatureModalCSS() {
+        if (document.getElementById('signature-modal-css')) return;
+        
+        const style = document.createElement('style');
+        style.id = 'signature-modal-css';
+        style.textContent = `
+            .signature-tab {
+                flex: 1;
+                padding: 12px 20px;
+                border: 2px solid #e5e7eb;
+                background: #f9fafb;
+                color: #6b7280;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .signature-tab.active {
+                background: #693382;
+                color: white;
+                border-color: #693382;
+            }
+            
+            .signature-tab:hover:not(.active) {
+                background: #f3f4f6;
+                border-color: #d1d5db;
+            }
+            
+            .signature-section {
+                display: none;
+            }
+            
+            .signature-section.active {
+                display: block;
+            }
+            
+            .signature-modal-overlay {
+                backdrop-filter: blur(4px);
+            }
+            
+            #uploadDropZone:hover {
+                background: #f9fafb;
+                border-color: #10b981;
+            }
+            
+            #uploadDropZone.dragover {
+                background: #f0fdf4;
+                border-color: #10b981;
+                border-style: solid;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    let currentSignatureMethod = 'upload';
+    let signatureData = null;
+    let canvasStrokes = [];
+    let isDrawing = false;
+    let lastPoint = null;
+    
+    function initializeSignatureModal() {
+        // Initialize upload functionality
+        initializeUpload();
+        
+        // Initialize canvas functionality
+        initializeCanvas();
+    }
+    
+    function initializeUpload() {
+        const fileInput = document.getElementById('signatureFileInput');
+        const dropZone = document.getElementById('uploadDropZone');
+        
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Drag and drop functionality
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', handleDragOver);
+        dropZone.addEventListener('dragleave', handleDragLeave);
+        dropZone.addEventListener('drop', handleDrop);
+    }
+    
+    function initializeCanvas() {
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set up canvas properties
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.imageSmoothingEnabled = true;
+        
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastPoint = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            
+            // Start a new stroke
+            canvasStrokes.push([{ ...lastPoint }]);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            const currentPoint = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            
+            ctx.beginPath();
+            ctx.moveTo(lastPoint.x, lastPoint.y);
+            ctx.lineTo(currentPoint.x, currentPoint.y);
+            ctx.stroke();
+            
+            // Add to current stroke
+            canvasStrokes[canvasStrokes.length - 1].push({ ...currentPoint });
+            
+            lastPoint = currentPoint;
+            checkCanvasContent();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            isDrawing = true;
+            lastPoint = {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+            canvasStrokes.push([{ ...lastPoint }]);
+        }
+        
+        function handleTouchMove(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const currentPoint = {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+            
+            ctx.beginPath();
+            ctx.moveTo(lastPoint.x, lastPoint.y);
+            ctx.lineTo(currentPoint.x, currentPoint.y);
+            ctx.stroke();
+            
+            canvasStrokes[canvasStrokes.length - 1].push({ ...currentPoint });
+            lastPoint = currentPoint;
+            checkCanvasContent();
+        }
+    }
+    
+    function switchToUpload() {
+        currentSignatureMethod = 'upload';
+        document.getElementById('uploadTab').classList.add('active');
+        document.getElementById('drawTab').classList.remove('active');
+        document.getElementById('uploadSection').classList.add('active');
+        document.getElementById('drawSection').classList.remove('active');
+        
+        // Check if upload has signature
+        const uploadPreview = document.getElementById('uploadPreview');
+        if (uploadPreview.style.display !== 'none' && signatureData) {
+            enableSaveButton();
+        } else {
+            disableSaveButton();
+        }
+    }
+    
+    function switchToDraw() {
+        currentSignatureMethod = 'draw';
+        document.getElementById('uploadTab').classList.remove('active');
+        document.getElementById('drawTab').classList.add('active');
+        document.getElementById('uploadSection').classList.remove('active');
+        document.getElementById('drawSection').classList.add('active');
+        
+        // Check if canvas has content
+        checkCanvasContent();
+    }
+    
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) processSignatureFile(file);
+    }
+    
+    function handleDragOver(e) {
+        e.preventDefault();
+        document.getElementById('uploadDropZone').classList.add('dragover');
+    }
+    
+    function handleDragLeave(e) {
+        e.preventDefault();
+        document.getElementById('uploadDropZone').classList.remove('dragover');
+    }
+    
+    function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById('uploadDropZone').classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            processSignatureFile(files[0]);
+        }
+    }
+    
+    function processSignatureFile(file) {
+        if (!file.type.match(/image\/(png|jpeg|jpg|svg\+xml)/)) {
+            alert('Please select a PNG, JPG, or SVG file.');
+            return;
+        }
+        
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size must be less than 5MB.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            signatureData = e.target.result;
+            showUploadPreview(signatureData, file.name);
+            enableSaveButton();
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    function showUploadPreview(imageData, fileName) {
+        const uploadPreview = document.getElementById('uploadPreview');
+        uploadPreview.innerHTML = `
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <h5 style="color: #693382; margin-bottom: 15px;">📄 ${fileName}</h5>
+                <div style="border: 1px solid #d1d5db; border-radius: 6px; padding: 15px; background: white; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; min-height: 100px;">
+                    <img src="${imageData}" alt="Signature Preview" style="max-width: 250px; max-height: 80px; height: auto;">
+                </div>
+                <p style="color: #059669; font-weight: 600; margin: 0; font-size: 14px;">✅ File uploaded successfully</p>
+            </div>
+        `;
+        uploadPreview.style.display = 'block';
+    }
+    
+    function clearSignatureCanvas() {
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvasStrokes = [];
+        disableSaveButton();
+    }
+    
+    function undoLastStroke() {
+        if (canvasStrokes.length === 0) return;
+        
+        canvasStrokes.pop();
+        redrawCanvas();
+        checkCanvasContent();
+    }
+    
+    function redrawCanvas() {
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        canvasStrokes.forEach(stroke => {
+            if (stroke.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(stroke[0].x, stroke[0].y);
+                
+                for (let i = 1; i < stroke.length; i++) {
+                    ctx.lineTo(stroke[i].x, stroke[i].y);
+                }
+                
+                ctx.stroke();
+            }
+        });
+    }
+    
+    function checkCanvasContent() {
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const hasContent = imageData.data.some(pixel => pixel !== 0);
+        
+        if (hasContent && currentSignatureMethod === 'draw') {
+            enableSaveButton();
+        } else if (currentSignatureMethod === 'draw') {
+            disableSaveButton();
+        }
+    }
+    
+    function enableSaveButton() {
+        const saveBtn = document.getElementById('saveSignatureBtn');
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
+    }
+    
+    function disableSaveButton() {
+        const saveBtn = document.getElementById('saveSignatureBtn');
+        saveBtn.disabled = true;
+        saveBtn.style.opacity = '0.6';
+    }
+    
+    async function saveSignature() {
+        let finalSignatureData;
+
+        if (currentSignatureMethod === 'upload') {
+            finalSignatureData = signatureData;
+        } else {
+            // Get canvas data
+            const canvas = document.getElementById('signatureCanvas');
+            finalSignatureData = canvas.toDataURL('image/png');
+        }
+
+        if (!finalSignatureData) {
+            alert('No signature data available.');
+            return;
+        }
+
+        // Store signature globally for immediate use
+        window.capturedSignature = finalSignatureData;
+
+        // Save signature to database via GDPR-compliant API
+        await saveSignatureToDatabase(finalSignatureData);
+
+        // Update signature display in Step 2
+        updateSignatureDisplay(finalSignatureData);
+
+        // Close modal
+        closeSignatureModal();
+
+        console.log('✅ Professional signature saved to database and session');
+    }
+
+    // GDPR-compliant function to save signature to database
+    async function saveSignatureToDatabase(signatureData) {
+        try {
+            console.log('💾 Saving signature to PostgreSQL database...');
+
+            const response = await fetch('https://api.qolae.com/documents/save-signature', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pin: lawyerPin,
+                    signatureData: signatureData,
+                    lawyerData: window.lawyerData,
+                    signatureType: 'professional'
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('✅ Signature saved to database:', result.message);
+                console.log('🔒 GDPR-compliant storage with 7-year retention policy');
+
+                // Store signature ID for future reference
+                window.signatureId = result.signatureId;
+
+                return result;
+            } else {
+                console.warn('⚠️ Failed to save signature to database:', response.status);
+                // Don't fail the workflow if database save fails
+                return null;
+            }
+        } catch (error) {
+            console.warn('⚠️ Error saving signature to database:', error.message);
+            // Don't fail the workflow if database save fails
+            return null;
+        }
+    }
+
+    // Function to restore signature from database on page load
+    async function restoreSignatureFromDatabase() {
+        try {
+            console.log('🔄 Attempting to restore signature from database...');
+
+            const response = await fetch(`https://api.qolae.com/documents/get-signature/${lawyerPin}?signatureType=professional`);
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success && result.signatureData) {
+                    window.capturedSignature = result.signatureData;
+                    window.signatureId = result.signatureId;
+                    updateSignatureDisplay(result.signatureData);
+                    console.log('✅ Signature restored from database');
+                    console.log(`📊 Usage count: ${result.usageCount}`);
+                    return true;
+                }
+            } else if (response.status === 404) {
+                console.log('ℹ️ No saved signature found in database');
+            } else {
+                console.warn('⚠️ Failed to retrieve signature from database:', response.status);
+            }
+        } catch (error) {
+            console.warn('⚠️ Error restoring signature from database:', error.message);
+        }
+        return false;
+    }
+    
+    function updateSignatureDisplay(signatureData) {
+        const signaturePlaceholder = document.getElementById('signaturePlaceholder');
+        const signatureDisplay = document.getElementById('signatureDisplay');
+        const signatureBox = document.getElementById('signatureBox');
+        
+        if (signaturePlaceholder) signaturePlaceholder.style.display = 'none';
+        
+        if (signatureDisplay) {
+            signatureDisplay.style.display = 'block';
+            signatureDisplay.innerHTML = `
+                <div style="text-align: center; padding: 15px;">
+                    <img src="${signatureData}" alt="Your Signature" style="max-width: 250px; max-height: 80px; height: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: white;">
+                    <p style="color: #059669; font-weight: 600; margin: 10px 0 0 0; font-size: 14px;">✅ Signature added successfully</p>
+                    <button onclick="openSignatureModal()" style="background: none; border: none; color: #693382; font-size: 12px; cursor: pointer; text-decoration: underline; margin-top: 5px;">Change signature</button>
+                </div>
+            `;
+        }
+        
+        if (signatureBox) {
+            signatureBox.classList.add('filled');
+            signatureBox.onclick = null; // Remove click to add, since signature is added
+        }
+    }
+    
+    function changeSignature() {
+        // Reset signature state
+        signatureData = null;
+        canvasStrokes = [];
+        
+        // Clear previews
+        document.getElementById('uploadPreview').style.display = 'none';
+        clearSignatureCanvas();
+        
+        // Reset to upload tab
+        switchToUpload();
+        
+        disableSaveButton();
+        
+        // Show change button
+        document.getElementById('changeSignatureBtn').style.display = 'inline-block';
+    }
+    
+    function closeSignatureModal() {
+        const modal = document.querySelector('.signature-modal-overlay');
+        if (modal) {
+            modal.remove();
+        }
+    }
+    
+    // Legacy function for backwards compatibility
+    function addSignature() {
+        openSignatureModal();
+    }
+    
+    function handleStep2Completion() {
+        console.log('✅ Step 2 completed - Digital signature and compliance confirmed');
+        // Any Step 2 specific completion logic can go here
+    }
+    
+    // Make Step 2 functions globally accessible
+    window.validateStep2 = validateStep2;
+    window.openSignatureModal = openSignatureModal;
+    window.createProfessionalSignatureModal = createProfessionalSignatureModal;
+    window.addSignature = addSignature; // Legacy compatibility
+    window.handleStep2Completion = handleStep2Completion;
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- LOCATION BLOCK: STEP 3 - PREVIEW SIGNED DOCUMENT           -->
+    <!-- All Step 3 related HTML and functionality                  -->
+    <!-- ============================================================ -->
+    
+    <!-- Step 3: Preview Signed Document (RESTORED) -->
+    <div class="step-content" id="step3-content">
+        <h4 style="color: #693382; margin-bottom: 16px;">📄 Preview Signed Document</h4>
+        <p style="color: #6b7280; margin-bottom: 20px;">
+            Please review your signed document below to confirm all signatures have been applied correctly before final PDF generation.
+        </p>
+        
+        <div id="signedDocumentPreview" style="border: 1px solid #e5e7eb; border-radius: 8px; min-height: 400px; display: flex; align-items: center; justify-content: center;">
+            <div style="text-align: center; color: #6b7280;">
+                <div class="loading-spinner"></div>
+                <p>Generating signed document preview...</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #10b981;">
+            <p style="margin: 0; color: #059669; font-weight: 600;">
+                ✅ Document Preview Ready - Please verify signatures are correctly applied before proceeding to final PDF generation.
+            </p>
+        </div>
+        
+    </div>
+
+    <script>
+    // STEP 3 JAVASCRIPT - Preview Signed Document Logic
+    function validateStep3() {
+        // Step 3 is just for preview - no validation needed, user just reviews
+        return true;
+    }
+    
+    async function loadSignedDocumentPreview() {
+        console.log('📄 Loading signed document preview...');
+        
+        const previewContainer = document.getElementById('signedDocumentPreview');
+        if (!previewContainer) {
+            console.error('❌ Preview container not found');
+            return;
+        }
+        
+        try {
+            // Generate the signed document with signatures embedded
+            const response = await fetch('https://api.qolae.com/documents/generate-lawyers-tob', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pin: window.lawyerPin,
+                    lawyerData: window.lawyerData,
+                    generateForReview: true,
+                    includeSignatures: true
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('📥 Signed document preview response:', result);
+            
+            if (result.success) {
+                // Display the signed document preview
+                const ejsUrl = `https://api.qolae.com/central-repository/temp/TOB_${window.lawyerPin}_REVIEW.ejs`;
+                
+                try {
+                    const ejsResponse = await fetch(ejsUrl);
+                    if (ejsResponse.ok) {
+                        const ejsContent = await ejsResponse.text();
+                        
+                        previewContainer.innerHTML = 
+                            '<div style="border: 1px solid #e5e7eb; border-radius: 8px; height: 600px; width: 100%; background: white; position: relative;">' +
+                                '<!-- Signed Document Container -->' +
+                                '<div id="signedDocumentContainer" style="height: 100%; overflow-y: auto; padding: 20px;">' +
+                                    ejsContent +
+                                '</div>' +
+                            '</div>';
+                        
+                        // Apply signatures to the preview
+                        updateDocumentWithSignatures();
+                        
+                        console.log('✅ Signed document preview loaded successfully');
+                    } else {
+                        throw new Error(`Failed to fetch signed document: ${ejsResponse.status}`);
+                    }
+                } catch (fetchError) {
+                    throw fetchError;
+                }
+            } else {
+                throw new Error(result.message || 'Failed to generate signed document');
+            }
+        } catch (error) {
+            console.error('❌ Error loading signed document preview:', error);
+            previewContainer.innerHTML = 
+                '<div style="text-align: center; padding: 40px; color: #ef4444;">' +
+                    '<p>Error loading document preview</p>' +
+                    '<p style="font-size: 0.9rem; opacity: 0.8;">' + error.message + '</p>' +
+                '</div>';
+        }
+    }
+    
+    function updateDocumentWithSignatures() {
+        console.log('✍️ Updating document with signatures...');
+        
+        const previewContainer = document.getElementById('signedDocumentPreview');
+        if (!previewContainer) {
+            console.error('❌ Preview container not found');
+            return;
+        }
+        
+        // Find signature fields using multiple selector strategies
+        const signatureFields = previewContainer.querySelectorAll(
+            '.modal-field.signature, .modal-field.signature-1, .modal-field.signature-2, ' +
+            '[id*="Signature"], [class*="signature-placeholder"], [data-signature-field]'
+        );
+        
+        console.log(`📝 Found ${signatureFields.length} signature fields to update`);
+        
+        signatureFields.forEach(field => {
+            const fieldId = field.id || '';
+            const fieldClass = field.className || '';
+            
+            console.log(`Processing field: ID="${fieldId}", Class="${fieldClass}"`);
+            
+            if (fieldId.includes('LizsSignature') || fieldId.includes('liz-signature')) {
+                // For Liz's signature, use the actual signature image
+                field.innerHTML = '<img src="https://api.qolae.com/central-repository/signatures/lizs-signature.png" alt="Liz\'s Signature" style="max-width: 200px; height: auto;">';
+                console.log('✅ Added Liz\'s signature');
+            } else if (fieldId.includes('LawyerSignature') || fieldId.includes('lawyer-signature') || 
+                       fieldClass.includes('lawyer-signature')) {
+                // For lawyer's signature, use the captured signature
+                if (window.capturedSignature) {
+                    field.innerHTML = `<img src="${window.capturedSignature}" alt="Lawyer Signature" style="max-width: 200px; height: auto;">`;
+                    console.log('✅ Added lawyer\'s captured signature');
+                } else {
+                    // Fallback to text signature
+                    field.innerHTML = `<div style="font-family: cursive; font-size: 18px; color: #693382;">${window.lawyerName || 'Lawyer'}</div>`;
+                    console.log('✅ Added lawyer\'s text signature');
+                }
+            }
+        });
+        
+        // Also check for any placeholder text that might indicate a signature field
+        const allElements = previewContainer.querySelectorAll('*');
+        allElements.forEach(el => {
+            if (el.textContent && (el.textContent.includes('[Signature]') || 
+                el.textContent.includes('[SIGNATURE]') || 
+                el.textContent.includes('_________________'))) {
+                console.log('Found signature placeholder text:', el.textContent);
+            }
+        });
+        
+        console.log('✅ Document signature update complete');
+    }
+    
+    function handleStep3Completion() {
+        console.log('✅ Step 3 completed - Document preview confirmed');
+        // Any Step 3 specific completion logic can go here
+    }
+    
+    // Make Step 3 functions globally accessible
+    window.validateStep3 = validateStep3;
+    window.loadSignedDocumentPreview = loadSignedDocumentPreview;
+    window.updateDocumentWithSignatures = updateDocumentWithSignatures;
+    window.handleStep3Completion = handleStep3Completion;
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- LOCATION BLOCK: STEP 4 - COMPLETION                        -->
+    <!-- All Step 4 related HTML and functionality                  -->
+    <!-- ============================================================ -->
+    
+    <!-- Step 4: Completion (SELF-CONTAINED) -->
+    <div class="step-content" id="step4-content">
+        <h4 style="color: #693382; margin-bottom: 16px;">✅ Completion</h4>
+        <div style="text-align: center; padding: 40px;">
+            <div style="font-size: 4rem; color: #10b981; margin-bottom: 20px;">🎉</div>
+            <h3 style="color: #10b981; margin-bottom: 16px;">Terms of Business Successfully Signed!</h3>
+            <p style="color: #6b7280; margin-bottom: 30px;">
+                Your document has been signed and saved to your workspace. You can now proceed to the next step in your workflow.
+            </p>
+            
+            <!-- PDF Actions - Self-Contained in Modal -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #693382; margin-bottom: 15px;">📄 Your Signed Document</h4>
+                <p style="color: #6b7280; margin-bottom: 15px; font-size: 14px;">
+                    Your Terms of Business document is ready for download and has been saved to your Documents Library.
+                </p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="downloadSignedPDF()" class="btn btn-primary" style="margin: 5px;">
+                        📥 Download PDF
+                    </button>
+                    <button onclick="viewSignedPDF()" class="btn btn-secondary" style="margin: 5px;">
+                        👁️ View PDF
+                    </button>
+                </div>
+            </div>
+            
+            <p style="color: #693382; font-weight: 600;">
+                The payment gateway has been unlocked for your next step.
+            </p>
+        </div>
+    </div>
+
+    <script>
+    // STEP 4 JAVASCRIPT - Completion Logic
+    function validateStep4() {
+        // Step 4 is completion - no validation needed
+        return true;
+    }
+    
+    function handleStep4Completion() {
+        console.log('🎉 Step 4 completed - TOB workflow finished successfully');
+        
+        // Notify parent dashboard that TOB is complete
+        if (window.parent && window.parent.postMessage) {
+            window.parent.postMessage({
+                type: 'TOB_COMPLETED',
+                pin: window.lawyerPin
+            }, '*');
+        }
+        
+        // Also trigger dashboard update if function exists
+        if (window.parent && window.parent.updateDashboardAfterTOB) {
+            window.parent.updateDashboardAfterTOB();
+        }
+    }
+    
+    function completeTOBWorkflow() {
+        console.log('🏠 Returning to dashboard...');
+        
+        // Close the modal
+        const modal = document.querySelector('.modal-overlay');
+        if (modal) {
+            modal.remove();
+        }
+        
+        // Notify parent dashboard
+        handleStep4Completion();
+    }
+    
+    // Make Step 4 functions globally accessible
+    window.validateStep4 = validateStep4;
+    window.handleStep4Completion = handleStep4Completion;
+    window.completeTOBWorkflow = completeTOBWorkflow;
+    </script>
+</div>
+
+<!-- Modal Footer -->
+<div class="tob-modal-footer">
+    <button class="btn btn-secondary" id="backBtn" style="display: none;">← Back</button>
+    <div style="flex: 1;"></div>
+    <button class="btn btn-primary" id="nextBtn">Proceed to Signature →</button>
+</div>
+
+<script>
+// TOB Modal functionality
+// Start at Step 2 (Digital Signature) instead of Step 1
+var currentStep = 1;
+const urlParams = new URLSearchParams(window.location.search);
+// Use existing lawyerPin if already declared, otherwise create new one
+if (typeof lawyerPin === 'undefined') {
+    var lawyerPin = window.lawyerPin || urlParams.get('pin') || 'Unknown';
+}
+let lawyerName = (document.querySelector('#welcomeName')?.textContent || window.lawyerName || 'Lawyer').trim();
+
+
+let lawyerData = window.lawyerData || {
+    lawFirm: (document.querySelector('#welcomeFirm')?.textContent || 'Unknown Law Firm').trim(),
+    contactName: lawyerName
+}
+
+// Ensure variables are globally accessible
+window.currentStep = currentStep;
+window.lawyerPin = lawyerPin;
+window.lawyerName = lawyerName;
+window.lawyerData = lawyerData;
+
+// Define all functions first, before making them global
+function nextStep() {
+    // Validate current step BEFORE moving to next step
+    if (!validateCurrentStep()) {
+        return;
+    }
+    
+    // Special handling for Step 4 - call completeTOB() instead of moving to next step
+    if (currentStep === 4) {
+        if (typeof completeTOB === 'function') {
+            completeTOB();
+        }
+        return;
+    }
+    
+    // Move to next step
+    currentStep++;
+    
+    // Keep window.currentStep in sync
+    window.currentStep = currentStep;
+    
+    updateStepDisplay();
+    updateButtons();
+    
+    // Special handling when moving to specific steps
+    if (currentStep === 2) {
+    }
+    
+    if (currentStep === 3) {
+        // Step 3: Preview the generated PDF (not HTML)
+        loadSignedPDFPreview();
+    }
+    
+    if (currentStep === 4) {
+    
+    }
+    
+    // Handle special actions when completing steps
+    if (currentStep === 2) {
+        // Step 2 - Digital Signature step completed
+        if (typeof completeSignature === 'function') {
+            completeSignature();
+        }
+        
+        // 🎯 NEW: PDF manipulation happens automatically after Step 2 completion
+        console.log('🖨️ Step 2 completed - PDF manipulation happening automatically...');
+        handleSignatureCompletion();
+        
+    } else if (currentStep === 3) {
+        // Step 3: Preview the already-filled PDF (no generation needed)
+        console.log('👁️ Step 3: Previewing already-filled PDF...');
+        // PDF preview is loaded in the step transition above
+        
+    } else if (currentStep === 4) {
+        // Step 4: Completion
+        console.log('🎉 Step 4: TOB workflow completed');
+    }
+}
+
+function previousStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        
+        // Keep window.currentStep in sync
+        window.currentStep = currentStep;
+        updateStepDisplay();
+        updateButtons();
+    }
+}
+
+function updateStepDisplay() {
+    
+    // Update step indicators - now using steps 1, 2, 3, 4
+    const steps = [1, 2, 3, 4];
+    
+    for (let i of steps) {
+        const stepElement = document.getElementById(`step${i}`);
+        const contentElement = document.getElementById(`step${i}-content`);
+        
+        if (i < currentStep) {
+            stepElement.className = 'step completed';
+            contentElement.className = 'step-content';
+            console.log(`✅ Step ${i}: completed`);
+        } else if (i === currentStep) {
+            stepElement.className = 'step active';
+            contentElement.className = 'step-content active';
+            console.log(`🎯 Step ${i}: active`);
+        } else {
+            stepElement.className = 'step pending';
+            contentElement.className = 'step-content';
+            console.log(`⏳ Step ${i}: pending`);
+        }
+    }
+}
+
+function updateButtons() {
+    console.log('🎯 updateButtons() called, current step:', currentStep);
+    
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    // Show/hide back button
+    backBtn.style.display = currentStep > 1 ? 'inline-block' : 'none';
+    console.log('🔙 Back button display:', backBtn.style.display);
+    
+    // Update next button text only (don't override event listeners)
+    if (currentStep === 1) {
+        nextBtn.textContent = 'Proceed to Signature →';
+        console.log('📝 Step 1: Proceed to Signature');
+    } else if (currentStep === 2) {
+        nextBtn.textContent = 'Continue to Preview →';
+        console.log('✅ Step 2: Continue to Preview');
+    } else if (currentStep === 3) {
+        nextBtn.textContent = 'Continue to Completion →';
+    } else if (currentStep === 4) {
+        nextBtn.textContent = 'Return to Dashboard';
+        nextBtn.className = 'btn btn-success';
+    }
+}
+
+function validateCurrentStep() {
+    // Call step-specific validation functions from location blocks
+    switch(currentStep) {
+        case 1: return window.validateStep1 ? window.validateStep1() : true;
+        case 2: return window.validateStep2 ? window.validateStep2() : true;
+        case 3: return window.validateStep3 ? window.validateStep3() : true;
+        case 4: return window.validateStep4 ? window.validateStep4() : true;
+        default: return true;
+    }
+}
+
+function handleCurrentStepCompletion() {
+    // Call step-specific completion functions from location blocks
+    switch(currentStep) {
+        case 1: if (window.handleStep1Completion) window.handleStep1Completion(); break;
+        case 2: if (window.handleStep2Completion) window.handleStep2Completion(); break;
+        case 3: if (window.handleStep3Completion) window.handleStep3Completion(); break;
+        case 4: if (window.handleStep4Completion) window.handleStep4Completion(); break;
+    }
+}
+
+function addSignature() {
+    // Get the actual lawyer name from the dashboard
+    let actualLawyerName = lawyerName;
+    
+    // If lawyerName is still "Lawyer", try to get it from the dashboard
+    if (!actualLawyerName || actualLawyerName === 'Lawyer') {
+        const welcomeName = document.querySelector('#welcomeName');
+        if (welcomeName) {
+            actualLawyerName = welcomeName.textContent.trim();
+        }
+    }
+    
+    // Fallback if still no name
+    if (!actualLawyerName || actualLawyerName === 'Lawyer') {
+        actualLawyerName = 'Lawyer';
+    }
+    
+    // Create signature capture modal
+    const signatureModal = document.createElement('div');
+    signatureModal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8); z-index: 10001;
+        display: flex; justify-content: center; align-items: center;
+    `;
+    signatureModal.className = 'signature-capture-modal';
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white; border-radius: 12px; padding: 30px;
+        width: 90vw; max-width: 600px; text-align: center;
+    `;
+    
+    modalContent.innerHTML = 
+        '<h3 style="color: #693382; margin-bottom: 20px;">Digital Signature</h3>' +
+        '<p style="color: #64748b; margin-bottom: 20px;">Please sign below using your mouse or touch device</p>' +
+        '<canvas id="signatureCanvas" width="500" height="200" ' +
+                'style="border: 2px solid #693382; border-radius: 8px; cursor: crosshair; background: white; margin: 20px 0;"></canvas>' +
+        '<div style="margin: 20px 0;">' +
+            '<button id="clearSignature" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 6px; margin-right: 10px; cursor: pointer;">' +
+                '🗑️ Clear' +
+            '</button>' +
+            '<button id="saveSignature" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">' +
+                '✅ Save Signature' +
+            '</button>' +
+            '<button id="cancelSignature" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; margin-left: 10px; cursor: pointer;">' +
+                '❌ Cancel' +
+            '</button>' +
+        '</div>';
+    
+    signatureModal.appendChild(modalContent);
+    document.body.appendChild(signatureModal);
+    
+    // Initialize signature capture
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    
+    // Enhanced canvas styling for better signature quality
+    ctx.strokeStyle = '#693382';
+    ctx.lineWidth = 2.5; // Slightly thinner for more precision
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+    
+    function startDrawing(e) {
+        isDrawing = true;
+        const rect = canvas.getBoundingClientRect();
+        lastX = e.clientX - rect.left;
+        lastY = e.clientY - rect.top;
+    }
+    
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        
+        const rect = canvas.getBoundingClientRect();
+        const currentX = e.clientX - rect.left;
+        const currentY = e.clientY - rect.top;
+        
+        // Draw line from last position to current position
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(currentX, currentY);
+        ctx.stroke();
+        
+        lastX = currentX;
+        lastY = currentY;
+    }
+    
+    function handleTouch(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        
+        if (e.type === 'touchstart') {
+            isDrawing = true;
+            lastX = x;
+            lastY = y;
+        } else if (e.type === 'touchmove' && isDrawing) {
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            lastX = x;
+            lastY = y;
+        }
+    }
+    
+    function stopDrawing() {
+        isDrawing = false;
+    }
+    
+    // Button event handlers
+    document.getElementById('clearSignature').addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+    
+    document.getElementById('saveSignature').addEventListener('click', () => {
+        // Check if signature was drawn
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const hasSignature = imageData.data.some(pixel => pixel !== 0);
+        
+        if (!hasSignature) {
+            alert('Please draw your signature before saving.');
+            return;
+        }
+        
+        // Convert canvas to data URL (PNG format)
+        const signatureDataURL = canvas.toDataURL('image/png');
+        
+        // Store the signature data
+        window.capturedSignature = signatureDataURL;
+        
+        // Hide placeholder and show signature preview
+        document.getElementById('signaturePlaceholder').style.display = 'none';
+        document.getElementById('signatureDisplay').style.display = 'block';
+        document.getElementById('signatureDisplay').innerHTML = `
+            <img src="${signatureDataURL}" alt="Captured Signature" style="max-width: 200px; height: auto;">
+        `;
+        
+        // Update signature box styling
+        document.getElementById('signatureBox').classList.add('filled');
+        
+        // Close signature modal
+        signatureModal.remove();
+        
+        console.log('✅ Signature captured and saved');
+    });
+    
+    document.getElementById('cancelSignature').addEventListener('click', () => {
+        signatureModal.remove();
+    });
+}
+
+function completeTOB() {
+    console.log('🎉 TOB completion process started...');
+    
+    // Show completion message
+    alert('🎉 Terms of Business completed successfully!');
+    
+    // Close modal first
+    closeTOBModal();
+    
+    // DIRECT METHOD: Call dashboard update function immediately
+    setTimeout(() => {
+        try {
+            console.log('📤 Calling updateDashboardAfterTOB directly...');
+            if (typeof window.updateDashboardAfterTOB === 'function') {
+                window.updateDashboardAfterTOB();
+                console.log('✅ Dashboard update function called successfully');
+            } else {
+                console.error('❌ updateDashboardAfterTOB function not found');
+                // Fallback: Force page refresh to get updated state
+                window.location.reload();
+            }
+            
+            // Also trigger WebSocket/database update
+            console.log('📡 Triggering WebSocket database update...');
+            refreshDashboardState();
+            
+        } catch (e) {
+            console.error('❌ Error calling dashboard update function:', e);
+            // Fallback: Force page refresh 
+            window.location.reload();
+        }
+    }, 500);
+}
+
+function closeTOBModal() {
+    // Since we're embedded in the dashboard modal, close the modal overlay
+    const modalOverlay = document.querySelector('.modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.remove();
+    }
+    
+}
+
+function showError(message) {
+    const tobContent = document.getElementById('tobContent');
+    if (tobContent) {
+        tobContent.innerHTML = 
+            '<div style="text-align: center; padding: 40px; color: #64748b;">' +
+                '<i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px; color: #f59e0b;"></i>' +
+                '<h3 style="color: #1e293b; margin-bottom: 15px;">Error</h3>' +
+                '<p>' + message + '</p>' +
+            '</div>';
+    } else {
+        // Fallback: Show error as alert if tobContent element not found
+        alert('Error: ' + message);
+        console.error('❌ tobContent element not found. Error:', message);
+    }
+}
+
+// Updated API call function for SSOT architecture
+// 🎯 NEW: Generate PDF with signatures after Step 2 completion
+async function generateSignedPDF() {
+    try {
+        console.log('🖨️ Starting PDF generation with signatures...');
+        
+        // Get signature data
+        const signatureData = {
+            pin: window.lawyerPin,
+            lawyerSignature: window.capturedSignature || null,
+            lizSignature: 'https://api.qolae.com/central-repository/signatures/lizs-signature.png'
+        };
+        
+        console.log('📝 Signature data:', signatureData);
+        
+        // Call the PDF generation API
+        const response = await fetch('https://api.qolae.com/documents/generate-lawyers-tob', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                pin: signatureData.pin,
+                lawyerData: window.lawyerData,
+                generateForReview: false,  // Generate signed PDF version
+                signatureData: signatureData
+            }),
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ PDF Generation API Error:', errorText);
+            throw new Error(`PDF generation failed! status: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log('✅ PDF generated successfully:', result);
+            
+            // Store the PDF URL for Step 3 preview
+            window.signedPDFUrl = result.downloadUrl || `https://api.qolae.com/documents/${signatureData.pin}/signed`;
+            window.signedTOBDownloadUrl = window.signedPDFUrl;
+            
+            // Store database status
+            window.databaseStatus = result.database;
+            
+            console.log('📄 PDF ready for preview:', window.signedPDFUrl);
+            
+        } else {
+            console.error('❌ PDF generation failed:', result.error);
+            alert('Failed to generate PDF. Please try again.');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error generating PDF:', error);
+        alert('Error generating PDF: ' + error.message);
+    }
+}
+
+// 🎯 NEW: Load PDF preview in Step 3
+function loadSignedPDFPreview() {
+    console.log('👁️ Loading PDF preview...');
+    
+    const previewContainer = document.getElementById('step3-content');
+    if (!previewContainer) {
+        console.error('❌ Step 3 content container not found');
+        return;
+    }
+    
+    if (!window.signedPDFUrl) {
+        console.error('❌ No signed PDF URL available');
+        previewContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #dc2626;">
+                <h4>❌ PDF Not Available</h4>
+                <p>PDF generation failed. Please go back and try again.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Create PDF preview iframe
+    previewContainer.innerHTML = `
+        <h4 style="color: #693382; margin-bottom: 16px;">📄 Preview Signed Document</h4>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p style="color: #6b7280;">Your Terms of Business document with digital signatures</p>
+        </div>
+        <div style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; height: 600px;">
+            <iframe 
+                src="${window.signedPDFUrl}" 
+                width="100%" 
+                height="100%" 
+                style="border: none;"
+                title="Signed TOB Preview">
+            </iframe>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="downloadSignedPDF()" class="btn btn-primary" style="margin-right: 10px;">
+                📥 Download PDF
+            </button>
+            <button onclick="viewSignedPDF()" class="btn btn-secondary">
+                👁️ View Full Screen
+            </button>
+        </div>
+    `;
+    
+    console.log('✅ PDF preview loaded');
+}
+
+// 🎯 NEW: Download signed PDF
+function downloadSignedPDF() {
+    if (window.signedPDFUrl) {
+        const downloadUrl = window.signedPDFUrl + '?download=true';
+        window.open(downloadUrl, '_blank');
+        console.log('📥 PDF download initiated');
+    } else {
+        alert('PDF not available for download');
+    }
+}
+
+// 🎯 NEW: View signed PDF in full screen
+function viewSignedPDF() {
+    if (window.signedPDFUrl) {
+        window.open(window.signedPDFUrl, '_blank');
+        console.log('👁️ PDF opened in new tab');
+    } else {
+        alert('PDF not available for viewing');
+    }
+}
+
+// Legacy function - keeping for backwards compatibility
+async function generateSignedTOB(signatureData) {
+    try {
+
+        // STEP 1: Fetch lawyer signature from database before generating PDF
+        console.log('🔄 [Legacy] Fetching lawyer signature from database before PDF generation...');
+
+        let lawyerSignatureData = null;
+
+        try {
+            const signatureResponse = await fetch(`https://api.qolae.com/documents/get-signature/${signatureData.pin}?signatureType=professional`);
+
+            if (signatureResponse.ok) {
+                const signatureResult = await signatureResponse.json();
+                if (signatureResult.success && signatureResult.signatureData) {
+                    lawyerSignatureData = signatureResult.signatureData;
+                    console.log('✅ [Legacy] Lawyer signature retrieved from database for PDF generation');
+                } else {
+                    console.warn('⚠️ [Legacy] No signature found in database');
+                }
+            } else if (signatureResponse.status === 404) {
+                console.warn('⚠️ [Legacy] No saved signature found');
+            }
+        } catch (signatureError) {
+            console.warn('⚠️ [Legacy] Error fetching signature from database:', signatureError.message);
+        }
+
+        // Fallback to session signature if database lookup failed
+        if (!lawyerSignatureData && window.capturedSignature) {
+            console.log('🔄 [Legacy] Using session signature as fallback');
+            lawyerSignatureData = window.capturedSignature;
+        }
+
+        // STEP 2: Call the TOB generation API with fetched signature
+        console.log('🖨️ [Legacy] Generating PDF with signature data...');
+
+        const response = await fetch('https://api.qolae.com/documents/generate-lawyers-tob', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any authentication headers if needed
+                // 'Authorization': 'Bearer ' + token,
+            },
+            body: JSON.stringify({
+                pin: signatureData.pin,
+                lawyerData: window.lawyerData,
+                generateForReview: false,  // Generate signed PDF version
+                signatureData: {
+                    lawyerSignature: lawyerSignatureData, // Use signature from database
+                    lizSignature: 'https://api.qolae.com/central-repository/signatures/lizs-signature.png'
+                }
+            }),
+            // Handle CORS properly
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ API Error Response:', errorText);
+            throw new Error(`API error! status: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            
+            // Store the download URL for later use
+            window.signedTOBDownloadUrl = result.downloadUrl || `https://api.qolae.com/central-repository/signed-tob/TOB_${signatureData.pin}_SIGNED.pdf`;
+            
+            // Store database status for display
+            window.databaseStatus = result.database;
+            
+            // Move to completion step
+            currentStep = 4;
+            updateStepDisplay();
+            updateButtons();
+            
+            // Show success message with download option
+            showSignedTOBSuccess(result);
+            
+        } else {
+            console.error('❌ Signed TOB generation failed:', result.error);
+            showSignedTOBError(result.error || 'Generation failed');
+        }
+        
+    } catch (error) {
+        console.error('💥 Error calling new TOB generation API:', error);
+        showSignedTOBError(`Network error: ${error.message}`);
+    }
+}
+
+// Step 2 - Digital Signature step (no API call needed)
+function completeSignature() {
+    if (!validateCurrentStep()) {
+        return;
+    }
+    
+}
+
+// Update existing document with signatures (client-side only) - DUPLICATE REMOVED
+// This function is already defined above with better signature detection
+
+// Load signed document preview (using existing HTML from bootstrap)
+async function loadSignedDocumentPreview() {
+    
+    const previewContainer = document.getElementById('signedDocumentPreview');
+    
+    try {
+        // Generate the signed document with signatures embedded
+        const response = await fetch('https://api.qolae.com/documents/generate-lawyers-tob', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pin: lawyerPin,
+                lawyerData: window.lawyerData,
+                generateForReview: true,  // Generate preview version with signatures
+                includeSignatures: true   // Include the captured signatures
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Display the signed document preview
+            const ejsUrl = `https://api.qolae.com/central-repository/temp/TOB_${lawyerPin}_REVIEW.ejs`;
+            
+            try {
+                const ejsResponse = await fetch(ejsUrl);
+                if (ejsResponse.ok) {
+                    const ejsContent = await ejsResponse.text();
+                    
+                    previewContainer.innerHTML = 
+                        '<div style="border: 1px solid #e5e7eb; border-radius: 8px; height: 600px; width: 100%; background: white; position: relative;">' +
+                            '<!-- Signed Document Container -->' +
+                            '<div id="signedDocumentContainer" style="height: 100%; overflow-y: auto; padding: 20px;">' +
+                                ejsContent +
+                            '</div>' +
+                        '</div>';
+                    
+                    // Embed the captured signature into the preview
+                    if (window.capturedSignature) {
+                        embedSignatureInPreview();
+                    }
+                    
+                } else {
+                    throw new Error(`Failed to fetch signed document: ${ejsResponse.status}`);
+                }
+            } catch (ejsError) {
+                console.error('❌ Error fetching signed document:', ejsError);
+                previewContainer.innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: #64748b;">' +
+                        '<div style="color: #f59e0b; font-size: 3rem; margin-bottom: 15px;">⚠️</div>' +
+                        '<h3 style="color: #1e293b; margin-bottom: 15px;">Preview Unavailable</h3>' +
+                        '<p>Unable to load signed document preview. The document has been generated successfully.</p>' +
+                    '</div>';
+            }
+        } else {
+            throw new Error(result.error || 'Failed to generate signed document preview');
+        }
+        
+    } catch (error) {
+        console.error('💥 Error loading signed document preview:', error);
+        previewContainer.innerHTML = 
+            '<div style="text-align: center; padding: 40px; color: #64748b;">' +
+                '<div style="color: #ef4444; font-size: 3rem; margin-bottom: 15px;">❌</div>' +
+                '<h3 style="color: #1e293b; margin-bottom: 15px;">Preview Error</h3>' +
+                '<p>Error loading signed document preview: ' + error.message + '</p>' +
+            '</div>';
+    }
+}
+
+// Embed signature into the preview document
+function embedSignatureInPreview() {
+    if (!window.capturedSignature) return;
+    
+    // Find signature fields in the preview and replace with captured signature
+    const signatureFields = document.querySelectorAll('#signedDocumentContainer .modal-field.signature, #signedDocumentContainer .modal-field.signature-1, #signedDocumentContainer .modal-field.signature-2, #signedDocumentContainer #LizsSignature, #signedDocumentContainer #LawyerSignature1, #signedDocumentContainer #LawyerSignature2');
+    
+    signatureFields.forEach(field => {
+        if (field.id === 'LizsSignature') {
+            // For Liz's signature, use the actual signature image
+            field.innerHTML = '<img src="https://api.qolae.com/central-repository/signatures/lizs-signature.png" alt="Liz\'s Signature" style="max-width: 200px; height: auto;">';
+        } else {
+            // For lawyer's signature, use the captured signature
+            field.innerHTML = `<img src="${window.capturedSignature}" alt="Lawyer Signature" style="max-width: 200px; height: auto;">`;
+        }
+    });
+    
+}
+
+// Show signed TOB generation success
+function showSignedTOBSuccess(result) {
+    // Move to step 4 (preview) instead of completion
+    currentStep = 4;
+    updateStepDisplay();
+    updateButtons();
+    
+    // Load the signed document preview
+    loadSignedDocumentPreview();
+    
+    // Show database confirmation banner
+    showDatabaseConfirmation(result.database);
+    
+    // Update button states to allow navigation
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.textContent = 'Generate Final PDF →';
+        nextBtn.disabled = false;
+    }
+}
+
+// Show database confirmation banner
+function showDatabaseConfirmation(dbStatus) {
+    if (!dbStatus) return;
+    
+    const isSuccess = dbStatus.documentStored && dbStatus.workflowStageUpdated && dbStatus.auditLogCreated;
+    
+    const bannerHtml = `
+        <div id="database-confirmation-banner" style="
+            margin: 15px 0; 
+            padding: 16px 20px; 
+            border-radius: 12px; 
+            border: 2px solid ${isSuccess ? '#10b981' : '#f59e0b'};
+            background: ${isSuccess ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)'};
+            color: ${isSuccess ? '#065f46' : '#92400e'};
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: slideInDown 0.5s ease-out;
+        ">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 20px;">${isSuccess ? '🎉' : '⚠️'}</span>
+                <div style="flex: 1;">
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">
+                        ${isSuccess 
+                            ? 'Document Stored Successfully!' 
+                            : 'Document Generated with Issues'
+                        }
+                    </div>
+                    <div style="font-size: 13px; font-weight: 500; opacity: 0.8;">
+                        ${isSuccess 
+                            ? 'Your signed TOB has been saved to the database and workflow updated' 
+                            : 'PDF generated but database storage encountered issues'
+                        }
+                    </div>
+                </div>
+                ${isSuccess ? `
+                    <div style="
+                        background: #10b981; 
+                        color: white; 
+                        padding: 6px 12px; 
+                        border-radius: 20px; 
+                        font-size: 12px; 
+                        font-weight: 600;
+                    ">
+                        ✓ STORED
+                    </div>
+                ` : ''}
+            </div>
+            ${!isSuccess ? `
+                <div style="margin-top: 12px; padding: 8px 12px; background: rgba(245, 158, 11, 0.1); border-radius: 6px; font-size: 12px; color: #92400e;">
+                    ${dbStatus.error ? `Error: ${dbStatus.error}` : 'Some database operations failed'}
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // Insert banner before the preview container
+    const previewContainer = document.getElementById('signedDocumentPreview');
+    if (previewContainer && !document.getElementById('database-confirmation-banner')) {
+        const bannerDiv = document.createElement('div');
+        bannerDiv.innerHTML = bannerHtml;
+        previewContainer.parentNode.insertBefore(bannerDiv.firstElementChild, previewContainer);
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInDown {
+                from { transform: translateY(-20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // If successful, trigger dashboard state refresh
+    if (isSuccess) {
+        refreshDashboardState();
+    }
+}
+
+// Refresh dashboard state after successful TOB completion
+async function refreshDashboardState() {
+    try {
+        console.log('🔄 Refreshing dashboard state after TOB completion...');
+        
+        // Method 1: Try WebSocket update first (if available)
+        if (window.io && window.io.connected) {
+            console.log('📡 Sending WebSocket update...');
+            window.io.emit('workflow:tob-completed', {
+                pin: lawyerPin,
+                timestamp: new Date().toISOString()
+            });
+        }
+        
+        // Method 2: Try REST API call to refresh state
+        try {
+            const response = await fetch(`https://api.qolae.com/api/lawyers/${lawyerPin}/refresh-state`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+        if (response.ok) {
+            console.log('✅ Dashboard state refreshed via REST API');
+        }
+        } catch (restError) {
+           
+        }
+        
+        // Method 3: Try parent window communication
+        if (window.parent && window.parent !== window) {
+            // console.log('📤 Sending parent window update...');
+            window.parent.postMessage({
+                type: 'TOB_COMPLETED',
+                pin: lawyerPin,
+                workflowStage: 2,
+                timestamp: new Date().toISOString()
+            }, '*');
+        }
+        
+        // Method 4: Try direct dashboard update function
+        if (typeof updateDashboardAfterTOB === 'function') {
+            console.log('🔄 Calling dashboard update function...');
+            updateDashboardAfterTOB();
+        }
+        
+        console.log('✅ Dashboard state refresh initiated');
+        
+    } catch (error) {
+        console.error('❌ Error refreshing dashboard state:', error);
+        // Don't fail the TOB process if state refresh fails
+    }
+}
+
+// Show signed TOB generation error
+function showSignedTOBError(errorMessage) {
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.textContent = 'Complete & Sign Document';
+    nextBtn.disabled = false;
+    
+    // Show error modal or alert
+    const errorHtml = `
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                    <div style="color: #dc2626; font-weight: 600; margin-bottom: 10px;">❌ Signed TOB Generation Failed</div>
+        <div style="color: #7f1d1d; font-size: 14px;">${errorMessage}</div>
+        <div style="margin-top: 15px;">
+            <button onclick="retrySignedTOBGeneration()" class="btn btn-primary" style="font-size: 14px;">
+                🔄 Retry Generation
+                        </button>
+                    </div>
+                </div>
+    `;
+    
+    // Insert error message before the signature box
+    const signatureBox = document.getElementById('signatureBox');
+    if (signatureBox && !document.getElementById('error-message')) {
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'error-message';
+        errorDiv.innerHTML = errorHtml;
+        signatureBox.parentNode.insertBefore(errorDiv, signatureBox);
+    }
+}
+
+// Retry signed TOB generation
+function retrySignedTOBGeneration() {
+    // Remove error message
+    const errorMessage = document.getElementById('error-message');
+    if (errorMessage) {
+        errorMessage.remove();
+    }
+    
+    // Retry the signature completion
+    completeSignature();
+}
+
+// Download signed TOB function
+function downloadSignedTOB() {
+    // If download URL is not cached, construct it based on the pattern
+    if (!window.signedTOBDownloadUrl) {
+        console.log('⚠️ Download URL not in cache, constructing from pattern...');
+        window.signedTOBDownloadUrl = `https://api.qolae.com/central-repository/signed-tob/TOB_${lawyerPin}_SIGNED.pdf`;
+    }
+    
+    console.log('📥 Downloading signed TOB from:', window.signedTOBDownloadUrl);
+    
+    // Try direct download first
+    const downloadLink = document.createElement('a');
+    downloadLink.href = window.signedTOBDownloadUrl;
+    downloadLink.download = `TOB_${lawyerPin}_SIGNED.pdf`;
+    downloadLink.style.display = 'none';
+    
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    console.log('✅ Download initiated');
+    
+    // If the direct download fails, try the API endpoint
+    setTimeout(() => {
+        fetch(window.signedTOBDownloadUrl, { method: 'HEAD' })
+            .then(response => {
+                if (!response.ok) {
+                    console.log('⚠️ Direct URL failed, trying API endpoint...');
+                    const apiUrl = `https://api.qolae.com/documents/${lawyerPin}/signed?download=true`;
+                    window.location.href = apiUrl;
+                }
+            })
+            .catch(err => {
+                console.error('❌ Download check failed:', err);
+                // Fallback to API endpoint
+                const apiUrl = `https://api.qolae.com/documents/${lawyerPin}/signed?download=true`;
+                window.location.href = apiUrl;
+            });
+    }, 500);
+}
+
+// Test SSOT API connectivity (debugging function)
+async function testSSOTConnection() {
+    try {
+        console.log('🧪 Testing SSOT API connection...');
+        
+        const response = await fetch('https://api.qolae.com/health', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const health = await response.json();
+            console.log('✅ SSOT API is healthy:', health);
+            return true;
+        } else {
+            console.error('❌ SSOT API health check failed:', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error('💥 SSOT API connection test failed:', error);
+        return false;
+    }
+}
+
+// Page Navigation Functions
+
+let currentPage = 1;
+let totalPages = 1;
+
+function initializePageNavigation() {
+    console.log('📄 Initializing page navigation...');
+    
+    // Parse the document content to identify pages
+    const documentContent = document.getElementById('documentContent');
+    if (!documentContent) {
+        console.error('❌ Document content not found');
+        return;
+    }
+    
+    // Professional page-by-page navigation
+    // The document is now structured with .sheet sections
+    documentContent.style.cssText = `
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+        background: transparent;
+    `;
+    
+    // Count the number of .sheet sections (pages)
+    const sheets = documentContent.querySelectorAll('.sheet');
+    totalPages = sheets.length;
+    currentPage = 1;
+    
+    // Initialize page navigation
+    updatePageNavigation();
+    
+    console.log(`✅ Page navigation initialized: ${totalPages} professional pages found`);
+}
+
+function splitContentIntoPages(content, pageHeight) {
+    // This is a simplified page splitting algorithm
+    // In practice, you'd want to parse the HTML structure more intelligently
+    
+    // For now, let's create a basic split based on content length
+    const wordsPerPage = 800; // Approximate words per page
+    const words = content.split(' ');
+    const pages = [];
+    
+    for (let i = 0; i < words.length; i += wordsPerPage) {
+        const pageWords = words.slice(i, i + wordsPerPage);
+        pages.push(pageWords.join(' '));
+    }
+    
+    // Ensure we have at least one page
+    if (pages.length === 0) {
+        pages.push(content);
+    }
+    
+    return pages;
+}
+
+// nextPage() and previousPage() functions removed - navigation now only via TOC
+
+function goToPage(pageNumber) {
+    const documentContent = document.getElementById('documentContent');
+    if (!documentContent) return;
+    
+    // Find the target sheet (page)
+    const sheets = documentContent.querySelectorAll('.sheet');
+    const targetSheet = sheets[pageNumber - 1];
+    
+    if (targetSheet) {
+        // Navigate directly to the target sheet
+        targetSheet.scrollIntoView({ 
+            behavior: 'instant', 
+            block: 'start' 
+        });
+        currentPage = pageNumber;
+        console.log(`📄 Navigated to page ${pageNumber}`);
+    }
+}
+
+function updatePageNavigation() {
+    // Page navigation buttons removed - only TOC navigation remains
+    console.log(`📄 Current page: ${currentPage} of ${totalPages}`);
+}
+
+// TOC Navigation Functions - Delegate to document's own navigation
+// The TemplateTOB.ejs document handles its own navigation with navigateToPage()
+
+function navigateToSection(sectionId) {
+    console.log(`📄 TOC: Navigating to section ${sectionId}`);
+    
+    // Find which page contains this section and navigate directly to that page
+    const section = document.getElementById(sectionId);
+    if (section) {
+        // Find the parent sheet (page) that contains this section
+        const sheet = section.closest('.sheet');
+        if (sheet) {
+            // Get the page number from the sheet's position
+            const allSheets = document.querySelectorAll('.sheet');
+            const pageNumber = Array.from(allSheets).indexOf(sheet) + 1;
+            
+            // Navigate directly to that page using the existing page navigation
+            goToPage(pageNumber);
+            console.log(`✅ Successfully navigated to page ${pageNumber} containing section ${sectionId}`);
+            } else {
+            console.warn(`Section ${sectionId} not found within a sheet`);
+        }
+    } else {
+        console.warn(`Section ${sectionId} not found`);
+    }
+}
+
+// Generate final PDF from preview
+async function generateFinalPDF() {
+
+    // Show processing state
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.textContent = 'Generating Final PDF...';
+    nextBtn.disabled = true;
+
+    try {
+        // STEP 1: Fetch lawyer signature from database before generating PDF
+        console.log('🔄 Fetching lawyer signature from database before PDF generation...');
+
+        let lawyerSignatureData = null;
+
+        try {
+            const signatureResponse = await fetch(`https://api.qolae.com/documents/get-signature/${lawyerPin}?signatureType=professional`);
+
+            if (signatureResponse.ok) {
+                const signatureResult = await signatureResponse.json();
+                if (signatureResult.success && signatureResult.signatureData) {
+                    lawyerSignatureData = signatureResult.signatureData;
+                    console.log('✅ Lawyer signature retrieved from database for PDF generation');
+                    console.log(`📊 Signature usage count: ${signatureResult.usageCount}`);
+                } else {
+                    console.warn('⚠️ No signature found in database - PDF will generate without lawyer signature');
+                }
+            } else if (signatureResponse.status === 404) {
+                console.warn('⚠️ No saved signature found - PDF will generate without lawyer signature');
+            } else {
+                console.warn(`⚠️ Failed to retrieve signature: ${signatureResponse.status}`);
+            }
+        } catch (signatureError) {
+            console.warn('⚠️ Error fetching signature from database:', signatureError.message);
+            // Continue with PDF generation even if signature fetch fails
+        }
+
+        // Fallback to session signature if database lookup failed
+        if (!lawyerSignatureData && window.capturedSignature) {
+            console.log('🔄 Using session signature as fallback');
+            lawyerSignatureData = window.capturedSignature;
+        }
+
+        // STEP 2: Generate PDF with fetched signature
+        console.log('🖨️ Generating final PDF with signature data...');
+
+        const response = await fetch('https://api.qolae.com/documents/generate-lawyers-tob', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pin: lawyerPin,
+                lawyerData: window.lawyerData,
+                generateForReview: false,  // Generate final PDF version
+                includeSignatures: true,   // Include the captured signatures
+                signatureData: {
+                    lawyerSignature: lawyerSignatureData, // Use signature from database
+                    lizSignature: 'https://api.qolae.com/central-repository/signatures/lizs-signature.png'
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ API Error Response:', response.status, errorText);
+            throw new Error(`API error! status: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('📥 Final PDF generation response:', result);
+        
+        // Validate the response structure
+        if (!result) {
+            throw new Error('Empty response from API');
+        }
+        
+        if (result.success) {
+            
+            // Store the download URL for later use
+            window.signedTOBDownloadUrl = result.downloadUrl || `https://api.qolae.com/central-repository/signed-tob/TOB_${lawyerPin}_SIGNED.pdf`;
+            
+            // Move to completion step
+            currentStep = 4;
+            updateStepDisplay();
+            updateButtons();
+            
+            // Show success message with download option
+            showFinalPDFSuccess(result);
+            
+        } else {
+            throw new Error(result.error || 'Failed to generate final PDF');
+        }
+        
+    } catch (error) {
+        console.error('💥 Error generating final PDF:', error);
+        showFinalPDFError(`Network error: ${error.message}`);
+    }
+}
+
+// Show final PDF generation success
+function showFinalPDFSuccess(result) {
+    // Update the completion step content
+    const step4Content = document.getElementById('step4-content');
+    if (step4Content) {
+        step4Content.innerHTML = `
+            <h4 style="color: #693382; margin-bottom: 16px;">✅ Completion</h4>
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 3rem; color: #10b981; margin-bottom: 15px;">🎉</div>
+                <h3 style="color: #10b981; margin-bottom: 15px;">Terms of Business Successfully Signed!</h3>
+                <p style="color: #6b7280; margin-bottom: 15px;">
+                    Your document has been processed with digital signatures and converted to a final PDF.
+                </p>
+                <p style="color: #693382; font-weight: 600; margin-bottom: 15px;">
+                    Signed: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+                <div style="margin-top: 15px;">
+                    <button onclick="completeTOB()" class="btn btn-primary">
+                        ✅ Complete & Return to Dashboard
+                        </button>
+                    </div>
+                </div>
+        `;
+    }
+    
+    // Update button states to allow navigation
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.textContent = 'Return to Dashboard';
+        nextBtn.onclick = completeTOB;
+        nextBtn.disabled = false;
+    }
+}
+
+// Show final PDF generation error
+function showFinalPDFError(errorMessage) {
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.textContent = 'Generate Final PDF →';
+    nextBtn.disabled = false;
+    
+    // Show error message
+    const previewContainer = document.getElementById('signedDocumentPreview');
+    if (previewContainer) {
+        previewContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #64748b;">
+                <div style="color: #ef4444; font-size: 3rem; margin-bottom: 15px;">❌</div>
+                <h3 style="color: #1e293b; margin-bottom: 15px;">PDF Generation Failed</h3>
+                <p>Error generating final PDF: ${errorMessage}</p>
+                <button onclick="generateFinalPDF()" class="btn btn-primary" style="margin-top: 15px;">
+                    🔄 Retry PDF Generation
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Now make all functions globally accessible
+window.nextStep = nextStep;
+window.previousStep = previousStep;
+window.updateStepDisplay = updateStepDisplay;
+window.updateButtons = updateButtons;
+// Export to PDF function
+
+
+window.validateCurrentStep = validateCurrentStep;
+// window.loadCustomizedTOB removed - function no longer exists
+window.addSignature = addSignature;
+window.openSignatureModal = openSignatureModal;
+window.createProfessionalSignatureModal = createProfessionalSignatureModal;
+window.switchToUpload = switchToUpload;
+window.switchToDraw = switchToDraw;
+window.clearSignatureCanvas = clearSignatureCanvas;
+window.undoLastStroke = undoLastStroke;
+window.saveSignature = saveSignature;
+window.changeSignature = changeSignature;
+window.closeSignatureModal = closeSignatureModal;
+window.completeSignature = completeSignature;
+window.completeTOB = completeTOB;
+window.closeTOBModal = closeTOBModal;
+window.showError = showError;
+window.downloadSignedTOB = downloadSignedTOB;
+window.generateSignedTOB = generateSignedTOB;
+window.testSSOTConnection = testSSOTConnection;
+window.initializePageNavigation = initializePageNavigation;
+window.goToPage = goToPage;
+window.updatePageNavigation = updatePageNavigation;
+// navigateToPage is handled by the embedded TemplateTOB.ejs document
+window.navigateToSection = navigateToSection;
+window.loadSignedDocumentPreview = loadSignedDocumentPreview;
+window.embedSignatureInPreview = embedSignatureInPreview;
+window.generateFinalPDF = generateFinalPDF;
+
+// Bootstrap function - generates TOB when modal opens
+async function bootstrapTOBGeneration() {
+            console.log('🚀 Bootstrap: Starting TOB (EJS) generation in background...');
+    
+    try {
+        // Call API to generate TOB (review mode - no signatures)
+        const response = await fetch('https://api.qolae.com/documents/generate-lawyers-tob', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pin: lawyerPin,
+                lawyerData: window.lawyerData,
+                generateForReview: true  // Generate review version
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                // console.log('✅ Bootstrap: TOB (EJS) generated successfully in background');
+                console.log('📁 Review TOB (EJS) saved to:', result.outputPath);
+            } else {
+                console.warn('⚠️ Bootstrap: TOB generation failed:', result.error);
+            }
+        } else {
+            console.warn('⚠️ Bootstrap: TOB generation failed with status:', response.status);
+        }
+    } catch (error) {
+        console.warn('⚠️ Bootstrap: TOB generation error (non-critical):', error.message);
+    }
+}
+
+// Initialize modal immediately when script loads (not waiting for DOMContentLoaded)
+console.log('🎯 TOB Modal script loaded');
+console.log('🔍 Variables check:', { currentStep, lawyerPin, lawyerName, lawyerData });
+
+// PIN is passed from dashboard via server-side rendering
+if (lawyerPin && lawyerPin !== 'Unknown') {
+       
+    
+    // 🚀 BOOTSTRAP: Generate TOB in background when modal opens
+    bootstrapTOBGeneration();
+
+    // 🔄 RESTORE: Attempt to restore signature from database
+    restoreSignatureFromDatabase();
+
+    // Add event listeners to buttons
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    // console.log('🔍 Buttons found:', { backBtn: !!backBtn, nextBtn: !!nextBtn });
+    
+    if (backBtn) {
+        backBtn.addEventListener('click', previousStep);
+        // console.log('✅ Back button event listener added');
+    }
+    
+        if (nextBtn) {
+            // Simple event listener - no cloning needed
+            nextBtn.addEventListener('click', nextStep);
+            
+        }
+    
+    // Initialize step display - ensure only Step 1 is visible
+    updateStepDisplay();
+    updateButtons();
+    
+    // Test SSOT API connection for debugging
+    testSSOTConnection();
+} else {
+    // Show error if no PIN
+    showError('PIN not available. Please ensure you\'re accessing this from the main dashboard.');
+}
+
+// 🎯 NEW: Make PDF manipulation functions globally accessible
+window.handleSignatureCompletion = handleSignatureCompletion;
+window.generateSignedPDF = generateSignedPDF;
+window.loadSignedPDFPreview = loadSignedPDFPreview;
+window.downloadSignedPDF = downloadSignedPDF;
+window.viewSignedPDF = viewSignedPDF;
+</script>
