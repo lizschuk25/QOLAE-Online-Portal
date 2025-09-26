@@ -15,16 +15,16 @@ async function inspectPDFFields(pdfDoc) {
         const fields = form.getFields();
         
         console.log('\n=== PDF FIELD INSPECTION ===');
-        console.log(`Total fields found: ${fieldNames.length}`);
+        console.log(`Total fields found: ${fields.length}`);
         
-        if (fieldNames.length === 0) {
+        if (fields.length === 0) {
             console.log('No form fields found in PDF');
             return [];
         }
         
         const fieldInfo = [];
-        fieldNames.forEach(name => {
-            const field = form.getField(name);
+        fields.forEach(field => {
+            const name = field.getName();
             const info = {
                 name: name,
                 type: field.constructor.name,
@@ -193,9 +193,11 @@ async function manipulatePDFWithSignatures(pin, signatureData) {
         }
         
         // Insert lawyer signatures
-        if (signatureData.lawyerSignature) {
-            results.lawyerSignature1 = await insertSignatureSmart(pdfDoc, signatureData.lawyerSignature, 'LawyerSignature1');
-            results.lawyerSignature2 = await insertSignatureSmart(pdfDoc, signatureData.lawyerSignature, 'LawyerSignature2');
+        if (signatureData.lawyerSignature1) {
+            results.lawyerSignature1 = await insertSignatureSmart(pdfDoc, signatureData.lawyerSignature1, 'LawyerSignature1');
+        }
+        if (signatureData.lawyerSignature2) {
+            results.lawyerSignature2 = await insertSignatureSmart(pdfDoc, signatureData.lawyerSignature2, 'LawyerSignature2');
         }
         
         // Save result
