@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liz's Signature Canvas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #signatureCanvas {
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: crosshair;
+            display: block;
+            margin: 20px auto;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+        .save-btn {
+            background: #51cf66;
+            color: white;
+        }
+        .test-btn {
+            background: #339af0;
+            color: white;
+        }
+        #status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖊️ Liz's Signature Canvas</h1>
+        <p style="text-align: center; color: #666;">
+            Draw your signature below. It will be saved in the same high-quality format as lawyer signatures.
+        </p>
+
+        <canvas id="signatureCanvas" width="600" height="200"></canvas>
+
+        <div class="controls">
+            <button class="clear-btn" onclick="clearCanvas()">Clear Canvas</button>
+            <button class="save-btn" onclick="saveSignature()">Save Signature</button>
+            <button class="test-btn" onclick="testSignature()">Test in PDF</button>
+        </div>
+
+        <div id="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        // Configure canvas for bold signatures (refined thickness)
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 12;  // Bold and professional for PDF visibility
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' :
+                                            e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            showStatus('Canvas cleared', 'info');
+        }
+
+        function saveSignature() {
+            // Convert canvas to base64
+            const dataURL = canvas.toDataURL('image/png');
+
+            // Send to server to save
+            fetch('/api/save-signature', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    signatureData: dataURL,
+                    filename: 'lizs-signature-canvas.png'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus('✅ Signature saved successfully!', 'success');
+                } else {
+                    showStatus('❌ Failed to save signature: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('❌ Error saving signature: ' + error.message, 'error');
+            });
+        }
+
+        function testSignature() {
+            // Test the saved signature in a PDF
+            fetch('/api/test-canvas-signature', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    pin: 'CT-CANVAS-TEST'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus('✅ PDF generated! Check: ' + data.downloadUrl, 'success');
+                    // Open PDF in new tab
+                    window.open(data.downloadUrl, '_blank');
+                } else {
+                    showStatus('❌ Failed to generate test PDF: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('❌ Error testing signature: ' + error.message, 'error');
+            });
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = type;
+            status.style.display = 'block';
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

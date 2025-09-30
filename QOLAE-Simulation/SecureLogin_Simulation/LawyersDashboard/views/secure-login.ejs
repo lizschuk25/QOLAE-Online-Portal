@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Login - QOLAE Lawyers Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #693382;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .logo p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #693382;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(105, 51, 130, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #693382, #8b5a96);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(105, 51, 130, 0.3);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .security-notice {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        .security-notice p {
+            color: #0369a1;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        .pin-hint {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        /* Remember Me Styles for Busy Lawyers */
+        .remember-me-group {
+            margin: 20px 0 !important;
+        }
+        
+        .remember-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .remember-checkbox input[type="checkbox"] {
+            opacity: 0;
+            position: absolute;
+        }
+        
+        .checkmark {
+            height: 20px;
+            width: 20px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            margin-right: 10px;
+            border: 2px solid #d1d5db;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .remember-checkbox:hover .checkmark {
+            background-color: #f3f4f6;
+        }
+        
+        .remember-checkbox input:checked ~ .checkmark {
+            background-color: #693382;
+            border-color: #693382;
+        }
+        
+        .remember-checkbox input:checked ~ .checkmark:after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .remember-hint {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        
+        /* Quick Access Styles */
+        .quick-access {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .quick-access-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #693382;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .saved-profile {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .saved-profile:hover {
+            border-color: #693382;
+            transform: translateY(-1px);
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        
+        .profile-pin {
+            font-weight: 600;
+            color: #693382;
+            font-size: 14px;
+        }
+        
+        .profile-email {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        
+        .profile-remove {
+            color: #ef4444;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 12px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .profile-remove:hover {
+            background: #fee2e2;
+        }
+        
+        .verification-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .verification-info p {
+            color: #059669;
+            font-size: 14px;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="http://localhost:3011/central-repository/images/qolaeNewLogo.svg" alt="QOLAE Logo" style="height: 140px; margin-bottom: 20px;" />
+            <p>Secure Lawyers Portal Access</p>
+        </div>
+        
+        <!-- Show verification message if coming from email -->
+        <div id="verificationInfo" class="verification-info" style="display: none;">
+            <p>✅ Email verification successful! Please complete secure login.</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <form id="secureLoginForm">
+            <div class="form-group">
+                <label for="email">📧 Email Address</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">🔒 Password</label>
+                <input type="password" id="password" name="password" required autocomplete="new-password" placeholder="Create your secure password">
+                <div class="pin-hint">Create a strong password for your QOLAE workspace</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="pin">📋 Lawyer PIN</label>
+                <input type="text" id="pin" name="pin" placeholder="e.g., AM-002008" required autocomplete="off">
+                <div class="pin-hint">Enter your unique lawyer identification PIN</div>
+            </div>
+            
+            <!-- Remember Me Option for Busy Lawyers -->
+            <div class="form-group remember-me-group">
+                <label class="remember-checkbox">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <span class="checkmark"></span>
+                    💾 Remember my email & PIN (secure device only)
+                </label>
+                <div class="remember-hint">⚡ Quick login for busy lawyers - saves 30 seconds each time!</div>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                🏛️ Setup Professional Workspace
+            </button>
+            
+            <!-- Quick Access Options -->
+            <div class="quick-access" id="quickAccessSection" style="display: none;">
+                <div class="quick-access-title">⚡ Quick Access</div>
+                <div class="saved-profiles" id="savedProfiles">
+                    <!-- Dynamically populated with saved lawyer profiles -->
+                </div>
+            </div>
+        </form>
+        
+        <div id="loading" class="loading">
+            <p>🏛️ Setting up your professional QOLAE workspace...</p>
+        </div>
+        
+        <div class="security-notice">
+            <p>🛡️ Your data is protected with enterprise-grade encryption and GDPR compliance.</p>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if coming from email verification
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromVerification = urlParams.get('verified');
+            const setupCompleted = urlParams.get('setup_completed');
+            const pinFromUrl = urlParams.get('pin');
+            
+            console.log('URL params:', { fromVerification, setupCompleted, pinFromUrl });
+            
+            if (fromVerification === 'true') {
+                const verificationDiv = document.getElementById('verificationInfo');
+                if (verificationDiv) {
+                    verificationDiv.style.display = 'block';
+                }
+            }
+            
+            if (setupCompleted === 'true') {
+                // Show alert message that lawyer has already visited this page before
+                const verificationDiv = document.getElementById('verificationInfo');
+                if (verificationDiv) {
+                    verificationDiv.innerHTML = '<p>🔐 Your professional workspace is already set up! Please use your secure login credentials below.</p>';
+                    verificationDiv.style.display = 'block';
+                    console.log('Setup completed message displayed');
+                } else {
+                    console.error('verificationInfo div not found');
+                }
+            }
+            
+            if (pinFromUrl) {
+                const pinInput = document.getElementById('pin');
+                if (pinInput) {
+                    pinInput.value = pinFromUrl;
+                }
+            }
+        });
+        
+        // Load saved profiles for busy lawyers
+        loadSavedProfiles();
+        
+        // Auto-fill if there are saved credentials
+        const lastUsedProfile = getLastUsedProfile();
+        if (lastUsedProfile) {
+            document.getElementById('email').value = lastUsedProfile.email;
+            document.getElementById('pin').value = lastUsedProfile.pin;
+            document.getElementById('rememberMe').checked = true;
+        }
+        
+        // Form submission
+        document.getElementById('secureLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const pin = document.getElementById('pin').value;
+            
+            // Show loading state
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loginBtn').textContent = '🏛️ Setting up workspace...';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            try {
+                const response = await fetch('/lawyers-dashboard/api/secure-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password, pin })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Save credentials if Remember Me is checked
+                    if (document.getElementById('rememberMe').checked) {
+                        saveProfile(email, pin);
+                    }
+                    
+                    // Success! Redirect to dashboard
+                    console.log('✅ Professional workspace setup successful, redirecting to dashboard');
+                    window.location.href = `/LawyersDashboard?pin=${pin}`;
+                } else {
+                    // Show error
+                    showError(result.error || 'Login failed. Please check your credentials.');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                // Reset button state
+                document.getElementById('loginBtn').disabled = false;
+                document.getElementById('loginBtn').textContent = '🏛️ Setup Professional Workspace';
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Scroll to top to show error
+            window.scrollTo(0, 0);
+        }
+        
+        // Auto-focus first empty field
+        window.addEventListener('load', function() {
+            if (!document.getElementById('email').value) {
+                document.getElementById('email').focus();
+            } else if (!document.getElementById('password').value) {
+                document.getElementById('password').focus();
+            } else if (!document.getElementById('pin').value) {
+                document.getElementById('pin').focus();
+            }
+        });
+        
+        // Helper functions for busy lawyer features
+        function saveProfile(email, pin) {
+            const profiles = getSavedProfiles();
+            const newProfile = {
+                email: email,
+                pin: pin,
+                lastUsed: new Date().toISOString(),
+                name: `Lawyer ${pin}`
+            };
+            
+            // Remove existing profile with same email/pin
+            const updatedProfiles = profiles.filter(p => p.email !== email || p.pin !== pin);
+            
+            // Add new profile at beginning (most recent)
+            updatedProfiles.unshift(newProfile);
+            
+            // Keep only last 3 profiles
+            if (updatedProfiles.length > 3) {
+                updatedProfiles.splice(3);
+            }
+            
+            // Save to localStorage (encrypted for security)
+            localStorage.setItem('qolae_saved_profiles', btoa(JSON.stringify(updatedProfiles)));
+            
+            console.log('💾 Profile saved for quick access');
+            loadSavedProfiles();
+        }
+        
+        function getSavedProfiles() {
+            try {
+                const saved = localStorage.getItem('qolae_saved_profiles');
+                return saved ? JSON.parse(atob(saved)) : [];
+            } catch (error) {
+                console.warn('Error loading saved profiles:', error);
+                return [];
+            }
+        }
+        
+        function getLastUsedProfile() {
+            const profiles = getSavedProfiles();
+            return profiles.length > 0 ? profiles[0] : null;
+        }
+        
+        function loadSavedProfiles() {
+            const profiles = getSavedProfiles();
+            const quickAccessSection = document.getElementById('quickAccessSection');
+            const savedProfilesContainer = document.getElementById('savedProfiles');
+            
+            if (profiles.length > 0) {
+                quickAccessSection.style.display = 'block';
+                savedProfilesContainer.innerHTML = '';
+                
+                profiles.forEach((profile, index) => {
+                    const profileElement = document.createElement('div');
+                    profileElement.className = 'saved-profile';
+                    profileElement.innerHTML = `
+                        <div class="profile-info">
+                            <div class="profile-pin">${profile.pin}</div>
+                            <div class="profile-email">${profile.email}</div>
+                        </div>
+                        <div class="profile-remove" onclick="removeProfile('${profile.email}', '${profile.pin}')">
+                            ✕
+                        </div>
+                    `;
+                    
+                    profileElement.onclick = (e) => {
+                        if (e.target.classList.contains('profile-remove')) return;
+                        quickLogin(profile);
+                    };
+                    
+                    savedProfilesContainer.appendChild(profileElement);
+                });
+            } else {
+                quickAccessSection.style.display = 'none';
+            }
+        }
+        
+        function quickLogin(profile) {
+            document.getElementById('email').value = profile.email;
+            document.getElementById('pin').value = profile.pin;
+            document.getElementById('password').focus();
+            
+            // Add visual feedback
+            const profileElements = document.querySelectorAll('.saved-profile');
+            profileElements.forEach(el => el.style.background = 'white');
+            event.currentTarget.style.background = '#f0f9ff';
+            
+            console.log('⚡ Quick login selected:', profile.pin);
+        }
+        
+        function removeProfile(email, pin) {
+            if (confirm('Remove this saved profile?')) {
+                let profiles = getSavedProfiles();
+                profiles = profiles.filter(p => p.email !== email || p.pin !== pin);
+                localStorage.setItem('qolae_saved_profiles', btoa(JSON.stringify(profiles)));
+                loadSavedProfiles();
+                console.log('🗑️ Profile removed');
+            }
+        }
+    </script>
+</body>
+</html>

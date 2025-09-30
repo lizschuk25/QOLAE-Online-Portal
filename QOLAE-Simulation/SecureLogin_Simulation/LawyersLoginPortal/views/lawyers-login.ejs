@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        /* QOLAE Logo at Top */
+        .qolae-logo {
+            margin-bottom: 60px;
+            text-align: center;
+            background: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        .qolae-logo img {
+            max-width: 1200px;
+            width: 110%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Main Content Container */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Login Card - BASKERVILLE FONT */
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #e9ecef;
+            font-family: 'Baskerville', 'Helvetica Neue', serif;
+        }
+
+        .login-title {
+            color: #693382;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Baskerville', 'Helvetica Neue', serif;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #693382;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #5a2a6b;
+            box-shadow: 0 0 0 3px rgba(105, 51, 130, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background-color: #693382;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-btn:hover {
+            background-color: #5a2a6b;
+        }
+
+        .login-btn:disabled {
+            background-color: #a8a8a8;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+        .pin-help {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0369a1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .pin-help strong {
+            color: #693382;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .qolae-logo img {
+                max-width: 300px;
+            }
+
+            .login-card {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- QOLAE Logo at Top -->
+    <div class="qolae-logo">
+        <img src="/public/qolaeNewLogo.svg" 
+             alt="QOLAE Logo" 
+             onerror="this.style.display='none'">
+    </div>
+
+    <div class="main-container">
+        <!-- Login Card -->
+        <div class="login-card">
+            <h2 class="login-title">QOLAE Lawyers Login</h2>
+            
+            <!-- Error/Success Messages -->
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <!-- PIN Help -->
+            <div class="pin-help">
+                <strong>Ready for 2-way Authentication</strong><br>
+                Enter your PIN and email to access your workspace
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="pin">PIN Number*</label>
+                    <input type="text" name="pin" id="pin" placeholder="e.g., BML-001701" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address*</label>
+                    <input type="email" name="email" id="email" placeholder="your.email@lawfirm.com" required>
+                </div>
+                
+                <button type="submit" id="loginButton" class="login-btn">Begin 2-way Authentication</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Extract PIN from URL query parameter and pre-populate the field
+        function prePopulatePinFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let pinFromUrl = urlParams.get('pin');
+            
+            // Also check for PIN in the URL path (for email links like /login?pin=ABC-123456)
+            if (!pinFromUrl) {
+                const pathSegments = window.location.pathname.split('/');
+                const pinSegment = pathSegments.find(segment => /^[A-Z]{2,4}-\d{6}$/.test(segment));
+                if (pinSegment) {
+                    pinFromUrl = pinSegment;
+                }
+            }
+            
+            if (pinFromUrl) {
+                document.getElementById('pin').value = pinFromUrl;
+                console.log('PIN pre-populated from URL:', pinFromUrl);
+                
+                // Show a helpful message if PIN was auto-filled
+                const pinHelp = document.querySelector('.pin-help');
+                pinHelp.innerHTML = `<strong>PIN Auto-filled!</strong><br>Your PIN ${pinFromUrl} has been loaded from your email link. Please enter your email address to continue.`;
+                pinHelp.style.background = '#dcfce7';
+                pinHelp.style.borderColor = '#bbf7d0';
+                pinHelp.style.color = '#16a34a';
+            }
+        }
+
+        // Call this function when page loads
+        document.addEventListener('DOMContentLoaded', prePopulatePinFromUrl);
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            hideMessages();
+            
+            const pin = document.getElementById('pin').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const loginButton = document.getElementById('loginButton');
+            
+            // Validate PIN format
+            if (!pin.match(/^[A-Z]{2,4}-\d{6}$/)) {
+                showError('Please enter a valid PIN in the format ABC-123456');
+                return;
+            }
+            
+            // Show loading state
+            loginButton.textContent = 'Initiating 2-way Authentication...';
+            loginButton.disabled = true;
+            
+            try {
+                const response = await fetch('/lawyers-auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        pin: pin,
+                        email: email
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('PIN and email validated! Proceeding to 2FA...');
+
+                    setTimeout(() => {
+                        // ✅ Redirect to 2FA page on the same portal
+                        window.location.href = result.redirect;
+                    }, 1500);
+                } else {
+                    if (result.error && result.error.includes('not found')) {
+                        showError('PIN not found in our system. Please check that you\'re using the correct PIN from your QOLAE email, or contact Liz at Liz.Chukwu@qolae.com for assistance.');
+                    } else {
+                        showError(result.error || 'Login failed. Please check your PIN and email.');
+                    }
+                    loginButton.textContent = 'Begin 2-way Authentication';
+                    loginButton.disabled = false;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please check your connection and try again.');
+                loginButton.textContent = 'Begin 2-way Authentication';
+                loginButton.disabled = false;
+            }
+        });
+
+        // Clear messages when user starts typing
+        document.getElementById('pin').addEventListener('input', hideMessages);
+        document.getElementById('email').addEventListener('input', hideMessages);
+    </script>
+</body>
+</html> 

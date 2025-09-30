@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id           String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  filename     String
+  originalPath String
+  tempPath     String?
+  finalPath    String?
+  documentType String
+  isGenerated  Boolean?  @default(false)
+  isCustomized Boolean?  @default(false)
+  isSent       Boolean?  @default(false)
+  isPushed     Boolean?  @default(false)
+  generatedAt  DateTime? @db.Timestamp(6)
+  sentAt       DateTime? @db.Timestamp(6)
+  pushedAt     DateTime? @db.Timestamp(6)
+  createdAt    DateTime? @default(now()) @db.Timestamp(6)
+  lawyerId     String
+  lawyer       Lawyer   @relation(fields: [lawyerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([lawyerId], map: "idx_documents_lawyer_id")
+}
+
+model Lawyer {
+  id                                   String      @id @default(dbgenerated("(gen_random_uuid())::text"))
+  pin                                  String      @unique
+  lawFirm                              String
+  contactName                          String
+  phone                                String
+  email                                String
+  status                               String?     @default("Pending")
+  readyToGenerateDocuments             Boolean?    @default(false)
+  readyToGenerateDocumentsSealed       Boolean?    @default(false)
+  sendEmail                            Boolean?    @default(false)
+  sendEmailSealed                      Boolean?    @default(false)
+  pushToCentralRepository              Boolean?    @default(false)
+  pushToCentralRepositorySealed        Boolean?    @default(false)
+  readyToSend                          Boolean?
+  pinAddedToTOB                        Boolean?
+  customizedTOBPath                    String?
+  pinHyperlink                         String?
+  documentsSent                        Boolean?
+  emailSentAt                          DateTime?   @db.Timestamp(6)
+  pushedToRepository                   Boolean?
+  repositoryPath                       String?
+  completedAt                          DateTime?   @db.Timestamp(6)
+  followUpDueDate                      DateTime?   @db.Timestamp(6)
+  followUpStatus                       String?
+  stackGroup                           String?     @default("Library")
+  position                             Int?        @default(0)
+  isActive                             Boolean?    @default(true)
+  isEditable                           Boolean?    @default(true)
+  isDraggable                          Boolean?    @default(true)
+  createdAt                            DateTime?   @default(now()) @db.Timestamp(6)
+  updatedAt                            DateTime?   @default(now()) @db.Timestamp(6)
+  lastModified                         DateTime?   @default(now()) @db.Timestamp(6)
+  createdBy                            String?     @default("admin")
+  documents                            Document[]
+  notes                                Note[]
+  customEmailSubject                   String?     @default("")
+  customEmailContent                   String?     @default("")
+  cardCollapsed                        Boolean?    @default(false)
+
+  @@index([pin], map: "idx_lawyer_pin")
+  @@index([status], map: "idx_lawyer_status")
+}
+
+model Note {
+  id        String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  text      String
+  createdAt DateTime? @default(now()) @db.Timestamp(6)
+  editedAt  DateTime? @db.Timestamp(6)
+  lawyerId  String
+  author    String?   @default("admin")
+  lawyer    Lawyer   @relation(fields: [lawyerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([lawyerId], map: "idx_note_lawyer_id")
+}
+
+model AuthVerificationToken {
+  id         String   @id @default(uuid())
+  email      String
+  pin        String   // Optional, depends on your system
+  method     String   // "email", "webauthn"
+  token      String
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+
+  @@index([email])
+  @@index([token])
+}
+
+model WebAuthnUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String?
+  createdAt    DateTime @default(now())
+  credentials  WebAuthnCredential[]
+}
+
+model WebAuthnCredential {
+  id              String   @id @default(uuid())
+  credentialId    String   @unique
+  publicKey       String
+  counter         Int
+  userId          String
+  user            WebAuthnUser @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+}
+

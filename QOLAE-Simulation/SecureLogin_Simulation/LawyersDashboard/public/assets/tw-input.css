@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Tell Tailwind where to scan */
+@source "../../views/**/*.ejs";
+@source "../**/*.js";
+
+/* Import your existing rules */
+@import "./main.css";
