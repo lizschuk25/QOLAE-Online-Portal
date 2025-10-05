@@ -5,12 +5,17 @@
 ### **Core Services**
 | Port | Service Name | Purpose | Status | URL |
 |------|--------------|---------|--------|-----|
-| **3000** | *Not in use* | Available for future service | ❌ Free | - |
-| **3001** | qolae-backend | Admin Dashboard backend (admin.qolae.com) | ✅ Active | https://admin.qolae.com |
-| **3002** | qolae-lawyers-dashboard | Lawyers Dashboard backend | ✅ Active | http://localhost:3002 |
-| **3003** | qolae-websocket | WebSocket server for real-time updates | ✅ Active | ws://qolae-online-portal:3003 |
-| **3004** | qolae-lawyers-login | Lawyers Login Portal (lawyers.qolae.com) | ✅ Active | https://lawyers.qolae.com |
-| **3005** | *Not in use* | Available for future service | ❌ Free | - |
+| **3000** | qolae-api-dashboard |fastify_server.js | api.qolae.com ✅
+
+| **3001** | qolae-backend | Admin Dashboard backend - server.js (admin.qolae.com/backend) | ✅ Active | https://admin.qolae.com |
+
+| **3002** | qolae-lawyers-dashboard | Lawyers Dashboard - server.js (lawyers.qolae.com/LawyersDashboard) | ✅ |
+
+| **3003** | qolae-websocket1 - socketServer.js | WebSocket server for real-time Lawyers Tracking Database updates | ✅ Active | (api.qolae.com)|
+
+| **3004** | qolae-lawyers-login - Lawyers_server.js | Lawyers Login Portal (lawyers.qolae.com/LawyersLoginPortal) | ✅ Active
+|
+| **3005** | qolae-wslawyers - socketLawyers.js | websocket for Lawyers Dashboard for real-time updates| ✅ Active|
 
 
 DATABASE SERVICES: 
@@ -39,8 +44,9 @@ DATABASE SERVICES:
 
 3004 - Lawyers Login Portal (lawyers.qolae.com) qolae-lawyers-login
 
-# Available Ports (for future use)
-3005 - Websocket Lawyers - socketLawyers.js) qolae-wslawyers(api.qolae.com) - LawyersDashboard and PostgreSQL - qolae_lawyers
+3005 - Websocket Lawyers - socketLawyers.js) qolae-wslawyers(api.qolae.com) 
+
+LawyersDashboard and PostgreSQL - qolae_lawyers
 
 # Standard Web Ports
 80   - HTTP (redirected to HTTPS)

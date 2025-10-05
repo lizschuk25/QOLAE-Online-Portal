@@ -1,1665 +1,1617 @@
 <!--
  * QOLAE Lawyers Dashboard
  * EJS Template for Lawyers Dashboard
+ * Organized by Modal Workflow Cards
  -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QOLAE Lawyers Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/public/assets/main.css?v=<%= Date.now() %>" />
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QOLAE Lawyers Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/public/assets/main.css?v=<%= Date.now() %>" />
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 0: ALL CSS STYLES -->
+  <!-- All styles for the entire dashboard - ALWAYS FIRST -->
+  <!-- ============================================== -->
+  <style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+  
+  body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #2d3748;
+  }
+  
+  .dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  }
+  
+  .header {
+  background: #ffffff;
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  }
+  
+  .logo-section {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  }
+  
+  .logo-section h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: transparent;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  display: flex;
+  align-items: center;
+  height: 6.5rem;
+  margin: 0 0 15px 0;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  }
+  
+  .logo-section h1 img {
+  height: 6.5rem;
+  width: auto;
+  max-width: 480px;
+  object-fit: contain;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  }
+  
+  .tagline {
+  color: #64748b;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  margin-left: 5px;
+  }
+  
+  .status-indicators {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  }
+  
+  .status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  }
+  
+  .secure {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  }
+  
+  .gdpr {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  }
+  
+  .logout-btn {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 20px;
+  }
+  
+  .logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+  background: linear-gradient(135deg, #b91c1c, #991b1b);
+  }
+  
+  .welcome-section {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  padding: 25px;
+  border-radius: 15px;
+  border-left: 5px solid #667eea;
+  }
+  
+  .welcome-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #1e293b;
+  }
+  
+  .welcome-text {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  }
+  
+  .session-info {
+  display: flex;
+  gap: 30px;
+  font-size: 0.9rem;
+  color: #64748b;
+  flex-wrap: wrap;
+  }
+  
+  .progress-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+  }
+  
+  .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #1e293b;
+  }
+  
+  .progress-tracker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-bottom: 15px;
+  }
+  
+  .progress-bar-bg {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+  transform: translateY(-50%);
+  z-index: 0;
+  }
+  
+  .progress-bar-fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: translateY(-50%);
+  z-index: 1;
+  transition: width 0.5s ease;
+  }
+  
+  .step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+  }
+  
+  .step-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  background: white;
+  border: 3px solid #e2e8f0;
+  color: #94a3b8;
+  transition: all 0.3s ease;
+  }
+  
+  .step-circle.step-complete {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  color: white;
+  }
+  
+  .step-circle.step-current {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: #667eea;
+  color: white;
+  animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  }
+  
+  .step-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  text-align: center;
+  max-width: 100px;
+  }
+  
+  .workflow-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+  }
+  
+  .workflow-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  }
+  
+  .workflow-card:not(.locked):hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  }
+  
+  .workflow-card.locked {
+  opacity: 0.6;
+  pointer-events: none;
+  }
+  
+  .workflow-card.locked::before {
+  content: '🔒';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  }
+  
+  .card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  }
+  
+  .card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  }
+  
+  .card-icon.primary-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  }
+  
+  .card-icon.success-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+  }
+  
+  .card-icon.warning-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  }
+  
+  .card-icon.info-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  }
+  
+  .card-icon.secure-icon {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  }
+  
+  .card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+  }
+  
+  .card-description {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  }
+  
+  .card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  }
+  
+  .action-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  }
+  
+  .btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  }
+  
+  .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  }
+  
+  .btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  }
+  
+  .btn-secondary:hover {
+  background: #e2e8f0;
+  }
+  
+  .opacity-50 {
+  opacity: 0.5;
+  }
+  
+  .pointer-events-none {
+  pointer-events: none;
+  }
+  
+  .cursor-not-allowed {
+  cursor: not-allowed;
+  }
+  
+  #notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  }
+  
+  #notification.show {
+  opacity: 1;
+  transform: translateY(0);
+  }
+  
+  @media (max-width: 768px) {
+  .workflow-cards {
+  grid-template-columns: 1fr;
+  }
+  
+  .progress-tracker {
+  flex-wrap: wrap;
+  gap: 20px;
+  }
+  
+  .step-label {
+  font-size: 0.75rem;
+  }
+  }
+
+  /* View Details Modal Styles */
+.view-details-modal {
+  max-width: 700px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.view-details-modal .modal-header {
+  background: linear-gradient(135deg, #693382 0%, #8b4f9f 100%);
+  color: white;
+  padding: 24px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-details-modal .modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.view-details-modal .modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-details-modal .modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.view-details-modal .modal-body {
+  padding: 32px;
+}
+
+/* Completion Summary */
+.completion-summary {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.completion-summary h4 {
+  margin: 0 0 16px 0;
+  color: #693382;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.summary-value {
+  font-size: 16px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.summary-text {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.summary-text strong {
+  color: #693382;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.summary-text p {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Behind the Scenes */
+.behind-scenes {
+  background: #faf5ff;
+  border: 2px solid #e9d5ff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.behind-scenes h4 {
+  margin: 0 0 16px 0;
+  color: #693382;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.behind-scenes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.behind-scenes li {
+  padding: 10px 0;
+  color: #4b5563;
+  font-size: 15px;
+  line-height: 1.6;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.behind-scenes li:not(:last-child) {
+  border-bottom: 1px solid #e9d5ff;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.modal-actions .btn-large {
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .view-details-modal {
+    max-width: 95%;
+    margin: 20px auto;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .view-details-modal .modal-body {
+    padding: 20px;
+  }
+}
+
+
+  </style>
+ </head>
+ <body>
+  <div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="header">
+  <div class="header-top">
+  <div class="logo-section">
+  <h1><img src="/public/assets/qolae-logo.png" alt="QOLAE Logo"></h1>
+  <p class="tagline">Empowering Lives through Compassion & Expertise</p>
+  </div>
+  <div class="status-indicators">
+  <div class="status-badge secure">
+  <i class="fas fa-lock"></i>
+  <span>Secure</span>
+  </div>
+  <div class="status-badge gdpr">
+  <i class="fas fa-shield-alt"></i>
+  <span>GDPR Compliant</span>
+  </div>
+  <button class="logout-btn" onclick="window.location.href='/logout'">
+  <i class="fas fa-sign-out-alt"></i>
+  Logout
+  </button>
+  </div>
+  </div>
+  
+  <div class="welcome-section">
+  <h2 class="welcome-title">Welcome <span id="welcomeName"><%= contactName %></span> from <span id="welcomeFirm"><%= lawFirm %></span></h2>
+  <p class="welcome-text">Access your secure legal workflow tools. All data is encrypted and GDPR compliant.</p>
+  <div class="session-info">
+  <span><strong>Last login:</strong> <span id="lastLogin"><%= lastLogin %></span></span>
+  <span><strong>Session:</strong> <span id="sessionStatus">Encrypted & Secure</span></span>
+  <span><strong>PIN:</strong> <span id="welcomePin"><%= pin %></span></span>
+  </div>
+  </div>
+  </div>
+  
+  <!-- Progress Tracker Section -->
+  <div class="progress-section">
+  <h3 class="section-title">Your Workflow Progress</h3>
+  <div class="progress-tracker">
+  <div class="progress-bar-bg"></div>
+  <div class="progress-bar-fill" id="workflowFill" style="width: 0%;"></div>
+  
+  <div class="step">
+  <div class="step-circle step-current" id="stepTob">1</div>
+  <span class="step-label">Terms Signing</span>
+  </div>
+  
+  <div class="step">
+  <div class="step-circle" id="stepPayment">2</div>
+  <span class="step-label">Payment</span>
+  </div>
+  
+  <div class="step">
+  <div class="step-circle" id="stepConsent">3</div>
+  <span class="step-label">Consent Form</span>
+  </div>
+  
+  <div class="step">
+  <div class="step-circle" id="stepReferral">4</div>
+  <span class="step-label">Case Referrals</span>
+  </div>
+  
+  <div class="step">
+  <div class="step-circle" id="stepUploads">5</div>
+  <span class="step-label">Document Library</span>
+  </div>
+  
+  <div class="step">
+  <div class="step-circle" id="stepLibrary">6</div>
+  <span class="step-label">Client Management</span>
+  </div>
+  </div>
+  </div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 1: TERMS OF BUSINESS (TOB) WORKFLOW CARD -->
+  <!-- HTML + JavaScript for TOB Modal Card -->
+  <!-- ============================================== -->
+  
+  <div class="workflow-cards">
+  <!-- TOB Workflow Card -->
+  <div class="workflow-card" id="cardTOB">
+  <div class="card-header">
+  <div class="card-icon primary-icon">📝</div>
+  <div class="card-title">Terms of Business</div>
+  </div>
+  <div class="card-description">
+  Review and digitally sign your Terms of Business.
+  </div>
+  <div class="card-actions">
+  <button class="action-btn btn-primary" id="btnTOBReview" onclick="signTerms()">
+  ✍️ Review & Sign Terms
+  </button>
+  </div>
+  </div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 2: PAYMENT WORKFLOW CARD -->
+  <!-- HTML + JavaScript for Payment Modal Card -->
+  <!-- ============================================== -->
+  
+  <!-- Payment Workflow Card -->
+  <div class="workflow-card locked" id="cardPayment">
+  <div class="card-header">
+  <div class="card-icon warning-icon">💳</div>
+  <div class="card-title">Complete Payment</div>
+  </div>
+  <div class="card-description">
+  Complete your upfront payment to unlock full portal access. Choose from secure payment options.
+  </div>
+  <div class="card-actions">
+  <button class="action-btn btn-secondary" id="btnMakePayment">
+  💳 Make Payment
+  </button>
+  <button class="action-btn btn-secondary" id="btnViewInvoice">
+  📄 View Invoice
+  </button>
+  </div>
+  </div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 3: CLIENT CONSENT FORM WORKFLOW CARD -->
+  <!-- HTML + JavaScript for Consent Form Modal Card -->
+  <!-- ============================================== -->
+  
+  <!-- Consent Form Workflow Card -->
+  <div class="workflow-card locked" id="cardConsent">
+  <div class="card-header">
+  <div class="card-icon primary-icon">📋</div>
+  <div class="card-title">Client Consent Form</div>
+  </div>
+  <div class="card-description">
+  Generate and manage the client consent form with digital signatures. This auto populates client details across the system.
+  </div>
+  <div class="card-actions">
+  <button class="action-btn btn-primary" id="btnConsentCreate">
+  📋 Complete Consent Form
+  </button>
+  <button class="action-btn btn-secondary" id="btnConsentPreview">
+  👁️ Preview Document
+  </button>
+  <button class="action-btn btn-secondary" id="btnConsentUpload">
+  📤 Upload Law Firm's Consent Form
+  </button>
+  </div>
+  </div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 4: CASE REFERRALS WORKFLOW CARD -->
+  <!-- HTML + JavaScript for Referrals Modal Card -->
+  <!-- ============================================== -->
+  
+  <!-- Referrals Workflow Card -->
+  <div class="workflow-card locked" id="cardReferral">
+  <div class="card-header">
+  <div class="card-icon secure-icon">⚖️</div>
+  <div class="card-title">Case Referral & Instructions</div>
+  </div>
+  <div class="card-description">
+  Submit case referral and instructions. Note: Case Managers cannot access until client consent is received.
+  </div>
+  <div class="card-actions">
+  <button class="action-btn btn-primary" id="btnReferralCreate">
+  ⚖️ Complete Instructions
+  </button>
+  <button class="action-btn btn-secondary" id="btnReferralView">
+  👁️ Preview Document
+  </button>
+  </div>
+  </div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 5: DOCUMENT LIBRARY (UPLOADS) WORKFLOW CARD -->
+  <!-- HTML + JavaScript for Document Library Modal Card -->
+  <!-- ============================================== -->
+  
+  <!-- Document Library Workflow Card -->
+  <div class="workflow-card locked" id="cardUploads">
+  <div class="card-header">
+  <div class="card-icon info-icon">📁</div>
+  <div class="card-title">Document Library</div>
+  </div>
+  <div class="card-description">
+  Securely upload medical records, legal documents, and case files. This completes the Lawyers Workflow.
+  </div>
+  <div class="card-actions">
+  <button class="action-btn btn-primary" id="btnUploadsUpload">
+  📤 Upload Documents
+  </button>
+  <button class="action-btn btn-secondary" id="btnUploadsBrowse">
+  📚 Browse Library
+  </button>
+  </div>
+  </div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 6: CLIENT MANAGEMENT HUB WORKFLOW CARD -->
+  <!-- HTML + JavaScript for Client Management Hub Card -->
+  <!-- ============================================== -->
+  
+  <!-- Client Management Hub Workflow Card -->
+  <div class="workflow-card" id="cardLibrary">
+  <div class="card-header">
+  <div class="card-icon info-icon">💼</div>
+  <div class="card-title">Client Management Hub</div>
+  </div>
+  <div class="card-description">
+  Manage multiple clients efficiently. Add new clients, view progress, and access your client library.
+  </div>
+  <div class="card-actions">
+  <button class="action-btn btn-primary">
+  ➕ Add New Client & Make Payment
+  </button>
+  <button class="action-btn btn-secondary">
+  📊 View All Clients
+  </button>
+  </div>
+  </div>
+  </div>
+  
+  </div>
+  
+  <!-- Notification Toast -->
+  <div id="notification"></div>
+  
+  <!-- ============================================== -->
+  <!-- LOCATION BLOCK 7: BOOTSTRAP & SOCKET.IO CONNECTION -->
+  <!-- Dashboard initialization, WebSocket, and communication handlers -->
+  <!-- ============================================== -->
+  
+  <script>
+  (async () => {
+  // Helper functions
+  const $ = id => document.getElementById(id);
+  const setText = (id, v) => { const el = $(id); if (el) el.textContent = v ?? ''; };
+  
+  const setBtn = (id, {enabled=true, label, href} = {}) => {
+  const el = $(id); 
+  if (!el) return;
+  
+  if (label) el.textContent = label;
+  
+  if (enabled) {
+  el.removeAttribute('disabled');
+  el.classList.remove('opacity-50','pointer-events-none','cursor-not-allowed');
+  
+  // Prevent href navigation when TOB modal is open
+  if (href && !document.querySelector('.modal-overlay')) {
+  console.log(`🔗 setBtn: Setting ${id} onclick to navigate to ${href}`);
+  el.onclick = (e) => { e?.preventDefault?.(); window.location.href = href; };
+  } else if (href) {
+  // Modal is open, don't set navigation onclick
+  console.log(`🔒 setBtn: Modal open, preventing ${id} navigation to ${href}`);
+  el.onclick = (e) => e?.preventDefault?.();
+  }
+  } else {
+  el.setAttribute('disabled','true');
+  el.classList.add('opacity-50','pointer-events-none','cursor-not-allowed');
+  el.onclick = (e) => e?.preventDefault?.();
+  }
+  };
+  
+  const toggleLocked = (cardId, locked) => {
+  const el = $(cardId); 
+  if (!el) return;
+  el.classList.toggle('locked', !!locked);
+  };
+  
+  const paintSteps = (g) => {
+  const order = ['tob', 'payment', 'consent', 'referral', 'uploads', 'library'];
+  const done = {
+  tob: !!g?.tob?.completed,
+  payment: !!g?.payment?.completed,
+  consent: !!g?.consent?.completed,
+  referral: !!g?.referral?.completed,
+  uploads: !!g?.uploads?.completed,
+  library: !!g?.library?.completed
+  };
+  
+  const firstPending = order.find((k) => !done[k]) ?? 'library';
+  const idFor = (k) => 'step' + k[0].toUpperCase() + k.slice(1);
+  
+  order.forEach((k, i) => {
+  const el = $(idFor(k)); 
+  if (!el) return;
+  
+  el.classList.remove('step-complete', 'step-current', 'step-pending');
+  
+  if (done[k]) { 
+  el.classList.add('step-complete'); 
+  el.textContent = '✓'; 
+  } else if (k === firstPending) { 
+  el.classList.add('step-current'); 
+  el.textContent = String(i + 1); 
+  } else { 
+  el.classList.add('step-pending'); 
+  el.textContent = String(i + 1); 
+  }
+  });
+  
+  // Progress fill
+  const fill = $('workflowFill');
+  if (fill) {
+  const count = Object.values(done).filter(Boolean).length;
+  fill.style.width = ((count / 6) * 100) + '%';
+  }
+  };
+  
+  // Fetch bootstrap data from server
+  let res;
+  try {
+  res = await fetch(`/lawyers-dashboard/api/bootstrap?pin=${window.lawyerPin || ''}`, { 
+  method: 'GET',
+  headers: {
+  'Content-Type': 'application/json'
+  }
+  });
+  
+  // If 401 (token expired), redirect to login
+  if (res.status === 401) {
+  console.log('❌ JWT token expired, redirecting to login...');
+  return window.location.href = '/LawyersLogin';
+  }
+  
+  if (!res.ok) throw new Error(`Bootstrap fetch failed: ${res.status}`);
+  
+  const data = await res.json();
+  console.log('✅ Bootstrap data received:', data);
+  
+  // Store bootstrap data globally
+  window.bootstrapData = data;
+  window.lawyerPin = data.user?.pin || window.lawyerPin;
+  
+  const { user, gates, features, links } = data;
+  
+  // Update welcome info
+  setText('welcomeName', user?.contactName);
+  setText('welcomeFirm', user?.lawFirm);
+  setText('lastLogin', user?.lastLogin);
+  setText('welcomePin', user?.pin);
+  
+  // Paint progress steps
+  paintSteps(gates || {});
+  
+  // --- TOB Card Logic ---
+  const tobSigned = !!gates?.tob?.completed;
+  
+  if (tobSigned) {
+  setBtn('btnTOBReview', { enabled: false, label: 'Signed ✅' });
+  } else {
+  // Keep TOB button enabled with onclick="signTerms()"
+  const tobBtn = $('btnTOBReview');
+  if (tobBtn) {
+  tobBtn.removeAttribute('disabled');
+  tobBtn.classList.remove('opacity-50','pointer-events-none','cursor-not-allowed');
+  console.log('✅ TOB button enabled, preserving onclick="signTerms()"');
+  }
+  }
+  
+  // --- Payment Card Logic (unlocked after TOB signed) ---
+  toggleLocked('cardPayment', !tobSigned);
+  
+  if (!tobSigned) {
+  setBtn('btnMakePayment', { enabled: false, label: '💳 Make Payment' });
+  } else if (gates?.payment?.completed) {
+  setBtn('btnMakePayment', { enabled: false, label: 'Paid ✅' });
+  } else {
+  setBtn('btnMakePayment', { enabled: true, label: '💳 Make Payment', href: gates?.payment?.next });
+  }
+  setBtn('btnViewInvoice', { enabled: true, href: links?.invoice || '#' });
+  
+  // --- Consent Card Logic (unlocked after payment) ---
+  const consentOn = !!features?.consentForms;
+  toggleLocked('cardConsent', !consentOn);
+  
+  if (consentOn) {
+  setBtn('btnConsentCreate', { enabled: true, label: '📋 Complete Consent Form', href: links?.consentCreate });
+  setBtn('btnConsentPreview', { enabled: true, label: '👁️ Preview Document', href: links?.consentHistory });
+  setBtn('btnConsentUpload', { enabled: true, href: links?.uploadsNew || links?.library });
+  } else {
+  setBtn('btnConsentCreate', { enabled: false, label: '📋 Complete Consent Form' });
+  setBtn('btnConsentPreview', { enabled: false, label: '👁️ Preview Document' });
+  setBtn('btnConsentUpload', { enabled: false, label: '📤 Upload Law Firm\'s Consent Form' });
+  }
+  
+  // --- Referral Card Logic (unlocked after consent) ---
+  const referralOn = !!features?.referrals;
+  toggleLocked('cardReferral', !referralOn);
+  
+  if (referralOn) {
+  setBtn('btnReferralCreate', { enabled: true, label: '⚖️ Complete Instructions', href: links?.referralNew });
+  setBtn('btnReferralView', { enabled: true, label: '👁️ Preview Document', href: links?.referralActive });
+  } else {
+  setBtn('btnReferralCreate', { enabled: false, label: '⚖️ Complete Instructions' });
+  setBtn('btnReferralView', { enabled: false, label: '👁️ Preview Document' });
+  }
+  
+  // --- Uploads Card Logic (unlocked after consent verified) ---
+  const uploadsOn = !!features?.uploads;
+  toggleLocked('cardUploads', !uploadsOn);
+  
+  if (uploadsOn) {
+  setBtn('btnUploadsUpload', { enabled: true, label: '📤 Upload Documents', href: links?.uploadsNew });
+  setBtn('btnUploadsBrowse', { enabled: true, label: '📚 Browse Library', href: links?.library });
+  } else {
+  setBtn('btnUploadsUpload', { enabled: false, label: '📤 Upload Documents' });
+  setBtn('btnUploadsBrowse', { enabled: false, label: '📚 Browse Library' });
+  }
+  
+  } catch (error) {
+  console.error('❌ Bootstrap error:', error);
+  alert('Failed to load dashboard data. Please refresh or contact support.');
+  }
+  })();
+  </script>
+  
+  <!-- Socket.IO Connection for Real-Time Updates -->
+  <script>
+  (() => {
+  const $ = id => document.getElementById(id);
+  
+  const toast = (text) => {
+  const n = $('notification'); 
+  if (!n) return;
+  n.textContent = text;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3500);
+  };
+  
+  // Connect to Socket.IO server
+  const socket = io('http://localhost:3012', {
+  transports: ['websocket', 'polling'],
+  upgrade: true,
+  rememberUpgrade: true,
+  timeout: 5000,
+  });
+  
+  socket.on('connect', () => {
+  console.log('✅ Socket.IO connected:', socket.id);
+  });
+  
+  socket.on('disconnect', () => {
+  console.log('❌ Socket.IO disconnected');
+  });
+  
+  // Listen for workflow completion events
+  socket.on('workflow:completed', (data) => {
+  console.log('🎉 Workflow completed:', data);
+  
+  if (data.workflow === 'tob') {
+  toast('✅ Terms of Business signed successfully!');
+  window.location.reload();
+  }
+  
+  if (data.workflow === 'payment') {
+  toast('✅ Payment completed successfully!');
+  window.location.reload();
+  }
+  
+  if (data.workflow === 'consent') {
+  toast('✅ Consent form completed!');
+  window.location.reload();
+  }
+  });
+  
+  // Expose socket globally for modal communication
+  window.socket = socket;
+  })();
+  </script>
+  
+<!-- ============================================== -->
+<!-- LOCATION BLOCK 8: UTILITY FUNCTIONS & GLOBAL JS -->
+<!-- TOB Modal opener, dashboard updates, and helper functions -->
+<!-- ✅ PHASE 1 & 2 COMPLETE -->
+<!-- ============================================== -->
+
+<script>
+    // ==================================================================================
+    // GLOBAL SETUP
+    // ==================================================================================
     
-    <!-- ============================================== -->
-    <!-- LOCATION BLOCK A: MAIN DASHBOARD LAYOUT       -->
-    <!-- A.0: Beautiful Layout - CSS Styles            -->
-    <!-- ============================================== -->
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #2d3748;
-        }
-
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: #ffffff;
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .logo-section {
-            background: transparent;
-            padding: 0;
-            margin: 0;
-            border: none;
-            outline: none;
-        }
-
-        .logo-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: transparent;
-            -webkit-background-clip: unset;
-            -webkit-text-fill-color: unset;
-            background-clip: unset;
-            display: flex;
-            align-items: center;
-            height: 6.5rem;
-            margin: 0 0 15px 0;
-            background: none;
-            border: none;
-            outline: none;
-            box-shadow: none;
-        }
-
-        .logo-section h1 img {
-            height: 6.5rem;
-            width: auto;
-            max-width: 480px;
-            object-fit: contain;
-            border: none;
-            outline: none;
-            box-shadow: none;
-        }
-
-        .tagline {
-            color: #64748b;
-            font-size: 1.1rem;
-            margin-top: 15px;
-            margin-left: 5px;
-        }
-
-        .logout-btn {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 20px;
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
-            background: linear-gradient(135deg, #b91c1c, #991b1b);
-        }
-
-        .status-indicators {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .secure {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .gdpr {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-        }
-
-        .welcome-section {
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            padding: 25px;
-            border-radius: 15px;
-            border-left: 5px solid #667eea;
-        }
-
-        .welcome-title {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #1e293b;
-        }
-
-        .welcome-text {
-            color: #64748b;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .session-info {
-            display: flex;
-            gap: 30px;
-            font-size: 0.9rem;
-            color: #64748b;
-            flex-wrap: wrap;
-        }
-
-        .progress-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-            margin-bottom: 30px;
-        }
-
-        .progress-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #1e293b;
-        }
-
-        .workflow-track{
-            position: relative;
-            height: 6px;
-            border-radius: 9999px;
-            background: #e5e7eb;
-            margin: 8px 6px 24px;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,.06);
-        }
-
-        #workflowFill{
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 0%;
-            border-radius: 9999px;
-            background: linear-gradient(90deg,#10b981,#059669);
-            transition: width .35s ease;
-        }
-
-        .workflow-steps {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .workflow-steps::before {
-            content: none;
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 2;
-            background: white;
-            padding: 0 10px;
-        }
-
-        .step-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .step-complete {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .step-current {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-        }
-
-        .step-pending {
-            background: #e5e7eb;
-            color: #9ca3af;
-        }
-
-        .step-label {
-            font-size: 0.8rem;
-            text-align: center;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        .workflow-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .workflow-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .workflow-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .workflow-card.locked {
-            opacity: 0.6;
-        }
-
-        .workflow-card.locked:hover {
-            transform: none;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .primary-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .success-icon { background: linear-gradient(135deg, #10b981, #059669); }
-        .warning-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .info-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .secure-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .card-description {
-            color: #64748b;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: rgba(100, 116, 139, 0.1);
-            color: #64748b;
-            border: 1px solid rgba(100, 116, 139, 0.2);
-        }
-
-        .action-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .action-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background: #e5e7eb;
-            color: #9ca3af;
-        }
-
-        .security-notice {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .footer {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .footer-links a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: #764ba2;
-        }
-
-        .notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 25px 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            z-index: 10000;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-            max-width: 600px;
-            opacity: 0;
-        }
-
-        .notification.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-
-        .modal-overlay {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background-color: rgba(0, 0, 0, 0.8) !important;
-            z-index: 10000 !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            overflow: hidden !important;
-        }
-
-        .modal-overlay * {
-            box-sizing: border-box !important;
-        }
-
-        .modal-overlay iframe {
-            max-width: 100% !important;
-            max-height: 100% !important;
-            border: none !important;
-        }
-
-        @media (max-width: 768px) {
-            .workflow-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header-top {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-
-            .workflow-steps {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .workflow-steps::before {
-                display: none;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .logo-section h1 img {
-                height: 5rem;
-                max-width: 380px;
-            }
-
-            .tagline {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo-section h1 img {
-                height: 4.5rem;
-                max-width: 320px;
-            }
-
-            .tagline {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- ============================================== -->
-        <!-- LOCATION BLOCK A.1: WELCOME PANEL             -->
-        <!-- ============================================== -->
-        <!-- Header Section -->
-        <div class="header">
-            <div class="header-top">
-                <div class="logo-section">
-                    <h1><img src="/central-repository/images/qolaeNewLogo.svg" alt="QOLAE Logo" /></h1>
-                    <div class="tagline">Secure Legal Document Management</div>
-                </div>
-                <div class="status-indicators">
-                    <div class="status-badge secure">
-                        <span>🔒</span> Secure
-                    </div>
-                    <div class="status-badge gdpr">
-                        <span>🛡️</span> GDPR Compliant
-                    </div>
-                    <button class="logout-btn" id="logoutBtn">
-                        <span>🚪</span> Logout
-                    </button>
-                </div>
-            </div>
-            
-            <div class="welcome-section">
-                <h2 class="welcome-title">Welcome <span id="welcomeName">John Smith</span> from <span id="welcomeFirm">Law Firm Name</span></h2>
-                <p class="welcome-text">Access your secure legal workflow tools. All data is encrypted and GDPR compliant.</p>
-                <div class="session-info">
-                    <span><strong>Last login:</strong> <%= new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %></span>
-                    <span><strong>Session:</strong> Encrypted & Secure</span>
-                    <span><strong>PIN:</strong> <span id="welcomePin">JS2024</span></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ============================================== -->
-        <!-- LOCATION BLOCK A.2: WORKFLOW PROGRESS PANEL   -->
-        <!-- ============================================== -->
-        <!-- Workflow Progress -->
-        <div class="progress-section">
-            <h3 class="progress-title">Your Workflow Progress</h3>
-            <div class="workflow-track">
-                <div id="workflowFill"></div>
-            </div>
-            <div class="workflow-steps">
-                <div class="step"><div id="stepTOB" class="step-circle step-current">1</div><div class="step-label">Terms Signing</div></div>
-                <div class="step"><div id="stepPayment" class="step-circle step-pending">2</div><div class="step-label">Payment</div></div>
-                <div class="step"><div id="stepConsent" class="step-circle step-pending">3</div><div class="step-label">Consent Form</div></div>
-                <div class="step"><div id="stepReferral" class="step-circle step-pending">4</div><div class="step-label">Case Referrals</div></div>
-                <div class="step"><div id="stepUploads" class="step-circle step-pending">5</div><div class="step-label">Document Library</div></div>
-            </div>
-        </div>
-
-        <!-- ============================================== -->
-        <!-- LOCATION BLOCK A.3: MODAL WORKFLOW CARDS      -->
-        <!-- ============================================== -->
-        <!-- Main Workflow Cards -->
-        <div class="workflow-grid">
-            <!-- Step 1: Terms of Business (CURRENT STEP - NEEDS SIGNING) -->
-            <div class="workflow-card">
-                <div class="card-header">
-                    <div class="card-icon warning-icon">📝</div>
-                    <div class="card-title">Terms of Business</div>
-                </div>
-                <div class="card-description">
-                    Review and digitally sign your Terms of Business.
-                </div>
-                <div class="card-actions">
-                    <button class="action-btn btn-primary" id="btnTOBSign">
-                        📝 Review & Sign Terms
-                    </button>
-                    <!-- When signed later you may show: -->
-                    <!-- <button class="action-btn btn-secondary" id="btnTOBDownload">📄 Download Signed Copy</button> -->
-                </div>
-            </div>
-
-            <!-- Step 2: Payment Card (LOCKED until TOB signed) -->
-            <div class="workflow-card locked">
-                <div class="card-header">
-                    <div class="card-icon warning-icon">💳</div>
-                    <div class="card-title">Complete Payment</div>
-                </div>
-                <div class="card-description">
-                    Complete your 75% upfront payment to unlock full portal access. Choose from secure payment options.
-                </div>
-                <div class="card-actions">
-                    <button class="action-btn btn-secondary" id="btnMakePayment">
-                        💳 Make Payment
-                    </button>
-                    <button class="action-btn btn-secondary" id="btnViewInvoice">
-                        📄 View Invoice
-                    </button>
-                </div>
-            </div>
-
-            <!-- Step 3: Client Consent Form (LOCKED) -->
-            <div class="workflow-card locked">
-                <div class="card-header">
-                    <div class="card-icon primary-icon">📋</div>
-                    <div class="card-title">Client Consent Form</div>
-                </div>
-                <div class="card-description">
-                    Generate and manage the client consent form with digital signatures. This auto populates client details across the system.
-                </div>
-                <div class="card-actions">
-                    <div style="display: flex; gap: 10px; flex-direction: column;">
-                        <button class="action-btn btn-primary" id="btnConsentCreate">
-                            📋 Complete Consent Form
-                        </button>
-                        <button class="action-btn btn-secondary" id="btnConsentPreview">
-                            👁️ Preview Document
-                        </button>
-                        <button class="action-btn btn-secondary" id="btnConsentUpload">
-                            📤 Upload Law Firm's Consent Form
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 4: Case Referrals & Instructions (LOCKED) -->
-            <div class="workflow-card locked">
-                <div class="card-header">
-                    <div class="card-icon secure-icon">⚖️</div>
-                    <div class="card-title">Case Referrals & Instructions</div>
-                </div>
-                <div class="card-description">
-                    Submit case referrals and instructions. Note: Case Managers cannot access until client consent is received.
-                </div>
-                <div class="card-actions">
-                    <div style="display: flex; gap: 10px; flex-direction: column;">
-                        <button class="action-btn btn-primary" id="btnReferralCreate">
-                            ⚖️ Complete Instructions
-                        </button>
-                        <button class="action-btn btn-secondary" id="btnReferralView">
-                            👁️ Preview Document
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 5: Document Library (LOCKED) -->
-            <div class="workflow-card locked">
-                <div class="card-header">
-                    <div class="card-icon info-icon">📂</div>
-                    <div class="card-title">Documents Library</div>
-                </div>
-                <div class="card-description">
-                    Securely upload medical records, legal documents, and case files. This completes the Lawyers Workflow.
-                </div>
-                <div class="card-actions">
-                    <div style="display: flex; gap: 10px; flex-direction: column;">
-                        <button class="action-btn btn-primary" id="btnUploadsUpload">
-                            📤 Upload Documents
-                        </button>
-                        <button class="action-btn btn-secondary" id="btnUploadsBrowse">
-                            📂 Browse Library
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 6: Support Always Available -->
-            <div class="workflow-card">
-                <div class="card-header">
-                    <div class="card-icon info-icon">💬</div>
-                    <div class="card-title">Support & Assistance</div>
-                </div>
-                <div class="card-description">
-                    Need help? Our support team is here to assist you with any questions or technical issues.
-                </div>
-                <div class="card-actions">
-                    <button class="action-btn btn-primary">
-                        💬 Contact Support
-                    </button>
-                    <button class="action-btn btn-secondary">
-                        📚 Help Center
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ============================================== -->
-        <!-- LOCATION BLOCK A.4: SECURITY NOTICE PANEL     -->
-        <!-- ============================================== -->
-        <!-- Security Notice -->
-        <div class="security-notice">
-            <span>🛡️</span>
-            <span><strong>Security Notice:</strong> All data is encrypted in transit and at rest. This system is GDPR compliant and maintains strict audit trails for all actions.</span>
-        </div>
-
-        <!-- ============================================== -->
-        <!-- LOCATION BLOCK A.5: T&Cs, POLICIES & COPYRIGHT-->
-        <!-- ============================================== -->
-        <!-- Footer -->
-        <div class="footer">
-            <div class="footer-content">
-                <div>© 2025 QOLAE. All rights reserved. Secure legal document management.</div>
-                <div class="footer-links">
-                    <a href="#privacy">Privacy Policy</a>
-                    <a href="#terms">Terms of Service</a>
-                    <a href="#support">Support</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Notification -->
-    <div class="notification" id="notification">
-        🎉 Welcome! Your secure session is active.
-    </div>
-
-    <!-- ============================================== -->
-    <!-- LOCATION BLOCK B: ALL MODAL ROUTES            -->
-    <!-- B.1: Modal Opening Functions & TOB Modal      -->
-    <!-- ============================================== -->
-    <script>
-        // Show welcome notification
-        setTimeout(() => {
-            document.getElementById('notification').classList.add('show');
-        }, 500);
-
-        // Hide notification after 3 seconds
-        setTimeout(() => {
-            document.getElementById('notification').classList.remove('show');
-        }, 3500);
-
-        // Open TOB Modal for Terms signing - UPDATED VERSION
-        function signTerms() {
-            console.log('🎯 signTerms() function called');
-            
-            // Get PIN from URL parameter first (from 2FA redirect)
-            const urlParams = new URLSearchParams(window.location.search);
-            let lawyerPin = urlParams.get('pin');
-            console.log('🔍 PIN from URL params:', lawyerPin);
-            
-            // If no PIN in URL, try to get from welcomePin element
-            if (!lawyerPin) {
-                const pinElement = document.getElementById('welcomePin');
-                lawyerPin = pinElement ? pinElement.textContent.trim() : '';
-                console.log('🔍 PIN from welcomePin element:', lawyerPin);
-            }
-            
-            // Validate PIN format
-            if (!lawyerPin || lawyerPin === '[Protected]' || lawyerPin === '') {
-                console.error('❌ No valid PIN found for TOB modal');
-                alert('PIN not available. Please log in again.');
-                return;
-            }
-            
-            console.log('📝 Opening TOB Modal with PIN:', lawyerPin);
-
-            // Use your existing working modal system
-            openTOBModal('Terms of Business', lawyerPin);
-        }
-
-        function openTOBModal(title, lawyerPin) {
-            console.log('🎯 openTOBModal called with:', { title, lawyerPin });
-            
-            // Close any existing modals
-            document.querySelectorAll('.modal-overlay').forEach(modal => modal.remove());
-            
-            // Create modal (same structure as your working PreviewDocs)
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                background-color: rgba(0, 0, 0, 0.8); z-index: 10000;
-                display: flex; justify-content: center; align-items: center;
-            `;
-            modal.className = 'modal-overlay';
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background: white; border-radius: 12px; overflow: hidden;
-                width: 90vw; height: 90vh; max-width: 1200px; max-height: 800px;
-                display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            `;
-            
-            // Modal header
-            const header = document.createElement('div');
-            header.style.cssText = `
-                background: #667eea; color: white; padding: 20px;
-                display: flex; justify-content: space-between; align-items: center;
-            `;
-            header.innerHTML = `
-                <h3 style="margin: 0; font-size: 1.2rem;">${title}</h3>
-                <button onclick="this.closest('.modal-overlay').remove()"
-                        style="background: none; border: none; color: white; font-size: 24px;
-                        cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
-            `;
-            
-            // Modal body - load TOB content from partial template
-            const body = document.createElement('div');
-            body.style.cssText = `flex: 1; padding: 0; overflow-y: auto;`;
-            
-            // Load tobModal.ejs content as a partner component
-            console.log('📥 Fetching TOB content from:', `/tobModal?pin=${lawyerPin}`);
-            
-            // Set up global variables for modal communication
-            window.lawyerPin = lawyerPin;
-            window.lawyerData = {
-                contactName: document.getElementById('welcomeName')?.textContent || 'Lawyer',
-                lawFirm: document.getElementById('welcomeFirm')?.textContent || 'Law Firm'
-            };
-            
-            fetch(`/tobModal?pin=${lawyerPin}`)
-                .then(response => {
-                    console.log('📥 TOB fetch response:', response.status, response.statusText);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    console.log('📥 TOB content loaded, length:', html.length);
-                    console.log('📥 TOB content preview:', html.substring(0, 200) + '...');
-                    body.innerHTML = html;
-                    
-                    // Check if the content loaded properly
-                    const nextBtn = body.querySelector('#nextBtn');
-                    const currentStep = body.querySelector('#step1');
-                    console.log('🔍 TOB content check:', { 
-                        nextBtn: !!nextBtn, 
-                        currentStep: !!currentStep,
-                        bodyChildren: body.children.length 
-                    });
-                    
-                    // Initialize TOB modal functionality after content loads
-                    setTimeout(() => {
-                        initializeTOBModal(lawyerPin);
-                        
-                        // Execute the modal's JavaScript in the correct scope
-                        console.log('🔧 TOB modal content loaded - executing JavaScript...');
-                        
-                        // Extract and execute the script content from the modal
-                        const scriptTags = body.querySelectorAll('script');
-                        scriptTags.forEach((script, index) => {
-                            console.log(`🔧 Executing script tag ${index + 1}`);
-                            try {
-                                // Create a new script element and execute it
-                                const newScript = document.createElement('script');
-                                newScript.textContent = script.textContent;
-                                document.head.appendChild(newScript);
-                                console.log(`✅ Script tag ${index + 1} executed successfully`);
-                            } catch (error) {
-                                console.error(`❌ Error executing script tag ${index + 1}:`, error);
-                            }
-                        });
-                        
-                        console.log('🔧 TOB modal JavaScript executed - communication should work now');
-                        
-                    }, 100);
-                })
-                .catch(error => {
-                    console.error('❌ Error loading TOB modal content:', error);
-                    body.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">Error loading TOB modal content. Please try again.</div>';
-                });
-            
-            modalContent.appendChild(header);
-            modalContent.appendChild(body);
-            modal.appendChild(modalContent);
-            
-            // Close on background click
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-            
-            // Close on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    modal.remove();
-                }
-            });
-            
-            document.body.appendChild(modal);
-        }
-        
-        // ============================================================ -->
-        <!-- LOCATION BLOCK B.2: MODAL COMMUNICATION HANDLER            -->
-        <!-- Handles communication between parent dashboard and modals  -->
-        <!-- ============================================================ -->
-        
-        // Listen for TOB completion messages from modal
-        window.addEventListener('message', function(event) {
-            if (event.data && event.data.type === 'TOB_COMPLETED') {
-                console.log('🎉 TOB completion message received from modal');
-                
-                // Close the modal
-                document.querySelectorAll('.modal-overlay').forEach(modal => modal.remove());
-                
-                // Update dashboard to show TOB as completed
-                updateDashboardAfterTOB();
-                
-                // Show success notification
-                const notification = document.getElementById('notification');
-                if (notification) {
-                    notification.textContent = '🎉 Terms of Business signed successfully!';
-                    notification.classList.add('show');
-                    setTimeout(() => notification.classList.remove('show'), 5000);
-                }
-            }
-        });
-        
-        // Make dashboard functions globally accessible for modal communication
-        window.updateDashboardAfterTOB = updateDashboardAfterTOB;
-        
-        // Set lawyerPin from server-side data (EJS template) or URL parameters
-        window.lawyerPin = '<%= pin %>' || new URLSearchParams(window.location.search).get('pin');
-        console.log('🎯 lawyerPin set to:', window.lawyerPin);
-        
-        window.lawyerData = window.lawyerData || {
-            contactName: document.getElementById('welcomeName')?.textContent || 'Lawyer',
-            lawFirm: document.getElementById('welcomeFirm')?.textContent || 'Law Firm'
-        };
-
-        // Initialize TOB modal functionality - Partnership with tobModal.ejs
-        function initializeTOBModal(lawyerPin) {
-            // The tobModal.ejs handles its own workflow functionality
-            // This function just ensures the partnership is working
-            console.log('🎯 TOB Modal initialized with PIN:', lawyerPin);
-            
-            // Listen for completion message from tobModal.ejs
-            const checkCompletion = setInterval(() => {
-                const completionBtn = document.getElementById('nextBtn');
-                if (completionBtn && completionBtn.textContent === 'Return to Dashboard') {
-                    clearInterval(checkCompletion);
-                    console.log('✅ TOB workflow ready for completion');
-                }
-            }, 100);
-        }
-
-        // Make updateDashboardAfterTOB globally accessible
-        window.updateDashboardAfterTOB = updateDashboardAfterTOB;
-
-        // Update dashboard after TOB completion
-        async function updateDashboardAfterTOB() {
-            console.log('🎯 updateDashboardAfterTOB() called');
-            
-            // 1. Get PIN from bootstrap data or welcome PIN element
-            let pin = null;
-            
-            // Try to get PIN from URL parameter first (from 2FA redirect)
-            const urlParams = new URLSearchParams(window.location.search);
-            pin = urlParams.get('pin');
-            
-            // If no PIN in URL, try bootstrap data or welcomePin element
-            if (!pin && window.bootstrapData?.user?.pin) {
-                pin = window.bootstrapData.user.pin;
-            }
-            if (!pin) {
-                const pinElement = document.getElementById('welcomePin');
-                pin = pinElement ? pinElement.textContent.trim() : null;
-            }
-            
-            if (!pin || pin === '[Protected]' || pin === '') {
-                console.error('❌ No valid PIN found for TOB completion persistence');
-                // Continue with UI updates even if database persistence fails
-            } else {
-                console.log('📝 TOB completion - using PIN:', pin);
-                
-                // 2. TOB completion handled by new PDF signature insertion workflow
-                console.log('✅ TOB completion handled by PDF signature insertion workflow');
-                
-                // 3. WebSocket broadcast - emit workflow completion event
-                try {
-                    // Use the existing socket connection established in the SSOT integration
-                    if (window.socket && window.socket.connected) {
-                        console.log('📡 Broadcasting TOB completion via WebSocket...');
-                        window.socket.emit('workflow:tob-completed', { 
-                            pin: pin,
-                            timestamp: new Date().toISOString(),
-                            step: 'tob'
-                        });
-                        console.log('✅ TOB completion broadcasted via WebSocket');
-                    } else {
-                        console.warn('⚠️ Socket not connected, skipping WebSocket broadcast');
-                    }
-                } catch (error) {
-                    console.error('❌ Error broadcasting TOB completion via WebSocket:', error);
-                    // Continue with UI updates even if WebSocket broadcast fails
-                }
-            }
-            
-            // 4. Continue with existing UI updates (keep all existing logic intact)
-            
-            // Update progress bar
-            const fill = document.getElementById('workflowFill');
-            if (fill) fill.style.width = '20%';  // 1 of 5 steps complete after TOB
-            
-            // Update step 1 to completed
-            const step1 = document.querySelector('.step:first-child .step-circle');
-            if (step1) {
-                step1.className = 'step-circle step-complete';
-                step1.textContent = '✓';
-                const stepLabel = document.querySelector('.step:first-child .step-label');
-                if (stepLabel) stepLabel.textContent = 'Terms Signed';
-            }
-            
-            // Update step 2 to current
-            const step2 = document.querySelector('.step:nth-child(2) .step-circle');
-            if (step2) {
-                step2.className = 'step-circle step-current';
-                step2.textContent = '2';
-            }
-            
-            // Update TOB card to completed state - use more specific selector
-            let tobCard = document.querySelector('.workflow-grid .workflow-card:first-child');
-            if (tobCard) {
-                tobCard.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-icon success-icon">✓</div>
-                        <div class="card-title">Terms of Business</div>
-                    </div>
-                    <div class="card-description">
-                        Terms of Business successfully signed and stored securely. Thank you for completing this step.
-                    </div>
-                    <div class="card-actions">
-                        <button class="action-btn btn-secondary" onclick="showTOBWorkflowSummary('${pin || 'unknown'}')">
-                            👁️ View Details
-                        </button>
-                    </div>
-                `;
-            }
-                
-            // Unlock payment card - use more specific selector
-            let paymentCard = document.querySelector('.workflow-grid .workflow-card:nth-child(2)');
-            if (paymentCard) {
-                paymentCard.classList.remove('locked');
-                // Keep the original structure but remove the locked class
-                // The buttons should already have the correct IDs and functionality
-                console.log('✅ Payment card unlocked - gateway opened');
-                
-                // Add click handler to Make Payment button
-                const makePaymentBtn = paymentCard.querySelector('#btnMakePayment');
-                if (makePaymentBtn) {
-                    makePaymentBtn.addEventListener('click', function() {
-                        console.log('💳 Make Payment button clicked - opening payment modal');
-                        openPaymentModal();
-                    });
-                    console.log('✅ Make Payment button click handler added');
-                }
-            }
-                
-            // Show success notification
-            const notification = document.getElementById('notification');
-            if (notification) {
-                notification.textContent = '🎉 Terms of Business successfully signed and stored securely! Payment gateway is now unlocked.';
-                notification.classList.add('show');
-                setTimeout(() => notification.classList.remove('show'), 5000);
-            }
-            
-            console.log('✅ Dashboard updated after TOB completion');
-        }
-
-        // Show TOB workflow completion summary
-        function showTOBWorkflowSummary(lawyerPin) {
-            console.log('👁️ Viewing signed TOB details for PIN:', lawyerPin);
-            
-            // Create a modal to show the signed TOB details
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                background-color: rgba(0, 0, 0, 0.8); z-index: 10000;
-                display: flex; justify-content: center; align-items: center;
-            `;
-            modal.className = 'modal-overlay';
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                background: white; border-radius: 12px; padding: 30px;
-                width: 90vw; max-width: 600px; max-height: 80vh; overflow-y: auto;
-            `;
-            
-            modalContent.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="margin: 0; color: #693382;">Signed TOB Details</h3>
-                    <button onclick="this.closest('.modal-overlay').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <h4 style="color: #693382; margin-bottom: 10px;">Document Information</h4>
-                    <p><strong>PIN:</strong> ${lawyerPin}</p>
-                    <p><strong>Document Type:</strong> Terms of Business</p>
-                    <p><strong>Status:</strong> ✅ Signed and Completed</p>
-                    <p><strong>Completion Date:</strong> ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    <p><strong>Signature:</strong> Digital signature applied</p>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <h4 style="color: #693382; margin-bottom: 10px;">Workflow Summary</h4>
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #693382;">
-                        <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                            <strong>TOB Workflow Completed:</strong> All 4 steps successfully completed including email preferences, digital signature capture, PDF preview and final completion.
-                        </p>
-                    </div>
-                </div>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                    <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                        <strong>Note:</strong> Your Terms of Business document has been digitally signed and stored securely. The workflow summary above shows all completed steps.
-                    </p>
-                </div>
-            `;
-            
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-            
-            // Close on background click
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-        }
-
-        // Add event listeners for buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            // Logout button
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', secureLogout);
-            }
-            
-            // TOB Sign button
-            const tobSignBtn = document.getElementById('btnTOBSign');
-            if (tobSignBtn) {
-                tobSignBtn.addEventListener('click', signTerms);
-            }
-
-            // View invoice function - moved here to be defined before use
-            function viewInvoice() {
-                console.log('📄 Opening invoice viewer...');
-
-                // Get lawyer PIN from URL or session
-                const urlParams = new URLSearchParams(window.location.search);
-                const lawyerPin = urlParams.get('pin') || window.lawyerPin || '';
-
-                if (lawyerPin) {
-                    // Open invoice in a new tab/modal instead of refreshing page
-                    const invoiceUrl = `/api/invoices/${lawyerPin}/view`;
-                    window.open(invoiceUrl, '_blank');
-                    console.log('✅ Invoice opened in new tab');
-                } else {
-                    console.error('❌ No PIN available for invoice');
-                    alert('Unable to view invoice. Please ensure you are logged in properly.');
-                }
-            }
-
-            // View Invoice button
-            const viewInvoiceBtn = document.getElementById('btnViewInvoice');
-            if (viewInvoiceBtn) {
-                viewInvoiceBtn.addEventListener('click', viewInvoice);
-            }
-        });
-
-        // Add hover effects and interactions
-        document.querySelectorAll('.workflow-card:not(.locked)').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-    </script>
-
-    <!-- ============================================== -->
-    <!-- LOCATION BLOCK: Dashboard State Management    -->
-    <!-- Workflow progress and card state updates      -->
-    <!-- ============================================== -->
-    <script>
-    (async () => {
-      // helpers
-      const $ = id => document.getElementById(id);
-      const setText = (id, v) => { const el = $(id); if (el) el.textContent = v ?? ''; };
-      const setBtn = (id, {enabled=true, label, href} = {}) => {
-        const el = $(id); if (!el) return;
-        if (label) el.textContent = label;
-        if (enabled) {
-          el.removeAttribute('disabled');
-          el.classList.remove('opacity-50','pointer-events-none','cursor-not-allowed');
-          // Prevent href navigation when TOB modal is open
-          if (href && !document.querySelector('.modal-overlay')) {
-            console.log(`🔧 setBtn: Setting ${id} onclick to navigate to ${href}`);
-            el.onclick = (e) => { e?.preventDefault?.(); window.location.href = href; };
-          } else if (href) {
-            // Modal is open, don't set navigation onclick
-            console.log(`🔧 setBtn: Modal open, preventing ${id} navigation to ${href}`);
-            el.onclick = (e) => e?.preventDefault?.();
-          }
-          // If no href provided, preserve existing onclick handler (like signTerms())
-          // This is important for buttons that have custom onclick functions
-        } else {
-          el.setAttribute('disabled','true');
-          el.classList.add('opacity-50','pointer-events-none','cursor-not-allowed');
-          el.onclick = (e) => e?.preventDefault?.();
-        }
-      };
-      const toggleLocked = (cardId, locked) => {
-        const el = $(cardId); if (!el) return;
-        el.classList.toggle('locked', !!locked);
-      };
-      const paintSteps = (g) => {
-        const order = ['tob', 'payment', 'consent', 'referral', 'uploads'];
-        const done = {
-          tob: !!g?.tob?.completed,
-          payment: !!g?.payment?.completed,
-          consent: !!g?.consent?.completed,
-          referral: !!g?.referral?.completed,
-          uploads: !!g?.uploads?.completed,
-        };
-        const firstPending = order.find((k) => !done[k]) ?? 'uploads';
-        const idFor = (k) => 'step' + k[0].toUpperCase() + k.slice(1);
-        order.forEach((k, i) => {
-          const el = $(idFor(k)); if (!el) return;
-          el.classList.remove('step-complete', 'step-current', 'step-pending');
-          if (done[k]) { el.classList.add('step-complete'); el.textContent = '✓'; }
-          else if (k === firstPending) { el.classList.add('step-current'); el.textContent = String(i + 1); }
-          else { el.classList.add('step-pending'); el.textContent = String(i + 1); }
-        });
-        // progress fill (only if you've added #workflowFill)
-        const fill = $('workflowFill');
-        if (fill) {
-          const count = Object.values(done).filter(Boolean).length;
-          fill.style.width = ((count / 5) * 100) + '%';
-        }
-      };
-
-      // Server-side JWT handling - no client-side token storage needed
-      // The Lawyers Dashboard server handles all JWT token management
-
-      // fetch bootstrap from Lawyers Dashboard server (server handles SSOT communication)
-      let res;
-      try {
-        res = await fetch(`/lawyers-dashboard/api/bootstrap?pin=${window.lawyerPin || ''}`, { 
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        // If 401 (token expired), redirect to login
-        if (res.status === 401) {
-          console.log('❌ JWT token expired, redirecting to login...');
-          return window.location.href = '/LawyersLogin';
-        }
-      } catch (error) {
-        console.error('❌ Bootstrap fetch failed:', error);
-        return window.location.href = '/LawyersLogin';
-      }
+    window.lawyerPin = '<%= pin %>';
+    console.log('🔑 lawyerPin set to:', window.lawyerPin);
+    
+    window.lawyerData = window.lawyerData || {
+      contactName: document.getElementById('welcomeName')?.textContent || 'Lawyer',
+      lawFirm: document.getElementById('welcomeFirm')?.textContent || 'Law Firm'
+    };
+  
+    // ==================================================================================
+    // PHASE 1: BACKEND PERSISTENCE FUNCTIONS
+    // ==================================================================================
+  
+    function updateDatabase(pin, emailPreference) {
+      console.log('📊 Updating database for PIN:', pin);
       
-      if (!res.ok) {
-        console.error('❌ Bootstrap returned:', res.status, res.statusText);
-        if (res.status === 401) {
-          // JWT expired - redirect to login
-          console.log('🔒 JWT expired, redirecting to login...');
-          return window.location.href = '/LawyersLogin';
-        }
-        // Other errors - redirect to dashboard (this might cause issues)
-        return window.location.href = '/LawyersDashboard';
-      }
-      
-      const data = await res.json();
-      if (!data?.valid) {
-        console.error('❌ Bootstrap data invalid:', data);
-        return window.location.href = '/LawyersDashboard';
-      }
-
-      const { user, gates, features, links } = data;
-
-      // header
-      setText('welcomeName', user?.contactName || user?.email || 'Lawyer');
-      setText('welcomeFirm', user?.lawFirm || 'Law Firm');
-      
-      // Get PIN from URL parameter first (from 2FA redirect), then fallback to SSOT
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlPin = urlParams.get('pin');
-      if (urlPin) {
-        setText('welcomePin', urlPin);
-        console.log('✅ PIN loaded from URL parameter:', urlPin);
-      } else {
-        setText('welcomePin', user?.pin || '[Protected]');
-      }
-
-      // steps
-      paintSteps(gates);
-
-      // --- TOB ---
-      const tobSigned = !!gates?.tob?.completed;
-      console.log('🔍 TOB gates data:', { tob: gates?.tob, next: gates?.tob?.next });
-      if (tobSigned) {
-        setBtn('btnTOBSign',    { enabled:false, label:'✓ Signed' });
-        setBtn('btnTOBPreview', { enabled:true  });
-        // Optional: if you later add IDs for download/view links, wire here.
-      } else {
-        // Don't call setBtn on TOB button - preserve existing onclick="signTerms()"
-        // Just update the label and ensure it's enabled
-        const tobBtn = document.getElementById('btnTOBSign');
-        if (tobBtn) {
-          tobBtn.textContent = '✍️ Review & Sign Terms';
-          tobBtn.removeAttribute('disabled');
-          tobBtn.classList.remove('opacity-50','pointer-events-none','cursor-not-allowed');
-          console.log('🔧 TOB button enabled, preserving onclick="signTerms()"');
-        }
-        setBtn('btnTOBPreview', { enabled:true  }); // keep as preview/static for now
-      }
-
-      // --- Payment (unlocked after TOB signed) ---
-      toggleLocked('cardPayment', !tobSigned);
-      if (!tobSigned) {
-        setBtn('btnMakePayment', { enabled:false, label:'💳 Make Payment' });
-      } else if (gates?.payment?.completed) {
-        setBtn('btnMakePayment', { enabled:false, label:'Paid ✅' });
-      } else {
-        setBtn('btnMakePayment', { enabled:true,  label:'💳 Make Payment', href:gates?.payment?.next });
-      }
-      setBtn('btnViewInvoice', { enabled:true, href:links?.invoice || '#' });
-
-      // --- Consent (unlocked after payment) ---
-      const consentOn = !!features?.consentForms;
-      toggleLocked('cardConsent', !consentOn);
-      if (consentOn) {
-        setBtn('btnConsentCreate',   { enabled:true,  label:'📋 Complete Consent Form', href:links?.consentCreate });
-        setBtn('btnConsentPreview', { enabled:true,  label:'👁️ Preview Document', href:links?.consentHistory });
-        setBtn('btnConsentUpload',   { enabled:true,  href:links?.uploadsNew || links?.library });
-      } else {
-        setBtn('btnConsentCreate',   { enabled:false, label:'📋 Complete Consent Form' });
-        setBtn('btnConsentPreview', { enabled:false, label:'👁️ Preview Document' });
-        setBtn('btnConsentUpload',   { enabled:false, label:'📤 Upload Law Firm\'s Consent Form' });
-      }
-
-      // --- Referral (unlocked after consent) ---
-      const referralOn = !!features?.referrals;
-      toggleLocked('cardReferral', !referralOn);
-      if (referralOn) {
-        setBtn('btnReferralCreate',  { enabled:true,  label:'⚖️ Complete Instructions', href:links?.referralNew });
-        setBtn('btnReferralView',    { enabled:true,  label:'👁️ Preview Document', href:links?.referralActive });
-      } else {
-        setBtn('btnReferralCreate',  { enabled:false, label:'⚖️ Complete Instructions' });
-        setBtn('btnReferralView',    { enabled:false, label:'👁️ Preview Document' });
-      }
-
-      // --- Uploads (unlocked after consent verified) ---
-      const uploadsOn = !!features?.uploads;
-      toggleLocked('cardUploads', !uploadsOn);
-      if (uploadsOn) {
-        setBtn('btnUploadsUpload', { enabled:true,  label:'📤 Upload Documents', href:links?.uploadsNew });
-        setBtn('btnUploadsBrowse', { enabled:true,  label:'📂 Browse Library', href:links?.library });
-      } else {
-        setBtn('btnUploadsUpload', { enabled:false, label:'📤 Upload Documents' });
-        setBtn('btnUploadsBrowse', { enabled:false, label:'📂 Browse Library' });
-      }
-    })();
-    </script>
-
-    <!-- ============================================== -->
-    <!-- LOCATION BLOCK C: DOCUMENT ROUTES             -->
-    <!-- Document viewing and download functions       -->
-    <!-- ============================================== -->
-    <script>
-    // View signed TOB function for dashboard (opens in new tab)
-    function viewSignedPDF(lawyerPin) {
-        console.log('👁️ Viewing signed TOB for PIN:', lawyerPin);
-        
-        // Use the correct central-repository path structure
-        const filename = `TOB_${lawyerPin}_SIGNED.pdf`;
-        const viewUrl = `/api/documents/${lawyerPin}/signed`;
-        console.log('🔗 View URL (central-repository):', viewUrl);
-        
-        // Open in new tab without download attribute
-        window.open(viewUrl, '_blank');
-        
-        console.log('✅ PDF opened in new tab for:', lawyerPin);
+      return fetch('/api/lawyer/update-tob-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin: pin,
+          tobCompleted: true,
+          emailPreference: emailPreference
+        })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error(`Database update failed: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        console.log('✅ Database updated successfully:', data);
+        return data;
+      })
+      .catch(error => {
+        console.error('❌ Error updating database:', error);
+        throw error;
+      });
     }
-    </script>
-
-    <script>
-    // Open payment modal function
-    function openPaymentModal() {
-        console.log('💳 Opening payment modal...');
-        
-        // Get lawyer PIN from URL or session
+  
+    function saveToDocumentLibrary(pin) {
+      console.log('📚 Saving PDF to Document Library for PIN:', pin);
+      
+      return fetch('/api/document-library/save-tob', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: pin })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error(`Document library save failed: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        console.log('✅ PDF saved to Document Library:', data);
+        return data;
+      })
+      .catch(error => {
+        console.error('❌ Error saving to Document Library:', error);
+        throw error;
+      });
+    }
+  
+    function sendEmailNotification(pin) {
+      console.log('📧 Sending email notification for PIN:', pin);
+      
+      return fetch('/api/email/tob-completion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: pin })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error(`Email notification failed: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        console.log('✅ Email notification sent:', data);
+        return data;
+      })
+      .catch(error => {
+        console.error('❌ Error sending email notification:', error);
+        throw error;
+      });
+    }
+  
+    function updateWorkflowProgress(pin) {
+      console.log('📈 Updating workflow progress for PIN:', pin);
+      
+      return fetch('/api/workflow/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin: pin,
+          workflow: 'tob',
+          status: 'completed'
+        })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error(`Workflow progress update failed: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        console.log('✅ Workflow progress updated:', data);
+        return data;
+      })
+      .catch(error => {
+        console.error('❌ Error updating workflow progress:', error);
+        throw error;
+      });
+    }
+  
+    // ==================================================================================
+    // PHASE 1: MAIN DASHBOARD UPDATE FUNCTION
+    // ==================================================================================
+  
+    async function updateDashboardAfterTOB() {
+      console.log('🏠 updateDashboardAfterTOB() called');
+      
+      let pin = null;
+      let emailPreference = null;
+      
+      // Get from message
+      if (window.lastTOBMessage) {
+        pin = window.lastTOBMessage.pin;
+        emailPreference = window.lastTOBMessage.emailPreference;
+        console.log('📨 Got data from message:', { pin, emailPreference });
+      }
+      
+      // Fallbacks
+      if (!pin) {
         const urlParams = new URLSearchParams(window.location.search);
-        const lawyerPin = urlParams.get('pin') || window.lawyerPin || '';
-        
-        // Open payment modal page with PIN
-        if (lawyerPin) {
-            window.location.href = `/paymentModal?pin=${lawyerPin}`;
-        } else {
-            console.error('❌ No PIN available for payment modal');
-            alert('Unable to open payment modal. Please ensure you are logged in properly.');
-        }
-    }
-    </script>
-
-    <!-- ============================================== -->
-    <!-- LOCATION BLOCK D: SSOT INTEGRATION            -->
-    <!-- D.1: Bootstrap & Socket.IO Connection         -->
-    <!-- ============================================== -->
-    <script>
-    (() => {
-      const $ = id => document.getElementById(id);
-      // toggleLocked function already defined above
-
-      // paintSteps function already defined above
-      // setBtn function defined above - no need to duplicate
-      const applyFeatures = (f, links = {}) => {
-        // consent
-        toggleLocked('cardConsent', !f?.consentForms);
-        if (f?.consentForms) {
-          setBtn('btnConsentCreate',  { enabled:true,  label:'📋 Complete Consent Form', href:links?.consentCreate });
-                  setBtn('btnConsentPreview', { enabled:true,  label:'👁️ Preview Document', href:links?.consentHistory });
-        setBtn('btnConsentUpload',  { enabled:true,  label:'📤 Upload Law Firm\'s Consent Form', href:links?.uploadsNew || links?.library });
-        } else {
-          setBtn('btnConsentCreate',  { enabled:false, label:'📋 Complete Consent Form' });
-          setBtn('btnConsentPreview', { enabled:false, label:'👁️ Preview Document' });
-          setBtn('btnConsentUpload',  { enabled:false, label:'📤 Upload Law Firm\'s Consent Form' });
-        }
-        // referrals
-        toggleLocked('cardReferral', !f?.referrals);
-        if (f?.referrals) {
-          setBtn('btnReferralCreate', { enabled:true,  label:'⚖️ Complete Instructions', href:links?.referralNew });
-          setBtn('btnReferralView',   { enabled:true,  label:'👁️ Preview Document', href:links?.referralActive });
-        } else {
-          setBtn('btnReferralCreate', { enabled:false, label:'⚖️ Complete Instructions' });
-          setBtn('btnReferralView',   { enabled:false, label:'👁️ Preview Document' });
-        }
-        // uploads
-        toggleLocked('cardUploads', !f?.uploads);
-        if (f?.uploads) {
-          setBtn('btnUploadsUpload', { enabled:true,  label:'📤 Upload Documents', href:links?.uploadsNew });
-          setBtn('btnUploadsBrowse', { enabled:true,  label:'📂 Browse Library', href:links?.library });
-        } else {
-          setBtn('btnUploadsUpload', { enabled:false, label:'📤 Upload Documents' });
-          setBtn('btnUploadsBrowse', { enabled:false, label:'📂 Browse Library' });
-        }
-      };
-      const toast = (text) => {
-        const n = $('notification'); if (!n) return;
-        n.textContent = text; n.classList.add('show');
-        setTimeout(() => n.classList.remove('show'), 3500);
-      };
-
-      // connect to socketLawyers.js via SSOT-Simulation /socket.io path
-      const socket = io('http://localhost:3012', {
-        transports: ['websocket', 'polling'],
-        upgrade: true,
-        rememberUpgrade: true,
-        timeout: 5000,
-      });
+        pin = urlParams.get('pin');
+      }
+      if (!pin && window.bootstrapData?.user?.pin) {
+        pin = window.bootstrapData.user.pin;
+      }
+      if (!pin) {
+        const pinElement = document.getElementById('welcomePin');
+        pin = pinElement ? pinElement.textContent.trim() : null;
+      }
       
-      // Make socket globally accessible for other functions
-      window.socket = socket;
-
-      // Connection success
-      socket.on('connect', () => {
-        console.log('✅ Socket.IO connected to socketLawyers.js');
-      });
-
-      // Connection failed
-      socket.on('connect_error', (error) => {
-        console.log('❌ Socket.IO connection failed:', error.message);
-      });
-
-      // Handle bootstrap data
-      socket.on('bootstrap', (data) => {
-        const { user, gates, features, links } = data || {};
-        console.log('🔍 Socket.IO bootstrap data received:', { gates: gates?.tob, features, links });
-        if (user) {
-          const name = user.contactName || user.email || 'Lawyer';
-          const firm = user.lawFirm || 'Law Firm';
-          const pin  = user.pin || '[Protected]';
-          const nameEl = $('welcomeName'); if (nameEl) nameEl.textContent = name;
-          const firmEl = $('welcomeFirm'); if (firmEl) firmEl.textContent = firm;
-          const pinEl  = $('welcomePin');  if (pinEl)  pinEl.textContent  = pin;
-        }
-        if (gates) paintSteps(gates);
-        applyFeatures(features || {}, links || {});
+      if (!pin || pin === '[Protected]' || pin === '') {
+        console.error('❌ No valid PIN found for TOB completion');
+        alert('Error: Unable to complete TOB workflow - no valid PIN found');
+        return;
+      }
+      
+      console.log('✅ Using PIN:', pin);
+      console.log('✅ Email Preference:', emailPreference || 'not provided');
+      console.log('🚀 Starting backend persistence tasks...');
+      
+      try {
+        const results = await Promise.all([
+          updateDatabase(pin, emailPreference),
+          saveToDocumentLibrary(pin),
+          sendEmailNotification(pin),
+          updateWorkflowProgress(pin)
+        ]);
         
-        // Don't override TOB button onclick - preserve HTML onclick="signTerms()"
-        console.log('🔧 Socket.IO: Preserving TOB button onclick="signTerms()"');
-      });
-
-      // Handle feature updates
-      socket.on('features:update', (data) => {
-        applyFeatures(data.features || {}, data.links || {});
-      });
-
-      // Handle toast notifications
-      socket.on('toast', (data) => {
-        toast(data.text || 'Update received.');
-      });
-
-      // Handle ping/pong for connection health
-      socket.on('ping', (data) => {
-        socket.emit('pong', { ts: Date.now() });
-      });
-    })();
-    </script>
-
-    <!-- Secure Logout Function -->
-    <script>
-    // Helper function for notifications
-    function showNotification(message) {
+        console.log('✅ All backend tasks completed successfully!', results);
+        
+        // Socket.IO notification
+        try {
+          if (window.socket && window.socket.connected) {
+            window.socket.emit('workflow:update', {
+              pin: pin,
+              workflow: 'tob',
+              completed: true
+            });
+            console.log('✅ Workflow completion event emitted via Socket.IO');
+          }
+        } catch (socketError) {
+          console.error('❌ Error emitting Socket.IO event:', socketError);
+        }
+        
+        // Update UI
+        updateUIAfterTOB();
+        
+        // Show notification
         const notification = document.getElementById('notification');
         if (notification) {
-            notification.textContent = message;
-            notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 3500);
-        }
-    }
-    
-    function secureLogout() {
-        // Show confirmation with session extension option for busy lawyers
-        const choice = confirm(
-            '🚪 Ready to logout?\n\n' +
-            'Click OK to logout securely\n' +
-            'Click Cancel to extend session for 30 more minutes'
-        );
-        
-        if (!choice) {
-            // User chose to extend session
-            extendSession();
-            return;
+          notification.textContent = '✅ Terms of Business signed successfully!';
+          notification.classList.add('show');
+          setTimeout(() => notification.classList.remove('show'), 5000);
         }
         
-        console.log('🚪 Initiating secure logout...');
-        
-        // Send logout notification to server
-        if (window.ws && window.ws.readyState === WebSocket.OPEN) {
-            window.ws.send(JSON.stringify({
-                type: 'user_logout',
-                pin: window.lawyerPin || 'Unknown',
-                timestamp: new Date().toISOString()
-            }));
+        // Close modal
+        const modal = document.querySelector('.modal-overlay');
+        if (modal) {
+          modal.remove();
+          console.log('✅ Modal closed');
         }
         
-        // Clear all session data for security
-        localStorage.clear();
-        sessionStorage.clear();
-        
-        console.log('✅ Session data cleared, redirecting to secure login...');
-        
-        // Show brief "logging out" message
-        showNotification('🚪 Logging out securely...');
-        
-        // Redirect to secure login page
+        // Reload dashboard
+        console.log('🔄 Reloading dashboard to show updated state...');
         setTimeout(() => {
-            window.location.href = '/secure-login';
+          window.location.reload();
         }, 1000);
-    }
-    
-    function extendSession() {
-        console.log('⏰ Extending session for busy lawyer...');
         
-        // Send session extension request to server
-        if (window.ws && window.ws.readyState === WebSocket.OPEN) {
-            window.ws.send(JSON.stringify({
-                type: 'extend_session',
-                pin: window.lawyerPin || 'Unknown',
-                extension: 30, // 30 minutes
-                timestamp: new Date().toISOString()
-            }));
+      } catch (error) {
+        console.error('❌ Backend persistence failed:', error);
+        alert('Error completing TOB workflow: ' + error.message + '\n\nPlease try again or contact support if the issue persists.');
+      }
+    }
+  
+    function updateUIAfterTOB() {
+      console.log('🎨 Updating UI after TOB completion...');
+      
+      const fill = document.getElementById('workflowFill');
+      if (fill) {
+        fill.style.width = '20%';
+        console.log('✅ Progress bar updated to 20%');
+      }
+      
+      const step1 = document.querySelector('.step:first-child .step-circle');
+      if (step1) {
+        step1.className = 'step-circle step-complete';
+        step1.textContent = '✓';
+        const step1Label = document.querySelector('.step:first-child .step-label');
+        if (step1Label) step1Label.textContent = 'Terms Signed';
+        console.log('✅ Step 1 marked as complete');
+      }
+      
+      const step2 = document.querySelector('.step:nth-child(2) .step-circle');
+      if (step2) {
+        step2.className = 'step-circle step-current';
+        step2.textContent = '2';
+        console.log('✅ Step 2 marked as current');
+      }
+      
+      const tobCard = document.querySelector('.workflow-card:first-of-type');
+      if (tobCard) {
+        const actionBtn = tobCard.querySelector('.action-btn');
+        if (actionBtn) {
+          actionBtn.textContent = '📋 View Details';
+          actionBtn.onclick = () => openViewDetailsModal();
+          actionBtn.classList.remove('btn-primary');
+          actionBtn.classList.add('btn-secondary');
+          console.log('✅ TOB card button updated to "View Details"');
         }
-        
-        // Show confirmation
-        showNotification('⏰ Session extended for 30 minutes - back to work!');
-        
-        // Set reminder for 25 minutes (5 min before expiry)
-        setTimeout(() => {
-            showNotification('⚠️ Session expires in 5 minutes. Save your work!');
-        }, 25 * 60 * 1000);
-        
-        console.log('✅ Session extended successfully');
+      }
+      
+      console.log('✅ UI update complete');
     }
-    
-    // Auto-logout warning for busy lawyers (5 minutes before expiry)
-    function setupSessionWarning() {
-        // Set warning 25 minutes after page load (assuming 30 min session)
-        setTimeout(() => {
-            const choice = confirm(
-                '⚠️ Session Expiring Soon!\n\n' +
-                'Your session will expire in 5 minutes.\n\n' +
-                'Click OK to extend for 30 more minutes\n' +
-                'Click Cancel to continue (auto-logout in 5 min)'
-            );
-            
-            if (choice) {
-                extendSession();
-            } else {
-                // Set final auto-logout
-                setTimeout(() => {
-                    alert('🔒 Session expired for security. Logging out...');
-                    secureLogout();
-                }, 5 * 60 * 1000);
-            }
-        }, 25 * 60 * 1000);
+  
+    // ==================================================================================
+    // PHASE 1: MESSAGE LISTENER
+    // ==================================================================================
+  
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'TOB_COMPLETED') {
+        console.log('📨 TOB completion message received from modal:', event.data);
+        
+        window.lastTOBMessage = {
+          pin: event.data.pin,
+          emailPreference: event.data.emailPreference
+        };
+        
+        updateDashboardAfterTOB();
+      }
+    });
+  
+    // ==================================================================================
+    // PHASE 2: VIEW DETAILS MODAL FUNCTIONS
+    // ==================================================================================
+  
+    function openViewDetailsModal() {
+      console.log('📋 Opening View Details Modal');
+      
+      const modal = document.getElementById('viewDetailsModal');
+      if (!modal) {
+        console.error('❌ View Details Modal not found in DOM');
+        return;
+      }
+      
+      let emailPreference = 'Not specified';
+      if (window.lastTOBMessage && window.lastTOBMessage.emailPreference) {
+        emailPreference = window.lastTOBMessage.emailPreference === 'yes' 
+          ? 'Yes - Receive email updates' 
+          : 'No - Portal access only';
+      } else if (window.bootstrapData?.user?.emailPreference) {
+        const pref = window.bootstrapData.user.emailPreference;
+        emailPreference = pref === 'yes' 
+          ? 'Yes - Receive email updates' 
+          : 'No - Portal access only';
+      }
+      
+      const emailPrefElement = document.getElementById('summaryEmailPref');
+      if (emailPrefElement) {
+        emailPrefElement.textContent = emailPreference;
+      }
+      
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      
+      console.log('✅ View Details Modal opened');
     }
-    
-    // Initialize session management for busy lawyers
-    if (typeof window !== 'undefined') {
-        setupSessionWarning();
-        
-        // Also setup activity-based session extension
-        let lastActivity = Date.now();
-        
-        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-            document.addEventListener(event, () => {
-                lastActivity = Date.now();
-            }, { passive: true });
+  
+    function closeViewDetailsModal() {
+      console.log('🎊 Closing View Details Modal - triggering completion actions');
+      
+      const modal = document.getElementById('viewDetailsModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+      
+      document.body.style.overflow = 'auto';
+      
+      triggerConfettiCelebration();
+      markTOBAsViewedDetails();
+      unlockPaymentWorkflow();
+      lockTOBCard();
+      
+      console.log('✅ View Details Modal closed - workflow fully complete!');
+    }
+  
+    function triggerConfettiCelebration() {
+      console.log('🎉 Triggering confetti celebration!');
+      
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
         });
         
-        // Check activity every 5 minutes
-        setInterval(() => {
-            const inactive = Date.now() - lastActivity;
-            const inactiveMinutes = Math.floor(inactive / (1000 * 60));
-            
-            if (inactiveMinutes >= 15) {
-                console.log('⚠️ User inactive for', inactiveMinutes, 'minutes');
-                showNotification(`💤 Inactive for ${inactiveMinutes} minutes. Move mouse to stay active.`);
-            }
-        }, 5 * 60 * 1000);
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+          });
+        }, 250);
+        
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+          });
+        }, 400);
+      } else {
+        console.log('🎊 Confetti library not loaded - using fallback celebration');
+        const notification = document.getElementById('notification');
+        if (notification) {
+          notification.textContent = '🎉 Congratulations! TOB Workflow Complete!';
+          notification.classList.add('show');
+          setTimeout(() => notification.classList.remove('show'), 3000);
+        }
+      }
     }
-    </script>
-
-    <!-- Debug WebSocket connection removed - now handled by Socket.IO above -->
-    <script>
-    (() => {
-      const n = document.getElementById('notification');
-      const showToast = (text) => {
-        if (!n) return;
-        n.textContent = text || 'Update';
-        n.classList.add('show');
-        setTimeout(() => n.classList.remove('show'), 3500);
-      };
-      // expose for manual test
-      window.qToast = showToast;
-      // Toast notifications now handled by Socket.IO above
-    })();
-    </script>
-
-    <script>
-    (() => {
-      // WebSocket functionality now handled by Socket.IO above
-      // const ws = window.ws || new WebSocket(`wss://${window.location.host}/workspace/ws`);
-      // tiny helpers (safe if IDs don't exist yet)
-      const $ = id => document.getElementById(id);
-      // toggleLocked function already defined above
-    })();
-
-    </script>
-</body>
-</html>
+  
+    function markTOBAsViewedDetails() {
+      const pin = window.lawyerPin || window.bootstrapData?.user?.pin;
+      
+      if (!pin) {
+        console.error('❌ No PIN available to mark TOB as viewed');
+        return;
+      }
+      
+      console.log('💾 Marking TOB as viewed details for PIN:', pin);
+      
+      fetch('/api/lawyer/tob-viewed-details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: pin })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('✅ TOB marked as viewed details:', data);
+      })
+      .catch(error => {
+        console.error('❌ Error marking TOB as viewed:', error);
+      });
+    }
+  
+    function unlockPaymentWorkflow() {
+      console.log('🔓 Unlocking Payment workflow...');
+      
+      const paymentCard = document.querySelectorAll('.workflow-card')[1];
+      if (paymentCard) {
+        paymentCard.classList.remove('card-locked');
+        paymentCard.classList.add('card-unlocked');
+        
+        const actionBtn = paymentCard.querySelector('.action-btn');
+        if (actionBtn) {
+          actionBtn.disabled = false;
+          actionBtn.textContent = '💳 Make Payment';
+          actionBtn.onclick = () => openPaymentModal();
+        }
+        
+        console.log('✅ Payment workflow unlocked');
+      }
+    }
+  
+    function lockTOBCard() {
+      console.log('🔒 Locking TOB card (workflow complete)...');
+      
+      const tobCard = document.querySelector('.workflow-card:first-of-type');
+      if (tobCard) {
+        tobCard.classList.add('card-completed');
+        
+        const cardDescription = tobCard.querySelector('.card-description');
+        if (cardDescription) {
+          cardDescription.textContent = '✅ Workflow completed! Terms of Business signed and saved securely.';
+        }
+        
+        console.log('✅ TOB card locked as completed');
+      }
+    }
+  
+    // Modal close on background click and Escape key
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('viewDetailsModal');
+      
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            closeViewDetailsModal();
+          }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeViewDetailsModal();
+          }
+        });
+      }
+    });
+  
+    // ==================================================================================
+    // EXISTING HELPER FUNCTIONS
+    // ==================================================================================
+  
+    function viewSignedPDF(lawyerPin) {
+      console.log('👁 Viewing signed TOB for PIN:', lawyerPin);
+      
+      const filename = `TOB_${lawyerPin}_SIGNED.pdf`;
+      const viewUrl = `/api/documents/${lawyerPin}/signed`;
+      console.log('👁 View URL (central-repository):', viewUrl);
+      
+      window.open(viewUrl, '_blank');
+      
+      console.log('✅ PDF opened in new tab for:', lawyerPin);
+    }
+  
+    function openPaymentModal() {
+      console.log('💳 Opening payment modal...');
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const lawyerPin = urlParams.get('pin') || window.lawyerPin || '';
+      
+      if (lawyerPin) {
+        window.location.href = `/paymentModal?pin=${lawyerPin}`;
+      } else {
+        console.error('❌ No PIN available for payment modal');
+        alert('Unable to open payment modal. Please ensure you are logged in properly.');
+      }
+    }
+  
+  </script>
+  
+  <!-- View Details Modal HTML -->
+  <div id="viewDetailsModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content view-details-modal">
+      <div class="modal-header">
+        <h2>🎉 Terms of Business - Completion Summary</h2>
+        <button class="modal-close" onclick="closeViewDetailsModal()">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="completion-summary">
+          <h4>📋 Completion Summary</h4>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Email Preference:</span>
+              <span class="summary-value" id="summaryEmailPref">-</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Signature Method:</span>
+              <span class="summary-value" id="summarySignatureMethod">Digital Canvas</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Document Status:</span>
+              <span class="summary-value">✅ Signed & Saved</span>
+            </div>
+          </div>
+          
+          <div class="summary-text">
+            <strong>What happens next:</strong>
+            <p>Your signed Terms of Business has been saved to your Document Library and emailed to you. You can now proceed to the Payment workflow.</p>
+          </div>
+        </div>
+        
+        <div class="behind-scenes">
+          <h4>🎬 Behind the Scenes</h4>
+          <ul>
+            <li>✅ Signed PDF saved to your Document Library</li>
+            <li>✅ Email sent with PDF attachment</li>
+            <li>✅ Database updated with completion status</li>
+            <li>✅ Main LawyersDashboard informed by tobModal at the completion of ALL workflow steps</li>
+            <li>✅ Terms of Business Workflow Modal Card locked and secured</li>
+            <li>✅ Payment workflow card now unlocked and available</li>
+          </ul>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn-primary btn-large" onclick="closeViewDetailsModal()">
+            🎊 Continue to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  </body>
+  </html>  

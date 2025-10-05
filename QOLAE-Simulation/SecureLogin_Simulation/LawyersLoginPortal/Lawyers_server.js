@@ -35,7 +35,6 @@ fastify.register(cors, {
 
 // 🛡️ CACHE-BUSTING MIDDLEWARE - Prevent stale content
 fastify.addHook('onRequest', async (request, reply) => {
-  // Add cache-busting headers to all responses
   reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
   reply.header('Pragma', 'no-cache');
   reply.header('Expires', '0');

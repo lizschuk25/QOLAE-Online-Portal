@@ -53,7 +53,7 @@ const io = new Server(server, {
     origin: [
       'https://lawyers.qolae.com',
       'https://admin.qolae.com',
-      'http://localhost:3002'
+      'http://localhost:3012'
     ],
     methods: ['GET', 'POST'],
     credentials: true
