@@ -46,7 +46,14 @@ DATABASE SERVICES:
 
 3005 - Websocket Lawyers - socketLawyers.js) qolae-wslawyers(api.qolae.com) 
 
-LawyersDashboard and PostgreSQL - qolae_lawyers
+LawyersDashboard and PostgreSQL - qolae_admin, qolae_lawyers, qolae_readers, qolae_casemanagers, qolae_clients
+
+3006 - CaseManagers-Dashboard (casemanagers.qolae.com) qolae-cm-dashboard - server.js
+3007 - cm websocket
+3008 - Readers-Dashboard (readers.qolae.com) qolae-readers - 
+3009 - readers Websocket 
+3010 - Clients-Dashboard (clients.qolae.com) qolae-clients 
+3011 - clients websocket
 
 # Standard Web Ports
 80   - HTTP (redirected to HTTPS)

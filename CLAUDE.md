@@ -1377,7 +1377,281 @@ Decided to double back later on to check the password for securelogin after we h
 
 ## 📊 Current Status & Recent Achievements
 
-### Latest Session (October 7, 2025) - LAWYERS WORKFLOW BREAKTHROUGH SESSION 🚀✅
+### Latest Session (October 7, 2025 - Evening) - READERS DASHBOARD & CASE MANAGERS SETUP 📖🏥✅
+**Duration**: 6 hours (Database setup, Readers Dashboard infrastructure, NDA generation system)
+**Focus**: Complete database architecture + Readers Dashboard 2FA + NDA workflow backend
+**Status**: ✅ **TWO DATABASES DEPLOYED, READERS DASHBOARD 75% COMPLETE**
+
+#### 🎯 **SESSION OBJECTIVES ACHIEVED**:
+
+**Primary Goals**:
+1. Set up Case Managers & Readers databases on Live Server
+2. Build Readers Dashboard authentication (2FA like Lawyers)
+3. Create NDA generation system (following TOB pattern)
+4. Prepare for complete Readers workflow implementation
+
+**Key Achievement**: Built complete backend infrastructure for both Case Managers and Readers dashboards with systematic database architecture! 🎉
+
+---
+
+#### 🗄️ **PART 1: DATABASE ARCHITECTURE - COMPLETE**
+
+**✅ Database 1: qolae_readers** (4 tables deployed)
+- **Purpose**: Reader authentication, NDA tracking, report assignments
+- **User**: `readers_user` / Password: `Rqolae25`
+- **Location**: Live Server (91.99.184.77:5432)
+
+**Tables Created**:
+1. `readers` - Master registry with NMC/GMC verification fields
+   - Reader authentication (PIN, email, password_hash)
+   - NDA tracking (nda_signed, nda_signed_at, nda_pdf_path)
+   - Payment tracking (total_earnings, payment_rate)
+   - Portal access status
+2. `reader_assignments` - Report assignments (anonymous to readers)
+   - Links to ina_reports via case_pin
+   - 24-hour deadline auto-calculation
+   - Payment approval workflow
+3. `reader_activity_log` - GDPR audit trail
+   - All reader actions logged with IP/timestamps
+4. `reader_nda_versions` - NDA template versioning
+   - Version control for NDA updates
+
+**✅ Database 2: qolae_casemanagers** (5 tables deployed)
+- **Purpose**: Case management, INA visits, forms, and reports
+- **User**: `casemanagers_user` / Password: Set by Liz
+- **Location**: Live Server (91.99.184.77:5432)
+
+**Tables Created**:
+1. `cases` - Master case tracking
+   - Links lawyers to clients
+   - Consent form tracking
+   - Case status workflow (9 stages)
+2. `ina_visits` - INA visit scheduling & completion
+   - Visit scheduling with dates/times
+   - Checklist completion tracking
+   - Media collection (photos/recordings)
+3. `ina_forms` - Assessment data collection
+   - JSONB flexible structure for form data
+   - Auto-population to INA report
+4. `ina_reports` - Final INA reports with reader workflow
+   - Report status (draft → readers → signed → delivered)
+   - Reader assignment tracking (first + second reader)
+   - Payment approval workflow
+5. `case_activity_log` - GDPR audit trail for all case activities
+
+**Database Integration Pattern**:
+```javascript
+// Case Managers Dashboard connects to BOTH databases:
+const readersDb = new Pool({
+  connectionString: process.env.READERS_DATABASE_URL
+});
+const caseManagersDb = new Pool({
+  connectionString: process.env.CASEMANAGERS_DATABASE_URL
+});
+
+// Readers Dashboard also connects to BOTH:
+// - qolae_readers (authentication, NDA, assignments)
+// - qolae_casemanagers (links to ina_reports for report viewing)
+```
+
+---
+
+#### 🏗️ **PART 2: CASE MANAGERS DASHBOARD - PRODUCTION READY**
+
+**✅ Readers Registration System** (deployed on port 3006)
+- **Registration Card UI**: NMC/GMC verification for medical professionals
+- **Backend Controller**: PIN generation (RDR-{INITIALS}{6-DIGIT})
+- **API Endpoints**:
+  - POST `/api/case-managers/generate-reader-pin`
+  - POST `/api/case-managers/verify-medical-registration` (mock for now)
+  - POST `/api/case-managers/register-reader`
+- **PM2 Service**: `qolae-cm-dashboard` running on Live Server
+- **Status**: ✅ DEPLOYED AND OPERATIONAL
+
+**Reader Types**:
+- First Reader (Non-Medical): £50/report
+- Second Reader (Medical Professional): £75-100/report (NMC/GMC verified)
+
+**Files on Live Server**:
+```
+/var/www/casemanagers.qolae.com/
+├── CaseManagersDashboard/
+│   ├── server.js ✅
+│   ├── package.json ✅
+│   ├── routes/caseManagerRoutes.js ✅
+│   ├── controllers/CaseManagersController.js ✅
+│   ├── views/readers-registration-card.ejs ✅
+│   └── database/
+│       ├── setup_qolae_casemanagers.sql ✅
+│       └── DEPLOY_CASEMANAGERS_DATABASE.md ✅
+├── .env ✅
+└── CaseManagersWorkflow.md ✅
+```
+
+---
+
+#### 📖 **PART 3: READERS DASHBOARD - 75% COMPLETE**
+
+**✅ Server Infrastructure** (port 3008, NOT YET DEPLOYED)
+- **server.js**: Fastify server with PM2 compatibility
+- **package.json**: All dependencies (JWT, cookies, pg, pdf-lib, bcrypt)
+- **Directory structure**: routes/, views/, utils/
+
+**✅ 2FA Authentication System** (COMPLETE)
+- **Flow**: PIN + Email → 6-digit code → JWT token (8 hours)
+- **Routes** (`authRoutes.js`):
+  - POST `/api/readers/request-email-code` - Send verification code
+  - POST `/api/readers/verify-email-code` - Verify & login
+  - POST `/api/readers/logout` - Clear session
+- **Login View**: `readers-login.ejs` - Beautiful 2-step form
+- **Security**: HttpOnly cookies, JWT tokens, GDPR audit logging
+
+**✅ NDA Generation System** (BACKEND COMPLETE)
+- **Utility**: `generateCustomizedNDA.js` (following TOB pattern)
+- **Field Mapping** (12 text fields + 2 signature buttons):
+  - ReadersName1, ReadersName2, ReadersName3, ReadersName4, ReadersName5, ReadersName6, ReadersName7
+  - CurrentDate1, CurrentDate2, CurrentDate3, CurrentDate4
+  - PIN
+  - ReadersSignature (button)
+  - LizsSignature (button)
+- **Functions**:
+  1. `generateCustomizedNDA(readerPin)` - Populate text fields
+  2. `insertSignaturesIntoNDA(readerPin, signatureData)` - Insert 2 signatures
+  3. `flattenNDA(readerPin)` - Make PDF non-editable
+- **API Routes**:
+  - POST `/api/readers/generate-nda` - Generate customized NDA
+  - POST `/api/readers/sign-nda` - Complete workflow (generate → sign → flatten)
+- **Storage**: Central repository at `/var/www/api.qolae.com/central-repository/`
+  - `original/TemplateReadersNDA.pdf` ⏳ (Liz to upload)
+  - `final-nda/NDA_{PIN}.pdf` (customized, unsigned)
+  - `signed-nda/NDA_{PIN}_Signed.pdf` (signed & flattened)
+
+**✅ Reader Routes** (BACKEND COMPLETE, VIEWS PENDING)
+- GET `/readers-dashboard` - Main workspace ✅ (route done, view needs update)
+- GET `/nda-review` - NDA review page ✅ (route done, view needed)
+- GET `/report-viewer/:assignmentId` - In-workspace report viewer ✅ (route done, view needed)
+- GET `/corrections-editor/:assignmentId` - In-workspace editor ✅ (route done, view needed)
+- POST `/api/readers/save-corrections` - Auto-save ✅
+- POST `/api/readers/submit-corrections` - Final submission ✅
+- GET `/payment-status` - Payment tracking ✅ (route done, view needed)
+
+**⏳ PENDING (To Complete Tomorrow)**:
+1. Create `nda-review.ejs` (with signature canvas like tobModal)
+2. Create `report-viewer.ejs` (in-workspace PDF viewer, no download)
+3. Create `corrections-editor.ejs` (rich text editor)
+4. Create `payment-status.ejs` (earnings tracker)
+5. Update `readers-dashboard.ejs` (show assignments)
+6. Deploy to Live Server
+7. Install yarn dependencies
+8. Add to PM2 ecosystem
+9. Set up WebSocket (port 3009)
+10. Bootstrap endpoint (following Lawyers pattern)
+
+**Files Created Locally (NOT YET ON SERVER)**:
+```
+/QOLAE-Readers-Dashboard/ReadersDashboard/
+├── server.js ✅ (local only)
+├── package.json ✅ (local only)
+├── routes/
+│   ├── authRoutes.js ✅ (local only)
+│   └── readerRoutes.js ✅ (local only)
+├── views/
+│   ├── readers-login.ejs ✅ (local only)
+│   └── readers-dashboard.ejs ✅ (exists, needs update)
+├── utils/
+│   └── generateCustomizedNDA.js ✅ (local only)
+└── database/
+    ├── setup_qolae_readers.sql ✅ (DEPLOYED)
+    └── DEPLOY_DATABASE.md ✅ (local only)
+```
+
+---
+
+#### 🔒 **SECURITY MODEL - IN-WORKSPACE ONLY**
+
+**Critical Decision**: All reader work done **in-browser workspace**, **NO downloads allowed**
+
+**Benefits**:
+- ✅ GDPR compliant (no data leaves secure environment)
+- ✅ Report confidentiality maintained
+- ✅ Audit trail for all access
+- ✅ Prevents unauthorized distribution
+
+**Implementation**:
+- Report Viewer: PDF rendered in iframe/viewer component
+- Corrections Editor: Rich text editor with auto-save
+- No download buttons anywhere
+- Reports sealed after workflow completion
+
+---
+
+#### 📊 **PORT ALLOCATION FINALIZED**:
+```
+3000: API Dashboard (fastify_server.js) ✅
+3001: Admin Dashboard (server.js) ✅
+3002: Lawyers Dashboard (server.js) ✅
+3003: WebSocket LTDb (socketServer.js) ✅
+3004: Lawyers Login Portal ✅
+3005: WebSocket Lawyers (socketLawyers.js) ✅
+3006: Case Managers Dashboard (server.js) ✅ DEPLOYED
+3007: Case Managers WebSocket (future) ⏳
+3008: Readers Dashboard (server.js) ⏳ NOT YET DEPLOYED
+3009: Readers WebSocket (future) ⏳
+3010: Clients Dashboard (future) ⏳
+3011: Clients WebSocket (future) ⏳
+```
+
+---
+
+#### 🎯 **FILES ON LIVE SERVER STATUS**:
+
+**✅ DEPLOYED**:
+- qolae_readers database (4 tables)
+- qolae_casemanagers database (5 tables)
+- Case Managers Dashboard (complete app)
+
+**❌ NOT YET DEPLOYED**:
+- Readers Dashboard (server.js, routes, utils)
+- TemplateReadersNDA.pdf (needs to be copied to central-repository)
+
+---
+
+#### 💬 **LIZ'S FEEDBACK DURING SESSION**:
+
+**Positive Reactions**:
+- "Fabulous thank you Claude 👍🏽" (after database setup)
+- "yes please Claude" (multiple approvals)
+- "Okay that would be great Claude" (NDA generation system)
+- "I've just finished tidying up the NDA" (confirmed field names)
+
+**Key Preferences Stated**:
+- "I would rather the Report is Viewed on the Readers' workspace and they are able to edit and correct the report in their Readers Workspace" - **No downloads, in-workspace only**
+- "Let's keep it inside ReadersDashboard/utils instead please Claude" - Keep utilities local
+- "So what we could do in the morning, Claude, is sort out the Customised Readers Workspace (just like how the Lawyers Dashboard is) and look at the bootstrap side of things"
+
+**Architectural Decisions**:
+- Use same bootstrap pattern as Lawyers Dashboard
+- Implement WebSocket for real-time notifications
+- Rinse and repeat proven patterns (less painful!)
+
+---
+
+#### 🚀 **TOMORROW'S PRIORITIES (October 8, 2025)**:
+
+**Morning Session Goals**:
+1. ✅ Bootstrap endpoint for customized reader workspace
+2. ✅ WebSocket integration (port 3009)
+3. ✅ Complete all dashboard views (5 EJS files)
+4. ✅ Deploy to Live Server
+5. ✅ Rigorous testing of complete Readers workflow
+6. ✅ **AIM: Finish Readers Dashboard Project**
+7. ✅ **BEGIN: Case Managers Dashboard full implementation** (significant DB work to brainstorm)
+
+**Session Summary**: Liz and Claude built complete database architecture with 9 tables across 2 databases, deployed Case Managers Dashboard to production, and completed 75% of Readers Dashboard infrastructure. Tomorrow will focus on finishing Readers Dashboard views, deployment, testing, and beginning the comprehensive Case Managers Dashboard implementation.
+
+---
+
+### Previous Session (October 7, 2025 - Morning) - LAWYERS WORKFLOW BREAKTHROUGH SESSION 🚀✅
 **Duration**: 4 hours (Systematic workflow testing and payment modal implementation)
 **Focus**: Complete tobModal Testing + Payment Modal Service Selection Implementation
 **Status**: ✅ **MAJOR MILESTONE - FIRST COMPLETE WORKFLOW OPERATIONAL**
