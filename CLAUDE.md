@@ -83,77 +83,212 @@ Signatures: GDPR-compliant encrypted storage with audit trails
 
 ## 🏗️ Complete Project Structure
 
-```
 QOLAE-Online-Portal/
-├── CLAUDE.md                           # This comprehensive reference file
-├── QOLAE-Online-Portal-Workspace.code-workspace
-├── .git/                               # Git repository
+├── 📄 CLAUDE.md                           # This comprehensive reference file
+├── 📄 test-db-connection.js
+├── 📁 .git/                               # Git repository
 ├── 
-├── QOLAE Documentation & Trackers/     # 📋 Project documentation
-│   ├── Admin Workflow.md
-│   ├── API_Checklist_and_Update.md
-│   ├── ButtonCreationGuide.md
-│   ├── Checklist Tracker.md
-│   ├── Claude_Code Checklists
-│   ├── CompanySignatureAutoApplicationFlow.md
-│   ├── Cross_Site_WebSocket_Architecture.md
-│   ├── PDFSignatureFieldDemo.md
-│   ├── Port_Documentation.md
-│   ├── README.md
-│   ├── VisualPDFSignature.md
-│   └── screenshots/                    # 📸 Visual references
-│       ├── Screenshot 2025-09-11 at 16.08.32.png
-│       ├── Screenshot 2025-09-11 at 16.08.43.png
-│       ├── Screenshot 2025-09-11 at 16.09.00.png
-│       ├── Screenshot 2025-09-11 at 16.09.15.png
-│       ├── Screenshot 2025-09-11 at 16.09.23.png
-│       └── Screenshot 2025-09-11 at 16.09.33.png
+├── 📁 QOLAE Documentation & Trackers/     # 📋 Project documentation
+│   ├── 📄 Admin Workflow.md
+│   ├── 📄 API_Checklist_and_Update.md
+│   ├── 📄 API_Workflow.md
+│   ├── 📄 ButtonCreationGuide.md
+│   ├── 📄 Case Managers' Workflow.pdf
+│   ├── 📄 Checklist Tracker.md
+│   ├── 📄 Clients' Workflow.pdf
+│   ├── 📄 CompanySignatureAutoApplicationFlow.md
+│   ├── 📄 Cross_Site_WebSocket_Architecture.md
+│   ├── 📄 Lawyers Workflow.md
+│   ├── 📄 PDFSignatureFieldDemo.md
+│   ├── 📄 Port_Documentation.md
+│   ├── 📄 Readers' Workflow.pdf
+│   ├── 📄 README.md
+│   ├── 📄 VisualPDFSignature.md
+│   └── 📁 screenshots/                    # 📸 Visual references
+│       ├── 📁 loginScreenshots/
+│       └── 📁 pdfScreenshots/
 │
-├── QOLAE-Admin-Dashboard/              # 🏢 Admin management system
-│   ├── server.js
-│   ├── package.json
-│   ├── views/
-│   ├── public/
-│   └── routes/
+├── 📁 QOLAE-Admin-Dashboard/              # 🏢 Admin management system
+│   ├── 📄 Admin.Nginx.md
+│   ├── 📁 AdminLogin/
+│   │   ├── 📁 dist/
+│   │   │   └── 📄 index.html
+│   │   ├── 📄 index.html
+│   │   ├── 📁 node_modules/
+│   │   ├── 📄 package.json
+│   │   ├── 📄 postcss.config.cjs
+│   │   ├── 📁 public/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 components/
+│   │   │   │   └── 📁 Admin/
+│   │   │   ├── 📄 index.css
+│   │   │   └── 📄 index.jsx
+│   │   ├── 📄 tailwind.config.js
+│   │   ├── 📄 vite.config.js
+│   │   └── 📄 yarn.lock
+│   ├── 📁 backend/
+│   │   ├── 📁 data/
+│   │   ├── 📁 generated/
+│   │   │   └── 📁 prisma/
+│   │   ├── 📁 prisma/
+│   │   │   └── 📄 schema.prisma
+│   │   ├── 📁 public/
+│   │   │   ├── 📁 scripts/
+│   │   │   └── 📁 styles/
+│   │   ├── 📁 src/
+│   │   │   ├── 📁 controllers/
+│   │   │   ├── 📁 emails/
+│   │   │   ├── 📁 facade/
+│   │   │   ├── 📁 plugins/
+│   │   │   ├── 📁 routes/
+│   │   │   ├── 📁 schemas/
+│   │   │   ├── 📁 scripts/
+│   │   │   └── 📁 utils/
+│   │   └── 📄 tailwind.build.css
+│   ├── 📄 dev.sh
+│   ├── 📄 eslint.config.js
+│   ├── 📁 node_modules/
+│   ├── 📄 package.json
+│   ├── 📄 postcss.config.js
+│   ├── 📄 README.md
+│   ├── 📄 tailwind.config.js
+│   └── 📄 yarn.lock
 │
-├── QOLAE-API-Dashboard/                # 🔌 Central API & document processing
-│   ├── fastify_server.js               # Main API server
-│   ├── fastify_server_modified_by_claude.js  # Recent Chrome flag modifications
-│   ├── package.json
-│   ├── routes/
-│   │   ├── authRoute.js               # Email verification endpoints
-│   │   └── webauthnRoute.js           # WebAuthn security key endpoints
-│   ├── lib/
-│   │   └── authUtils.js               # WebAuthn utilities
-│   ├── utils/
-│   │   ├── generateLawyersCustomizedTOB.js
-│   │   └── generateLawyersCustomizedTOB_modified_by_claude.js
-│   └── central-repository/
-│       ├── images/
-│       │   └── qolaeNewLogo.svg       # Company logo
-│       ├── signatures/                # Digital signature storage
-│       ├── original/
-│       │   ├── TemplateTOB.ejs        # Terms of Business template
-│       │   ├── TemplateTOB_modified_by_claude.ejs  # Recent sheet strategy modifications
-│       │   └── TemplateTOB.pdf        # Reference PDF version
-│       └── signed-tob/                # Generated signed documents
+├── 📁 QOLAE-API-Dashboard/             # 🔌 Central API (SSOT) & document processing
+│   ├── 📄 API-Nginx.md
+│   ├── 📁 central-repository/
+│   │   ├── 📁 final-tob/
+│   │   ├── 📁 images/
+│   │   │   ├── 📄 qolaeNewLogo.png
+│   │   │   └── 📄 qolaeNewLogo.svg       # Company logo
+│   │   ├── 📁 original/
+│   │   │   ├── 📄 CaseStudies.pdf
+│   │   │   ├── 📄 CV.pdf
+│   │   │   └── 📄 TemplateTOB.pdf       # Terms of Business template
+│   │   ├── 📁 review-tob/
+│   │   ├── 📁 signatures/                # Digital signature storage
+│   │   │   ├── 📄 lizs-signature.png
+│   │   │   └── 📄 lizs-signature.svg
+│   │   ├── 📁 signed-tob/                # Generated signed documents
+│   │   └── 📁 temp/
+│   │    
+│   ├── 📁 controllers/
+│   │   ├── 📄 authController.js
+│   │   └── 📄 emailController.js
+│   ├── 📁 database/
+│   │   └── 📄 setup_lawyers_dashboard.sql
+│   ├── 📄 env.example
+│   ├── 📄 fastify_server.js               # Main API server
+│   ├── 📁 node_modules/
+│   ├── 📄 package.json
+│   ├── 📁 prisma/
+│   │   └── 📄 schema.prisma
+│   ├── 📁 routes/
+│   │   ├── 📄 authRoute.js               # Email verification endpoints
+│   │   ├── 📄 documentRoutes.js
+│   │   ├── 📄 emailRoutes.js
+│   │   ├── 📄 websocketRoutes.js
+│   │   └── 📄 workspaceRoute.js
+│   ├── 📄 socketLawyers.js
+│   ├── 📄 socketServer.js
+│   └── 📁 utils/
+│       ├── 📄 generateLawyersCustomizedTOB.js
+│       ├── 📄 IntroductoryEmail.js
+│       └── 📄 prisma.js
 │
-├── QOLAE-Lawyers-Dashboard/            # ⚖️ Lawyer workspace
-│   ├── server.js
-│   ├── package.json
-│   ├── docs/
-│   │   ├── README.md                  # Lawyer dashboard documentation
-│   │   └── LawyersWorkflow.md         # Detailed lawyer workflow steps
-│   ├── views/
-│   │   └── lawyers-dashboard.ejs
-│   └── public/
-│       └── styles/
-│           └── main.css
+├── 📁 QOLAE-CaseManagers-Dashboard/       # 📁 Case management system
+│   ├── 📄 CaseManagers Workflow.md
+│   └── 📁 CaseManagersDashboard/
+│       ├── 📄 casemangers-dashboard.ejs
+│       └── 📁 views/
 │
-├── QOLAE-CaseManagers-Dashboard/       # 📁 Case management system
-├── QOLAE-Clients-Dashboard/            # 👥 Client portal
-└── qolaePdfWriter/                     # 📄 PDF processing utilities
-```
+├── 📁 QOLAE-Clients-Dashboard/            # 👥 Client portal
+│   ├── 📄 Clients Workflow.md
+│   └── 📁 ClientsDashboard/
+│       ├── 📄 clients-dashboard.ejs
+│       └── 📁 views/
+│
+├── 📁 QOLAE-Lawyers-Dashboard/            # ⚖️ Lawyer workspace
+│   ├── 📄 Lawyers-Dashboard-Checklist.md
+│   ├── 📄 Lawyers-Nginx.md
+│   ├── 📁 LawyersDashboard/
+│   │   ├── 📄 LawyersDashboard-Nginx.md
+│   │   ├── 📁 middleware/
+│   │   │   └── 📄 authenticateToken.js
+│   │   ├── 📁 node_modules/
+│   │   ├── 📄 package.json
+│   │   ├── 📁 public/
+│   │   │   ├── 📁 assets/
+│   │   │   ├── 📄 favicon.ico
+│   │   │   └── 📁 js/
+│   │   ├── 📄 README.md
+│   │   ├── 📁 routes/
+│   │   │   ├── 📄 authRoute.js
+│   │   │   └── 📄 documentsRoute.js
+│   │   ├── 📄 server.js
+│   │   ├── 📁 views/
+│   │   │   ├── 📄 lawyers-dashboard.ejs
+│   │   │   ├── 📄 secure-login.ejs
+│   │   │   ├── 📄 tobModal.ejs
+│   │   │   ├── 📄 paymentModal.ejs
+│   │   │   ├── 📄 clientManagementHub.ejs
+│   │   │   ├── 📄 lawyers-login.ejs
+│   │   │   └── 📄 lawyers-login-portal.ejs
+│   │   └── 📄 yarn.lock
+│   ├── 📁 LawyersLoginPortal/
+│   │   ├── 📄 Lawyers_server.js
+│   │   ├── 📄 LawyersLoginPortal-Nginx.md
+│   │   ├── 📁 node_modules/
+│   │   ├── 📄 package.json
+│   │   ├── 📁 public/
+│   │   │   ├── 📁 js/
+│   │   │   └── 📁 styles/
+│   │   ├── 📄 README.md
+│   │   ├── 📁 routes/
+│   │   │   └── 📄 lawyersAuthRoute.js
+│   │   └── 📁 views/
+│   │       ├── 📄 lawyers-login.ejs
+│   │       └── 📄 lawyers-login-portal.ejs
+│   ├
+│   │   ├── 📄 eslint.config.js
+│   │   ├── 📄 index.html
+│   │   ├── 📁 node_modules/
+│   │   ├── 📄 package.json
+│   │   ├── 📄 postcss.config.cjs
+│   │   ├── 📁 public/
+│   │   │   ├── 📄 favicon.ico
+│   │   │   └── 📁 sounds/
+│   │   ├── 📄 README.md
+│   │   ├── 📄 tailwind.config.cjs
+│   │   ├── 📄 vite.config.js
+│   │   └── 📄 yarn.lock
+│   ├── 📁 configs/
+│   ├── 📁 docs/
+│   │   ├── 📄 DailyWorkingDocument.md
+│   │   ├── 📄 LawyersWorkflow.md         # Detailed lawyer workflow steps
+│   │   └── 📄 README.md                  # Lawyer dashboard documentation
+│   └── 📁 scripts/
+│
+├── 📁 QOLAE-Readers-Dashboard/            # 📖 Reader portal
+│   └── 📁 ReadersDashboard/
+│       └── 📁 views/
+│
+├── 📁 QOLAE-Simulation/                   # 🧪 Testing environments
+│   ├── 📁 SecureLogin_Simulation/
+│   │   ├── 📁 LawyersDashboard/
+│   │   ├── 📁 LawyersLoginPortal/
+│   │   ├── 📁 SSOT-Simulation/
+│   │   └── 📁 central-repository/
+│   └── 📁 Signature_Simulation/
+│       ├── 📁 central-repository/
+│       ├── 📁 routes/
+│       ├── 📁 utils/
+│       └── 📁 views/
+│
+└── 📁 qolaePdfWriter/                     # 📄 PDF processing utilities
+    
+
+
 
 ---
 
