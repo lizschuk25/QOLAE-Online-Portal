@@ -35,9 +35,9 @@ End of today's Journal for Claude to go through.
 
 # QOLAE Online Portal - Comprehensive Project Framework & Roadmap
 
-> **Last Updated**: October 5, 2025
-> **Current Phase**: Phase 2 - Core Feature Implementation (95% Complete)
-> **Next Milestone**: Blockchain Capsule Technology & Workflow Modal Cards Optimization
+> **Last Updated**: October 10, 2025
+> **Current Phase**: Case Managers Dashboard Architecture & Planning (100% Complete)
+> **Next Milestone**: Case Managers Dashboard Implementation - 14-Stage Workflow System
 
 ---
 
@@ -1648,6 +1648,495 @@ const caseManagersDb = new Pool({
 7. ✅ **BEGIN: Case Managers Dashboard full implementation** (significant DB work to brainstorm)
 
 **Session Summary**: Liz and Claude built complete database architecture with 9 tables across 2 databases, deployed Case Managers Dashboard to production, and completed 75% of Readers Dashboard infrastructure. Tomorrow will focus on finishing Readers Dashboard views, deployment, testing, and beginning the comprehensive Case Managers Dashboard implementation.
+
+---
+
+### Latest Session (October 10, 2025 - Evening) - CASE MANAGERS DASHBOARD ARCHITECTURE & WORKFLOW DESIGN 🏗️📋✅
+**Duration**: Strategic Planning Session (2+ hours)
+**Focus**: Complete Case Managers Dashboard architecture, 14-stage workflow design, R&D/Report Writing tools, Master Calendar integration
+**Status**: ✅ **COMPREHENSIVE PLANNING COMPLETE - READY FOR IMPLEMENTATION**
+
+#### 🎯 **SESSION OBJECTIVES ACHIEVED**:
+
+**Primary Goal**: Design complete Case Managers Dashboard architecture with workflow complexity while maintaining clean, intuitive UX.
+
+**Key Achievement**: Transformed CM Dashboard from "similar to Lawyers Dashboard" into a **sophisticated project management system** that handles complex multi-stage workflows, R&D tracking, report writing, calendar management, and role-based permissions! 🎉
+
+---
+
+#### 🏆 **PART 1: ROLE-BASED PERMISSIONS STRUCTURE**
+
+**✅ Liz (Management Level):**
+- Reader registration & HR compliance
+- Reader payments (all payment approvals)
+- CM onboarding & HR compliance
+- Budget approvals
+- Compliance sign-offs
+- Case closure decisions (post 2nd reader review)
+- **Plus** all operational tasks below
+
+**✅ Other CMs (Operational Level):**
+- Client contact (after consent form sent by lawyer)
+- INA visit booking & execution
+- Reader assignment (auto-assign based on availability - NO approval needed)
+- Medical notes access (after consent returned)
+- R&D phase execution
+- Report writing
+- Internal review workflow
+- Follow workflow through to completion
+- **Cannot**: Handle payments, register readers, make management decisions
+
+**✅ Workflow Gates Identified:**
+1. **Medical Notes Access:** Locked until consent received
+2. **INA Visit Booking:** Locked until consent received
+3. **Start R&D:** Locked until INA visit completed
+4. **Start Report Writing:** Locked until R&D complete
+5. **Assign 1st Reader:** Locked until internal review complete
+6. **Assign 2nd Reader:** Locked until 1st reader corrections received
+7. **Case Closure:** Locked until 2nd reader complete + Liz approval required
+
+---
+
+#### 🎨 **PART 2: HYBRID DASHBOARD LAYOUT DESIGNED**
+
+**Liz's Brilliant Insight**: "I think both to be honest, so a hybrid? 🤔"
+
+**✅ Top Section: ACTION CENTER** (Task-focused)
+```
+🔴 URGENT (3)     🟡 TODAY (2)     🟢 READY (5)     📋 PENDING (2)
+```
+- Click any card → filters cases below
+- Always visible (never hidden in tabs)
+- Real-time counts
+
+**✅ Main Section: MY CASES** (Case-focused)
+- Enhanced case table with expandable rows
+- 3 view options: **Compact** / **Detailed** / **Kanban**
+- User preference saving (localStorage + database)
+- Responsive to mood/task/device
+
+**✅ Management Sections (Tabs for Liz):**
+- Reader Management (register, availability, payments)
+- Approval Queue (payment requests, case closures)
+- CM Management (onboarding, case assignments)
+
+---
+
+#### 📊 **PART 3: 14-STAGE WORKFLOW SYSTEM**
+
+**Critical Addition**: R&D Phase, Report Writing, Internal Review stages identified as missing from initial design!
+
+**✅ Complete Workflow Stages:**
+```
+Stage 1:  📋 Case Opened (7%)
+Stage 2:  📞 Client Contacted (14%)
+Stage 3:  📧 Consent Sent (21%)
+Stage 4:  🔓 Consent Received → Medical Notes Unlocked (28%)
+Stage 5:  📅 INA Visit Scheduled (35%)
+Stage 6:  🏥 INA Visit Completed (42%)
+Stage 7:  📚 R&D Phase (50%) ← NEW
+Stage 8:  ✍️ Report Writing (57%) ← NEW
+Stage 9:  🔍 Internal Review (64%) ← NEW
+Stage 10: 👤 1st Reader Assigned (71%)
+Stage 11: ✏️ 1st Reader Corrections (78%)
+Stage 12: 👨‍⚕️ 2nd Reader Assigned (85%)
+Stage 13: ✏️ 2nd Reader Corrections (92%)
+Stage 14: ✅ Case Closure (100%)
+```
+
+**✅ Visual Progress Tracking:**
+- **Compact View**: Simple progress bar (████████████░░░ 64%)
+- **Detailed View**: Full stage visualization with icons (✅✅✅✅✅✅✅✅🟡⏳⏳⏳⏳⏳)
+- **Kanban View**: Visual board with drag-and-drop between stages
+
+---
+
+#### 📚 **PART 4: R&D WORKSPACE DESIGN**
+
+**Liz's Requirement**: "So the INA Report writing doesn't appear and neither does the R&D that is required to complete the INA Report, so that needs to be factored in"
+
+**✅ R&D Workspace Features:**
+1. **Medical Conditions Research Checklist**
+   - Add/remove conditions dynamically
+   - Rich text notes per condition
+   - File attachments per condition
+   - Link to NICE guidelines
+
+2. **Equipment Research Tracker**
+   - Wheelchair/hoist/bed/bathroom categories
+   - Supplier comparison tables
+   - Cost tracking
+   - Specification documentation
+
+3. **Case Law & Guidelines Library**
+   - NICE guidelines integration
+   - Case precedent search
+   - Local authority care standards
+   - Expert consultation notes
+
+4. **Time Logging**
+   - Track R&D hours (important for billing/capacity)
+   - Estimated vs actual time
+   - Progress indicators
+
+5. **"Mark R&D Complete" Validation**
+   - Ensures all checklist items addressed
+   - Gates report writing until complete
+
+---
+
+#### ✍️ **PART 5: REPORT EDITOR DESIGN**
+
+**✅ 7-Section Report Template:**
+1. Executive Summary
+2. Medical Background
+3. Home Environment Assessment
+4. Equipment Needs
+5. Care Package Design
+6. Recommendations
+7. Appendices
+
+**✅ Editor Features:**
+- Rich text formatting toolbar
+- Auto-save every 30 seconds
+- **"Insert from R&D"** dropdown (pull research directly into report)
+- Side-by-side medical notes panel (toggle on/off)
+- INA visit media viewer (photos/recordings)
+- Word count tracker (real-time, e.g., "2,847 / ~5,000 estimated")
+- Section completion indicators
+- Version history (rollback capability)
+- Preview report as PDF
+- Request peer review workflow
+
+---
+
+#### 📅 **PART 6: MASTER CALENDAR INTEGRATION**
+
+**Liz's Brilliant Insight**: "It's just occurred to me... an interactive calendar on the CM's Dashboard will be needed right? Because the CM is juggling, INA visits, meetings, all sorts right?" 🤔
+
+**✅ Multi-Layer Event System:**
+```
+🏥 INA Visits (blue)
+📚 R&D Deadlines (purple)
+✍️ Report Writing Deadlines (green)
+📋 Reader Deadlines (orange - 24hr countdown)
+📞 Client/Lawyer Calls (teal)
+🏢 Team Meetings (grey)
+⏰ CM Availability Blocks (yellow)
+⚠️ Conflict Warnings (red)
+```
+
+**✅ Calendar Features:**
+- Toggle layers on/off (show/hide event types)
+- **Conflict Detection Algorithm**:
+  - Overlapping INA visits
+  - Travel time calculation between locations
+  - Visual warning indicators
+- **Reader Availability Overlay**:
+  - Click "Assign Reader" → Shows available readers on calendar
+  - Holiday/busy periods marked
+  - Prevents double-booking
+- Drag-and-drop rescheduling
+- Month/Week/Day views
+- Quick actions from calendar clicks
+
+**✅ Calendar ↔ Workflow Integration:**
+- Assign reader → Auto-add 24hr deadline to calendar
+- Book INA visit → Auto-add to calendar + case timeline
+- Complete stage → Calendar updates automatically
+- WebSocket notifications for calendar changes
+
+---
+
+#### 🎨 **PART 7: VIEW TOGGLE SYSTEM**
+
+**Liz's Preference**: "I love the visual progress bar and the tabular as well. I guess it depends on the mood of the day and of course people's preferences"
+
+**✅ Three View Options:**
+
+**1. Compact View (Default - Quick Scan):**
+```
+INA-007 | Anderson | Rachel | ████████████░░░ 64% | ✅ Oct 5 | Review Draft | 1 day | +
+                              🔍 Internal Review
+```
+**Best for:** Quick daily check-ins, scanning multiple cases
+
+**2. Detailed View (Power Users):**
+```
+INA-007 | Lisa Anderson | Rachel Green | Stage 9/14: Internal Review (64%)
+
+✅──✅──✅──✅──✅──✅──✅──✅──🟡──⏳──⏳──⏳──⏳──⏳
+1   2   3   4   5   6   7   8   9   10  11  12  13  14
+
+✅ Opened  ✅ Contacted  ✅ Consent  ✅ Received  ✅ Scheduled  ✅ Visit
+✅ R&D  ✅ Writing  🟡 Review  ⏳ 1st Reader  ⏳ Corrections  ⏳ 2nd Reader
+⏳ Final  ⏳ Closure
+
+NEXT: Complete internal review → Assign 1st reader
+```
+**Best for:** Deep focus on workflow progression, tracking blockers
+
+**3. Kanban View (Visual Workflow Board):**
+```
+┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
+│ 📚 R&D       │ ✍️ Writing   │ 🔍 Review    │ 👤 Readers   │ ✅ Closure   │
+│ (2 cases)    │ (3 cases)    │ (1 case)     │ (4 cases)    │ (2 cases)    │
+├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
+│ [Case cards] │ [Case cards] │ [Case cards] │ [Case cards] │ [Case cards] │
+└──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
+```
+**Best for:** Visual thinkers, identifying bottlenecks, capacity planning
+
+**✅ Preference Saving:**
+- LocalStorage (instant load next time)
+- Database (cross-device persistence)
+- Per-user setting in `case_managers` table
+
+---
+
+#### 📱 **PART 8: MOBILE RESPONSIVE DESIGN**
+
+**✅ Mobile Adaptations:**
+- **Auto-force Compact View** (mobile screens)
+- **Bottom Tab Navigation**: Home | Cases | Calendar | Team | Settings
+- **Hamburger Menu** (top-left ☰) for secondary navigation
+- **Swipe Gestures**:
+  - Swipe right on case → Quick Actions menu
+  - Swipe left on case → Archive/Mark Complete
+  - Long press case → Pin to top / Priority toggle
+  - Pull down → Refresh data
+  - Swipe tabs → Switch Timeline/Documents/Readers sections
+
+**✅ Mobile-Optimized Screens:**
+1. **Action Center**: 2x2 grid of filter cards
+2. **Case List**: Full-width cards with tap-to-expand
+3. **Expanded Case View**: Full-screen with tabbed sections
+4. **R&D Workspace**: Accordion-style checklist
+5. **Report Editor**: Section-by-section editing
+6. **Calendar**: Week view with swipe navigation
+
+**✅ Offline Mode:**
+- Cache last viewed cases
+- Queue actions when offline
+- Sync when connection restored
+- Critical for CMs during INA visits (no internet)
+
+---
+
+#### 📋 **PART 9: CLAUDE AI PROTOTYPE REVIEWED**
+
+**✅ What Works (Keep):**
+- Action Center color-coded cards ✅
+- Expandable case rows ✅
+- Reader Management with availability + payment tracking ✅
+- Approval Queue with Approve/Reject buttons ✅
+- CM Management with case reassignment ✅
+- Clean, professional aesthetic ✅
+- Tab navigation structure ✅
+
+**❌ What's Missing (Add):**
+- Reader availability calendar ❌
+- INA visit scheduling system ❌
+- Consent form tracking/gates ❌
+- Medical notes access indicators ❌
+- Workflow stage visualization ❌
+- Case allocation display ❌
+- R&D tracker ❌
+- Report writing workspace ❌
+- Master calendar ❌
+
+**✅ Recommended Adaptations:**
+1. Make Action Center **always visible** (not hidden in tabs)
+2. Add **workflow progress bars** to case table
+3. Enhance expanded case view with **7 sections** (Timeline, R&D, Report, Documents, Readers, INA, Quick Actions)
+4. Integrate **Master Calendar** as primary navigation element
+5. Add **reader availability calendar modal**
+
+---
+
+#### 💡 **PART 10: KEY DESIGN DECISIONS**
+
+**1. View Toggle System:**
+- Give CMs choice based on mood/task (Compact/Detailed/Kanban)
+- Default to Compact (80% use case)
+- Save preference per user
+
+**2. Always-Visible Action Center:**
+- Never hide urgency indicators in tabs
+- CMs need at-a-glance task awareness
+
+**3. R&D as Distinct Phase:**
+- Recognize research as critical work (not just "report writing")
+- Average 5-7 days per case
+- Track time for capacity planning
+
+**4. Master Calendar:**
+- Unified view of all CM responsibilities
+- Prevent conflicts and double-bookings
+- Reader availability overlay for smart assignment
+
+**5. Mobile-First Gestures:**
+- Swipe, long-press, pull-to-refresh
+- Offline capability for field work
+- Bottom tab navigation for thumb-friendly UX
+
+**6. Workflow Gates:**
+- Auto-lock based on completion status
+- Clear messaging (🔒 Locked until X)
+- Prevent workflow violations
+
+---
+
+#### 🗂️ **PART 11: EXPANDABLE CASE DETAILS (7 SECTIONS)**
+
+When CM clicks **"+"** on case row, expand to show:
+
+**Section 1: Timeline** (Workflow Events)
+- Chronological audit trail
+- Stage completion timestamps
+- Who performed each action
+
+**Section 2: R&D Tracker** (NEW)
+- Medical conditions checklist
+- Equipment research progress
+- Case law/guidelines reviewed
+- Expert consultations scheduled
+- Time logged
+
+**Section 3: Report Writing Status** (NEW)
+- Word count tracker
+- Section completion (7 sections)
+- Last saved timestamp
+- [Open Report Editor] button
+
+**Section 4: Documents**
+- Consent form
+- Medical notes (342 pages)
+- INA forms
+- Visit media (photos/recordings)
+- Draft reports
+
+**Section 5: Reader Assignments**
+- 1st Reader: Name, status, payment
+- 2nd Reader: Name, status, payment
+- [Assign Reader] dropdown with availability check
+
+**Section 6: INA Visit Details**
+- Date, time, duration
+- Location (with travel time to next visit)
+- Checklist completion
+- Media collected
+
+**Section 7: Quick Actions**
+- [📞 Contact Client] [📧 Email Lawyer] [👤 Assign Reader]
+- [📄 View Report] [🗓️ Schedule Follow-up] [💬 Add Note]
+- [📚 R&D Workspace] [✍️ Report Editor] [✅ Mark Complete]
+
+---
+
+#### 📊 **PART 12: PRIORITY CALCULATION ALGORITHM**
+
+**✅ Auto-Priority System:**
+```javascript
+const calculatePriority = (case) => {
+  const daysInStage = calculateDays(case.stage_updated_at);
+
+  if (daysInStage > 5) return { color: '🔴', label: 'URGENT' };
+  if (daysInStage > 3) return { color: '🟡', label: 'ATTENTION' };
+  return { color: '🟢', label: 'ON TRACK' };
+};
+```
+
+**Priority Indicators:**
+- 🔴 **URGENT**: >5 days stuck in current stage
+- 🟡 **ATTENTION**: 3-5 days in current stage
+- 🟢 **ON TRACK**: <3 days in current stage
+
+---
+
+#### 📈 **FILES & DELIVERABLES CREATED**
+
+**✅ Architecture Documentation:**
+1. Enhanced case table structure (markdown sketch)
+2. 14-stage workflow breakdown with percentages
+3. R&D workspace modal design
+4. Report editor 7-section template
+5. Master calendar multi-layer system
+6. Mobile responsive designs (5 key screens)
+7. View toggle system specifications
+
+**✅ Implementation Tasks (DailyWorkingDocument.md):**
+- **Phase 2**: Case Table Structure (35 tasks)
+- **Phase 3**: R&D & Report Writing Workspace (50 tasks)
+- **Phase 4**: Master Calendar Integration (65 tasks)
+- **Phase 5**: Mobile Responsive Design (80 tasks)
+
+**Total**: 80 implementation tasks across 5 phases
+
+---
+
+#### 💬 **LIZ'S FEEDBACK DURING SESSION**:
+
+**Key Quotes:**
+- **"I'm not quite sure how to structure this differently"** → Led to hybrid dashboard discussion
+- **"I guess the workflow has a specific pattern"** → Clarified role-based permissions
+- **"It's just occurred to me... an interactive calendar on the CM's Dashboard will be needed right?"** → **BRILLIANT INSIGHT** 🎯
+- **"I love the visual progress bar and the tabular as well. I guess it depends on the mood of the day"** → View toggle system born
+- **"So the INA Report writing doesn't appear and neither does the R&D"** → Critical workflow stages identified
+- **"Yes please Claude"** (to mobile responsive sketch)
+- **"Thank you so much for brainstorming and discussing the CaseManagers-Dashboard this evening, fabulous work. I now have a clearer picture of where I'm going with this🎉"**
+
+**Architectural Clarifications:**
+- Case allocation needs to be visible to Lawyers Dashboard (who is assigned to their case)
+- Payment approvals always go through Liz
+- Reader assignment can be auto-assign (no approval) if readers mark availability
+- New CM onboarding needs HR compliance workflow (similar to readers)
+
+---
+
+#### 🚀 **NEXT SESSION PRIORITIES (October 11, 2025)**:
+
+**Morning Tasks:**
+1. **Liz**: Add complete architecture to DailyWorkingDocument.md (work with Cursor Claude)
+2. **Liz**: Share architecture with Claude AI to begin UI implementation
+3. **Begin Phase 2**: Case Table with view toggle system
+4. **Build**: 14-stage workflow tracking backend
+5. **Create**: R&D workspace modal foundation
+6. **Design**: Master Calendar database schema
+
+**Phase 2 Focus Areas:**
+- Action Center (4 filter cards)
+- Case table with Compact/Detailed/Kanban views
+- Expandable case rows (7 sections)
+- Workflow progress bars
+- Priority algorithm
+- View preference saving
+
+---
+
+#### 🎉 **SESSION IMPACT**:
+
+**Before This Session:**
+- Case Managers Dashboard = "similar to Lawyers Dashboard with modal cards"
+- Vague understanding of CM workflow
+- No clear UI direction
+
+**After This Session:**
+- **Sophisticated project management system** fully architected
+- **14-stage workflow** with visual progress tracking
+- **R&D and Report Writing** recognized as distinct, critical phases
+- **Master Calendar** integration for juggling multiple responsibilities
+- **3 view options** for different work styles
+- **Mobile responsive** design for field work
+- **Role-based permissions** clearly defined
+- **Workflow gates** preventing violations
+- **80 implementation tasks** across 5 phases
+
+**This was a TRANSFORMATIVE planning session!** 🚀
+
+The Case Managers Dashboard is now positioned to be the most sophisticated workspace in the QOLAE ecosystem, handling complex workflows while maintaining the clean, intuitive UX that Liz requires.
+
+**The blueprint is complete and ready for implementation!** ✅
 
 ---
 
