@@ -319,6 +319,15 @@ Completed: 13 (Phases 0-1 complete)
 In Progress: 0
 Remaining: 187
 
+## 📋 BUSINESS WORKFLOW OVERVIEW
+For detailed workflow steps, see: [CaseManagersWorkflow.md](./QOLAE-CaseManagers-Dashboard/CaseManagersWorkflow.md)
+
+**Quick Reference:**
+- Phase 1 (Marketing) → Admin Dashboard (Phases 0-2)
+- Phase 2 (Case Allocation) → Case Managers Dashboard (Phases 2A-2D)
+- Phase 3-5 (Operations) → Case Managers Workspace (Phases 2B-2C)
+- Phase 6 (Financial) → Payment approval buttons
+
                    ******************************
 7TH OCTOBER 2025 
 
