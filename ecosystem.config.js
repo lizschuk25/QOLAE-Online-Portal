@@ -66,8 +66,7 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 3004,
-        JWT_SECRET: '0a7fb9f41df6a7f708cce7fc6ad638abd79cd7b7a5baba68c2eab7773ed7ded3'
+        PORT: 3004
       },
       // Cache prevention settings
       watch: false,
@@ -105,9 +104,8 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        WS_PORT: 3005,
-        LAWYERS_DATABASE_URL: "postgresql://lawyers_user:LawyersDB2024!@localhost:5432/qolae_lawyers"
-      },
+        WS_PORT: 3005
+      },  
       // Cache prevention settings
       watch: false,
       ignore_watch: ['node_modules', 'logs', '*.log'],
@@ -117,16 +115,15 @@ module.exports = {
       min_uptime: '10s',
       max_restarts: 10
     },
-    {
-      name: 'qolae-cm-dashboard',
-      script: 'server.js',
-      cwd: '/var/www/casemanagers.qolae.com/CaseManagersDashboard',
+  {
+    name: 'qolae-cm-dashboard',
+    script: 'cm_server.js',
+    cwd: '/var/www/casemanagers.qolae.com/CaseManagersDashboard',
       instances: 1,
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 3006,
-        CASEMANAGERS_DATABASE_URL: "postgresql://casemanagers_user:CMqolae25@localhost:5432/qolae_casemanagers"
+        PORT: 3006
       },
       // Cache prevention settings
       watch: false,
@@ -141,16 +138,15 @@ module.exports = {
       log_date_format: 'DD-MM-YYYY HH:mm:ss Z'
     },
 
-    {
-      name: 'qolae-readers-dashboard',
-      script: 'server.js',
-      cwd: '/var/www/readers.qolae.com/ReadersDashboard',
+  {
+    name: 'qolae-readers-dashboard',
+    script: 'rd_server.js',
+    cwd: '/var/www/readers.qolae.com/ReadersDashboard',
       instances: 1,
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 3008,
-        READERS_DATABASE_URL: "postgresql://readers_user:Rqolae25@localhost:5432/qolae_readers"
+        PORT: 3008
       },
       // Cache prevention settings
       watch: false,

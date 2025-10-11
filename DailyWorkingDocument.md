@@ -1,106 +1,281 @@
 10TH OCTOBER 2025
 
-📋 QOLAE READERS COMPLIANCE - IMPLEMENTATION PHASES
-✅ PHASE 0: PLANNING & DOCUMENTATION (100% Complete)
-Workflow documentation
+📋 QOLAE READERS COMPLIANCE - IMPLEMENTATION PHASES
+✅ PHASE 0: PLANNING & DOCUMENTATION (100% Complete)
+Workflow documentation
 Database schema design
-Architecture decisions
+Architecture decisions
 
-🟡 PHASE 1: DATABASE SETUP (✅ 100% completed)
-[✅] Create setup_qolae_hrcompliance.sql
-[x] Create migration for readers table
-[ ] Run database scripts on live server
-[ ] Test database connections
+🟡 PHASE 1: DATABASE SETUP (✅ 100% completed)
+[✅] Create setup_qolae_hrcompliance.sql
+[x] Create migration for readers table
+[ ] Run database scripts on live server
+[ ] Test database connections
 
-
-⏳ PHASE 2: CASE MANAGERS DASHBOARD - READER REGISTRATION (0%)
-Tasks: 14-18
-Create/update readers-registration-card.ejs
+⏳ PHASE 2: CASE MANAGERS DASHBOARD - READER REGISTRATION (0%)
+Tasks: 14-18
+Create/update readers-registration-card.ejs
 Reader details form
-Reader type selection (First/Second)
-Medical verification for Second Readers
-PIN generation
-NDA generation checkbox
-Send invitation email button
-Backend: ReadersController.js
-Backend: generateCustomizedReadersNDA.js
-Backend: sendReaderInvitation.js email
-Routes: readersRoutes.js
+Reader type selection (First/Second)
+Medical verification for Second Readers
+PIN generation
+NDA generation checkbox
+Send invitation email button
+Backend: ReadersController.js
+Backend: generateCustomizedReadersNDA.js
+Backend: sendReaderInvitation.js email
+Routes: readersRoutes.js
 
-⏳ PHASE 3: READERS DASHBOARD - LOGIN & 2FA (0%)
-Tasks: 19-21
-Create readers-login.ejs
-PIN auto-population
-Email + password creation
+⏳ PHASE 2A: CASE MANAGERS DASHBOARD - CORE STRUCTURE (0%)
+Tasks: 19-35
+
+**Action Center (Always Visible):**
+[ ] 4 color-coded filter cards (Urgent/Today/Ready/Pending)
+[ ] Badge counts on each card
+[ ] Click-to-filter functionality
+[ ] Auto-refresh counts every 30 seconds
+
+**Case Table - View Toggle System:**
+[ ] Compact View (default - quick scan)
+    - Simple progress bar + stage name
+    - 8 columns: PIN, Client, CM, Progress, Consent, Action, Days, Expand
+[ ] Detailed View (power users)
+    - Full 14-stage workflow visualization with icons
+    - Checkmarks for completed, current highlighted, upcoming greyed
+    - Next stage indicator
+[ ] Kanban View (visual workflow)
+    - 5 swimlanes: R&D, Writing, Review, Readers, Closure
+    - Drag-and-drop between stages
+    - Case count per lane
+[ ] View preference saving (localStorage + database)
+[ ] Smooth transitions between views
+
+**14-Stage Workflow Tracking:**
+[ ] Stage 1: Case Opened (7%)
+[ ] Stage 2: Client Contacted (14%)
+[ ] Stage 3: Consent Sent (21%)
+[ ] Stage 4: Consent Received (28%)
+[ ] Stage 5: INA Visit Scheduled (35%)
+[ ] Stage 6: INA Visit Completed (42%)
+[ ] Stage 7: R&D Phase (50%)
+[ ] Stage 8: Report Writing (57%)
+[ ] Stage 9: Internal Review (64%)
+[ ] Stage 10: 1st Reader Assigned (71%)
+[ ] Stage 11: 1st Reader Corrections (78%)
+[ ] Stage 12: 2nd Reader Assigned (85%)
+[ ] Stage 13: 2nd Reader Corrections (92%)
+[ ] Stage 14: Case Closure (100%)
+
+**Expandable Case Details:**
+[ ] Timeline section with all workflow events
+[ ] R&D Tracker (medical/equipment/case law checklists)
+[ ] Report Writing Status (word count, sections complete)
+[ ] Documents library (consent, medical notes, INA forms, drafts)
+[ ] Reader Assignments (1st + 2nd with payment status)
+[ ] INA Visit Details (date, time, checklist, media)
+[ ] Quick Actions (8 buttons: Contact, Email, Assign, View, Schedule, Upload, Note, Complete)
+
+**Backend Logic:**
+[ ] Auto-calculate workflow stage percentage
+[ ] Auto-calculate days in current stage
+[ ] Priority algorithm (🔴 >5 days stuck, 🟡 3-5 days, 🟢 on track)
+[ ] Workflow gate enforcement (7 gates with lock messages)
+[ ] Real-time updates via WebSocket
+
+⏳ PHASE 2B: CASE MANAGERS DASHBOARD - R&D & REPORT WRITING WORKSPACE (0%)
+Tasks: 36-50
+
+**R&D Workspace Modal:**
+[ ] Medical conditions research checklist
+    - Add/remove conditions dynamically
+    - Notes per condition (rich text)
+    - File attachments per condition
+[ ] Equipment research tracker
+    - Wheelchair/hoist/bed/bathroom categories
+    - Supplier comparison
+    - Cost tracking
+[ ] Case law & guidelines library
+    - NICE guidelines integration
+    - Case precedent search
+    - Local authority standards
+[ ] Expert consultation scheduler
+    - OT/wheelchair specialist/medical expert
+    - Calendar integration
+    - Notes from consultations
+[ ] R&D notes (main rich text editor)
+[ ] Time logging (track R&D hours)
+[ ] "Mark R&D Complete" validation (ensures all checklist items addressed)
+
+**Report Editor:**
+[ ] 7-section template structure
+    - Executive Summary
+    - Medical Background
+    - Home Environment Assessment
+    - Equipment Needs
+    - Care Package Design
+    - Recommendations
+    - Appendices
+[ ] Rich text editor with formatting toolbar
+[ ] Auto-save every 30 seconds
+[ ] "Insert from R&D" dropdown (pull research into report)
+[ ] Side-by-side medical notes panel (toggle on/off)
+[ ] INA visit media viewer (photos/recordings)
+[ ] Word count tracker (real-time)
+[ ] Section completion indicators
+[ ] Version history (rollback capability)
+[ ] Preview report as PDF
+[ ] Request peer review workflow
+[ ] "Mark Ready for Review" validation
+
+⏳ PHASE 2C: CASE MANAGERS DASHBOARD - MASTER CALENDAR INTEGRATION (0%)
+Tasks: 51-65
+
+**Calendar Views:**
+[ ] Month view (overview)
+[ ] Week view (detailed daily planning)
+[ ] Day view (hour-by-hour schedule)
+
+**Multi-Layer Event System:**
+[ ] INA Visits (color: blue 🏥)
+[ ] R&D Deadlines (color: purple 📚)
+[ ] Report Writing Deadlines (color: green ✍️)
+[ ] Reader Deadlines (color: orange 📋, 24hr countdown)
+[ ] Client/Lawyer Calls (color: teal 📞)
+[ ] Team Meetings (color: grey 🏢)
+[ ] CM Availability Blocks (color: yellow ⏰)
+
+**Calendar Features:**
+[ ] Toggle layers on/off (show/hide event types)
+[ ] Conflict detection algorithm
+    - Overlapping INA visits
+    - Travel time calculation between locations
+    - Visual warning indicators
+[ ] Reader availability overlay
+    - Click "Assign Reader" → Shows available readers on calendar
+    - Holiday/busy periods marked
+[ ] Drag-and-drop rescheduling
+[ ] Quick actions from calendar clicks
+    - Click INA visit → View case / Reschedule / Cancel
+    - Click reader deadline → View corrections / Send reminder
+[ ] Calendar sync with case workflow
+    - Assign reader → Auto-add 24hr deadline to calendar
+    - Book INA visit → Auto-add to calendar + case timeline
+[ ] WebSocket notifications for calendar changes
+
+**Backend Calendar System:**
+[ ] Unified calendar_events table (all event types)
+[ ] Conflict detection queries
+[ ] Reader availability checking
+[ ] Auto-deadline calculation (24hr reader deadlines)
+[ ] Calendar event CRUD operations
+[ ] iCal export (sync with external calendars)
+
+⏳ PHASE 2D: CASE MANAGERS DASHBOARD - MOBILE RESPONSIVE DESIGN (0%)
+Tasks: 66-80
+
+**Mobile UI Adaptations:**
+[ ] Auto-force Compact View on mobile
+[ ] Swipe gestures:
+    - Swipe right → Quick Actions
+    - Swipe left → Archive/Complete
+    - Long press → Pin/Priority toggle
+    - Pull down → Refresh
+[ ] Bottom tab navigation (Home/Cases/Calendar/Team/Settings)
+[ ] Hamburger menu (top-left ☰)
+[ ] Full-screen case expansion
+[ ] Tabbed sections (swipe to switch: Timeline/Documents/Readers/INA)
+[ ] Accordion-style R&D workspace
+[ ] Simplified report editor (section-by-section)
+[ ] Week-view calendar (optimized for small screens)
+[ ] Offline mode with caching
+[ ] Push notifications for urgent actions
+
+**Responsive Breakpoints:**
+[ ] Mobile: <768px (compact only, gestures, bottom nav)
+[ ] Tablet: 768-1024px (compact + detailed, horizontal scroll for kanban)
+[ ] Desktop: >1024px (all 3 views, full features)
+
+**Testing:**
+[ ] iOS Safari compatibility
+[ ] Android Chrome compatibility
+[ ] Tablet landscape/portrait
+[ ] Touch gesture testing
+[ ] Offline functionality testing
+
+⏳ PHASE 3: READERS DASHBOARD - LOGIN & 2FA (0%)
+Tasks: 81-86
+Create readers-login.ejs
+PIN auto-population
+Email + password creation
 2FA code verification
-Backend: AuthController.js
-Routes: authRoutes.js
+Backend: AuthController.js
+Routes: authRoutes.js
 
-⏳ PHASE 4: HR COMPLIANCE GATE (READERS SIDE) (0%)
-Tasks: 22-26
-Create readers-compliance.ejs
-CV upload (PDF, max 5MB)
-Professional reference form
-Character reference form
-Submit button
-Backend: ComplianceController.js
+⏳ PHASE 4: HR COMPLIANCE GATE (READERS SIDE) (0%)
+Tasks: 87-95
+Create readers-compliance.ejs
+CV upload (PDF, max 5MB)
+Professional reference form
+Character reference form
+Submit button
+Backend: ComplianceController.js
 File storage structure
-Routes: complianceRoutes.js
-Middleware: checkCompliance.js (gate logic)
+Routes: complianceRoutes.js
+Middleware: checkCompliance.js (gate logic)
 
-⏳ PHASE 5: CASE MANAGERS DASHBOARD - COMPLIANCE REVIEW (0%)
-Tasks: 27-32
-Update casemanagers-dashboard.ejs
-Pending compliance notifications
-Review modal with CV download
-Reference status tracking
-Approval section
-Create reference-form.ejs (Liz fills during phone call)
-Create referee-signature.ejs (public-facing for referees)
-Backend: HRComplianceController.js
-Backend: complianceEmails.js
-Routes: hrComplianceRoutes.js
+⏳ PHASE 5: CASE MANAGERS DASHBOARD - COMPLIANCE REVIEW (0%)
+Tasks: 96-106
+Update casemanagers-dashboard.ejs
+Pending compliance notifications
+Review modal with CV download
+Reference status tracking
+Approval section
+Create reference-form.ejs (Liz fills during phone call)
+Create referee-signature.ejs (public-facing for referees)
+Backend: HRComplianceController.js
+Backend: complianceEmails.js
+Routes: hrComplianceRoutes.js
 
-⏳ PHASE 6: READERS DASHBOARD - MAIN WORKSPACE (0%)
-Tasks: 33-36
-Create readers-dashboard.ejs
-Welcome panel
+⏳ PHASE 6: READERS DASHBOARD - MAIN WORKSPACE (0%)
+Tasks: 107-115
+Create readers-dashboard.ejs
+Welcome panel
 Workflow progress
 NDA workflow card
 Current assignments card
-Payment details card
-Management hub card
-NDA signature workflow (similar to Lawyers TOB)
-Backend: NDAController.js
-Routes: ndaRoutes.js
+Payment details card
+Management hub card
+NDA signature workflow (similar to Lawyers TOB)
+Backend: NDAController.js
+Routes: ndaRoutes.js
 
-⏳ PHASE 7: REPORT ASSIGNMENT WORKFLOW (Future)
-Tasks: 37-39
+⏳ PHASE 7: REPORT ASSIGNMENT WORKFLOW (Future)
+Tasks: 116-120
 CM assigns redacted INA reports to readers
 Readers edit/correct reports
-CM reviews corrections
-Payment approval
+CM reviews corrections
+Payment approval
 
-⏳ PHASE 8: FRONTEND STYLING & UX (0%)
-Tasks: 40-41
-Bootstrap Readers Dashboard theme
+⏳ PHASE 8: FRONTEND STYLING & UX (0%)
+Tasks: 121-128
+Bootstrap Readers Dashboard theme
 Bootstrap Case Managers compliance section
 Responsive design
 Accessibility
 Loading states & error handling
 
-⏳ PHASE 9: SECURITY & PERMISSIONS (0%)
-Tasks: 42-45
+⏳ PHASE 9: SECURITY & PERMISSIONS (0%)
+Tasks: 129-136
 JWT authentication
 Role-based access control
 Secure file uploads
-GDPR compliance & audit logging
+GDPR compliance & audit logging
 
-⏳ PHASE 10: EMAIL & NOTIFICATIONS (0%)
-Tasks: 46-48
-Email service setup
-8 email templates:
-Reader invitation (PIN + NDA)
+⏳ PHASE 10: EMAIL & NOTIFICATIONS (0%)
+Tasks: 137-152
+Email service setup
+8 email templates:
+Reader invitation (PIN + NDA)
 2FA codes
 Compliance confirmations
 Reference requests
@@ -109,40 +284,40 @@ Report assignments
 Deadline reminders
 Payment confirmations
 
-⏳ PHASE 11: TESTING (0%)
-Tasks: 49-52
+⏳ PHASE 11: TESTING (0%)
+Tasks: 153-164
 Unit tests
 Integration tests
-End-to-end workflow tests
-Manual testing as all user types
+End-to-end workflow tests
+Manual testing as all user types
 
-⏳ PHASE 12: DEPLOYMENT (0%)
-Tasks: 53-58
-Production database setup
+⏳ PHASE 12: DEPLOYMENT (0%)
+Tasks: 165-176
+Production database setup
 Environment variables
-Nginx configuration
+Nginx configuration
 SSL certificates
-Live deployment testing
+Live deployment testing
 
-⏳ PHASE 13: DOCUMENTATION & TRAINING (0%)
-Tasks: 59-62
+⏳ PHASE 13: DOCUMENTATION & TRAINING (0%)
+Tasks: 177-188
 User guides
 API documentation
 Troubleshooting guides
 Training materials
 
-⏳ PHASE 14: MAINTENANCE & ITERATION (Future)
-Tasks: 63-67
-Performance monitoring
-User feedback
+⏳ PHASE 14: MAINTENANCE & ITERATION (Future)
+Tasks: 189-200
+Performance monitoring
+User feedback
 Analytics
 Iterative improvements
 
-📊 CURRENT STATUS
-Total Tasks: 67
-Completed: 5
-In Progress: 4
-Remaining: 58
+📊 CURRENT STATUS
+Total Tasks: 200
+Completed: 13 (Phases 0-1 complete)
+In Progress: 0
+Remaining: 187
 
                    ******************************
 7TH OCTOBER 2025 
@@ -155,7 +330,7 @@ Remaining: 58
   Case Managers Dashboard - Port 3006 ✅ RUNNING
   /var/www/casemanagers.qolae.com/
   ├── CaseManagersDashboard/
-  │   ├── server.js ✅
+  │   ├── cm_server.js ✅
   │   ├── package.json ✅
   │   ├── node_modules/ ✅
   │   ├── routes/caseManagerRoutes.js ✅
@@ -182,8 +357,8 @@ Remaining: 58
 
   Readers Dashboard - Complete Application
   /QOLAE-Readers-Dashboard/ReadersDashboard/
-  ├── server.js ❌ LOCAL ONLY
-  ├── package.json ❌ LOCAL ONLY
+  ├── rd_server.js ✅ ON LIVE SERVER
+  ├── package.json ✅ ON LIVE SERVER
   ├── routes/
   │   ├── authRoutes.js ❌ LOCAL ONLY
   │   └── readerRoutes.js ❌ LOCAL ONLY
