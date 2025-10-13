@@ -54,6 +54,7 @@ LawyersDashboard and PostgreSQL - qolae_admin, qolae_lawyers, qolae_readers, qol
 3009 - readers Websocket 
 3010 - Clients-Dashboard (clients.qolae.com) qolae-clients 
 3011 - clients websocket
+3012 - hrCompliance-Dashboard (hrcompliance.qolae.com)qolae-hrcompliance
 
 # Standard Web Ports
 80   - HTTP (redirected to HTTPS)

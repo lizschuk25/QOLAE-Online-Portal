@@ -1,4 +1,130 @@
-10TH OCTOBER 2025
+📅 12th-13TH OCTOBER 2025 - PRE-INA CONTACT INTERFACE IMPLEMENTATION
+
+## 🎯 SESSION FOCUS: Pre-INA Contact Form (Stage 2 Workflow)
+
+**Status**: Pre-INA Contact EJS component created - Ready for backend integration
+
+**What Was Accomplished**:
+- ✅ Reviewed Claude AI's three interactive design PDFs (Pre-INA-Dashboard.pdf, CaseManagersDashboard-InteractiveDesign.pdf, INA-InteractiveArtifact.pdf)
+- ✅ Extracted key UI/UX patterns from React designs
+- ✅ Created working EJS component: `pre-ina-contact.ejs` (460 lines)
+- ✅ Simplified design based on Liz's feedback (removed client's story, reframed special requirements as safety assessment)
+
+**Pre-INA Contact Form Components Built**:
+1. ✅ **Call Details Section** - Date (auto-fills today), Time, Duration
+2. ✅ **Call Outcome Buttons** - 5 outcomes: Reached-Booking, Reached-Followup, Voicemail, No Answer, Wrong Number
+3. ✅ **Call Notes Textarea** - Brief conversation notes (500 char limit)
+4. ✅ **INA Visit Booking** - Conditional section (shows only if "Reached - Booking Made" selected)
+5. ✅ **Safety/Risk Assessment** - Checkboxes for: Aggressive animals, Mental health needs, Access issues, Other concerns
+6. ✅ **"What Happens Next"** - Dynamic info box based on outcome
+7. ✅ **Form Actions** - Save Draft + Complete Pre-INA Contact buttons with validation
+
+**Key Design Decisions**:
+- **Simplified approach**: Client's story will be captured in INA Form Section 3 (not during Pre-INA call)
+- **Safety-focused**: "Special requirements" reframed as safety/risk assessment per Liz's feedback
+- **Conditional logic**: INA booking fields only show when booking confirmed
+- **EJS architecture**: Uses `<%= casePin %>` for unique IDs, fully integrated with my-cases-tab.ejs expandable details
+
+**File Created**:
+```
+/QOLAE-CaseManagers-Dashboard/
+└── CaseManagersDashboard/
+    └── views/
+        └── partials/
+            └── pre-ina-contact.ejs ✅ (Ready for integration)
+```
+
+**Still Required (Next Session)**:
+1. ⏳ **Backend**: Create `pre_ina_contacts` database table
+2. ⏳ **Backend**: Build POST `/api/case-managers/pre-ina-contact` endpoint
+3. ⏳ **Backend**: Add workflow stage update logic (Stage 2 → Stage 5 if booking made)
+4. ⏳ **Frontend**: Integrate pre-ina-contact.ejs into my-cases-tab.ejs expandable details
+5. ⏳ **Testing**: Test complete Pre-INA workflow end-to-end
+
+**Workflow Alignment Confirmed**:
+- ✅ Stage 2 (14% completion): Pre-INA Contact → CM introduces self, answers consent questions, books INA visit
+- ✅ Entry gate: Case at Stage 2 (consent sent by lawyer)
+- ✅ Exit gate: INA visit booked → progresses to Stage 5 (35% completion)
+
+**Next Priority**: Create backend database table and API endpoint for Pre-INA Contact, then integrate into dashboard
+
+---
+
+📅 12TH OCTOBER 2025 - CASE MANAGERS DASHBOARD WORKFLOW ALIGNMENT
+
+## 🎯 CRITICAL WORKFLOW CORRECTION
+
+**Status**: Phase 2B built with incorrect architecture - REQUIRES REBUILD
+
+**What Happened**:
+During architectural review, discovered that Phase 2B implementation does NOT align with actual CM workflow documented in CaseManagersWorkflow.md and INA documents. The modals built (research-workspace-modal.ejs and report-editor-modal.ejs) were based on assumptions rather than the actual INA workflow sequence.
+
+**Root Cause**:
+- Built "Research Workspace Modal" as standalone phase (incorrect)
+- Built "Report Editor Modal" with generic 7 sections instead of INAReportTemplate.pdf structure (incorrect)
+- Missed the Pre-INA Contact phase entirely
+- Didn't understand INA Checklist → INA Form → INA Report auto-population chain
+- R&D phase happens AFTER INA visit completion, not as standalone workspace
+
+**Correct Workflow Sequence** (from CaseManagersWorkflow.md):
+```
+Stage 2: Pre-INA Contact → CM introduces self, answers consent questions, books INA visit
+Stage 5-6: INA Visit → Day before: INA Checklist | During visit: INA Form (15 sections) | After: Upload
+Stage 6: Auto-population → INA Form data flows into INA Report Template
+Stage 7: R&D Phase → Phone calls to GP/nurses/specialists, research, evidence gathering
+Stage 8: Report Writing → Complete INA Report using INAReportTemplate.pdf (10 sections, 5,000 words)
+Stage 9: Internal Review → CM reviews before sending to readers
+```
+
+**What Was Built (Incorrect)**:
+- ❌ research-workspace-modal.ejs (920 lines) - standalone medical conditions checklist, equipment tracker, case law library
+- ❌ report-editor-modal.ejs (930 lines) - generic 7-section report structure
+- ❌ No Pre-INA Contact interface
+- ❌ No INA Checklist form
+- ❌ No INA Form (15-section interactive clinical assessment)
+- ❌ No INAReportTemplate.pdf-based report editor
+
+**What Actually Needs to Be Built**:
+1. **Pre-INA Contact Interface** (Stage 2) - Call tracking, consent Q&A notes, client story capture, provisional booking
+2. **INA Checklist Form** (Stage 6 - Day Before) - Tools verification, documents checklist
+3. **INA Form Interactive** (Stage 6 - During Visit) - 15 sections, mobile-friendly, photo/video upload, Body Map, ADLs table (20 categories), progressive save
+4. **R&D Notes Workspace** (Stage 7 - AFTER INA) - Phone call tracker, research notes, NICE guidelines, case law, time logging (6-min increments @ £125/hour)
+5. **INA Report Editor** (Stage 8) - Based on INAReportTemplate.pdf (10 sections, NOT generic 7), auto-populated from INA Form, insert R&D findings, ~5,000 words
+
+**Auto-Population Chain**:
+```
+Lawyers Dashboard (Consent + Referral)
+    ↓ AUTO-POPULATE
+CM Dashboard (INA Checklist + INA Form + INA Report Template shells)
+    ↓ STAGE 2: PRE-INA CONTACT
+Pre-INA Contact notes → Provisional booking
+    ↓ STAGE 5-6: INA VISIT
+INA Checklist → INA Form (15 sections) → Photos/videos
+    ↓ AUTO-POPULATE
+INA Report Template (skeleton with INA Form data)
+    ↓ STAGE 7: R&D PHASE
+R&D Notes (research, phone calls, evidence)
+    ↓ STAGE 8: REPORT WRITING
+INA Report Editor → Insert R&D findings → Complete 5,000-word report
+```
+
+**Next Actions**:
+1. ✅ Created presentation (case-managers-workspace-presentation.html) - shared with colleagues for feedback
+2. ⏳ HOLD deployment - do NOT deploy incorrect modals to Live Server
+3. ⏳ Move incorrect modals to backup folder locally
+4. ⏳ Read INAReportTemplate.pdf thoroughly to understand 10-section structure
+5. ⏳ Build 5 workspaces systematically following actual workflow
+6. ⏳ Test with real workflow sequence before deployment
+
+**Phase 2B Status**:
+- Previous: ✅ 75% (INCORRECT - modals don't match workflow)
+- Current: 🔄 20% (Core structure done, but workspaces need complete rebuild)
+
+**Focus**: Get Case Managers Dashboard in a state of readiness with correct workflow alignment before moving to parallel workflows.
+
+---
+
+📅 10TH & 11TH OCTOBER 2025
 
 📋 QOLAE READERS COMPLIANCE - IMPLEMENTATION PHASES
 ✅ PHASE 0: PLANNING & DOCUMENTATION (100% Complete)
@@ -12,7 +138,7 @@ Architecture decisions
 [ ] Run database scripts on live server
 [ ] Test database connections
 
-⏳ PHASE 2: CASE MANAGERS DASHBOARD - READER REGISTRATION (0%)
+⏳ PHASE 2: CASE MANAGERS DASHBOARD - READER REGISTRATION (✅100%)
 Tasks: 14-18
 Create/update readers-registration-card.ejs
 Reader details form
@@ -26,106 +152,172 @@ Backend: generateCustomizedReadersNDA.js
 Backend: sendReaderInvitation.js email
 Routes: readersRoutes.js
 
-⏳ PHASE 2A: CASE MANAGERS DASHBOARD - CORE STRUCTURE (0%)
+✅ PHASE 2A: CASE MANAGERS DASHBOARD - CORE STRUCTURE (100%) 🎉
 Tasks: 19-35
+**Completed:** October 12, 2025
 
 **Action Center (Always Visible):**
-[ ] 4 color-coded filter cards (Urgent/Today/Ready/Pending)
-[ ] Badge counts on each card
-[ ] Click-to-filter functionality
-[ ] Auto-refresh counts every 30 seconds
+[x] 4 color-coded filter cards (Urgent/Today/Ready/Pending)
+[x] Badge counts on each card
+[x] Click-to-filter functionality
+[x] Auto-refresh counts every 30 seconds
+[x] ✨ EXTRA: Real-time WebSocket badge updates
 
 **Case Table - View Toggle System:**
-[ ] Compact View (default - quick scan)
+[x] Compact View (default - quick scan)
     - Simple progress bar + stage name
     - 8 columns: PIN, Client, CM, Progress, Consent, Action, Days, Expand
-[ ] Detailed View (power users)
+[x] Detailed View (power users)
     - Full 14-stage workflow visualization with icons
     - Checkmarks for completed, current highlighted, upcoming greyed
     - Next stage indicator
-[ ] Kanban View (visual workflow)
+[x] Kanban View (visual workflow)
     - 5 swimlanes: R&D, Writing, Review, Readers, Closure
     - Drag-and-drop between stages
     - Case count per lane
-[ ] View preference saving (localStorage + database)
-[ ] Smooth transitions between views
+[x] View preference saving (localStorage + database)
+[x] Smooth transitions between views
 
 **14-Stage Workflow Tracking:**
-[ ] Stage 1: Case Opened (7%)
-[ ] Stage 2: Client Contacted (14%)
-[ ] Stage 3: Consent Sent (21%)
-[ ] Stage 4: Consent Received (28%)
-[ ] Stage 5: INA Visit Scheduled (35%)
-[ ] Stage 6: INA Visit Completed (42%)
-[ ] Stage 7: R&D Phase (50%)
-[ ] Stage 8: Report Writing (57%)
-[ ] Stage 9: Internal Review (64%)
-[ ] Stage 10: 1st Reader Assigned (71%)
-[ ] Stage 11: 1st Reader Corrections (78%)
-[ ] Stage 12: 2nd Reader Assigned (85%)
-[ ] Stage 13: 2nd Reader Corrections (92%)
-[ ] Stage 14: Case Closure (100%)
+[x] Stage 1: Case Opened (7%)
+[x] Stage 2: Client Contacted (14%)
+[x] Stage 3: Consent Sent (21%)
+[x] Stage 4: Consent Received (28%)
+[x] Stage 5: INA Visit Scheduled (35%)
+[x] Stage 6: INA Visit Completed (42%)
+[x] Stage 7: R&D Phase (50%)
+[x] Stage 8: Report Writing (57%)
+[x] Stage 9: Internal Review (64%)
+[x] Stage 10: 1st Reader Assigned (71%)
+[x] Stage 11: 1st Reader Corrections (78%)
+[x] Stage 12: 2nd Reader Assigned (85%)
+[x] Stage 13: 2nd Reader Corrections (92%)
+[x] Stage 14: Case Closure (100%)
 
-**Expandable Case Details:**
-[ ] Timeline section with all workflow events
-[ ] R&D Tracker (medical/equipment/case law checklists)
-[ ] Report Writing Status (word count, sections complete)
-[ ] Documents library (consent, medical notes, INA forms, drafts)
-[ ] Reader Assignments (1st + 2nd with payment status)
-[ ] INA Visit Details (date, time, checklist, media)
-[ ] Quick Actions (8 buttons: Contact, Email, Assign, View, Schedule, Upload, Note, Complete)
+**Expandable Case Details (7 Sections):**
+[x] Timeline section with all workflow events
+[x] R&D Tracker (medical/equipment/case law checklists)
+[x] Report Writing Status (word count, sections complete)
+[x] Documents library (consent, medical notes, INA forms, drafts)
+[x] Reader Assignments (1st + 2nd with payment status)
+[x] INA Visit Details (date, time, checklist, media)
+[x] Quick Actions (8 buttons: Contact, Email, Assign, View, Schedule, Upload, Note, Complete)
+[x] ✨ EXTRA: Tab navigation system for 7 sections
+[x] ✨ EXTRA: Workflow gate lock indicators with messages
 
 **Backend Logic:**
-[ ] Auto-calculate workflow stage percentage
-[ ] Auto-calculate days in current stage
-[ ] Priority algorithm (🔴 >5 days stuck, 🟡 3-5 days, 🟢 on track)
-[ ] Workflow gate enforcement (7 gates with lock messages)
-[ ] Real-time updates via WebSocket
+[x] Auto-calculate workflow stage percentage
+[x] Auto-calculate days in current stage
+[x] Priority algorithm (🔴 >5 days stuck, 🟡 3-5 days, 🟢 on track)
+[x] Workflow gate enforcement (7 gates with lock messages)
+[x] Real-time updates via WebSocket
+[x] ✨ EXTRA: Badge counts API endpoint (`/api/case-managers/badge-counts`)
+[x] ✨ EXTRA: Cases with priority API endpoint (`/api/case-managers/cases-with-priority`)
+[x] ✨ EXTRA: Helper function `getStageInfo()` for stage mapping
 
-⏳ PHASE 2B: CASE MANAGERS DASHBOARD - R&D & REPORT WRITING WORKSPACE (0%)
+**WebSocket Infrastructure (EXTRA):**
+[x] ✨ Created socketCaseManagers.js in SSOT (547 lines)
+[x] ✨ Dual database connections (qolae_casemanagers + qolae_readers)
+[x] ✨ JWT authentication with session validation
+[x] ✨ 14 event handlers implemented
+[x] ✨ Badge count calculation functions
+[x] ✨ Socket.IO server on port 3007
+[x] ✨ Path: /ws-case-managers/socket.io/
+[x] ✨ CORS configuration for all dashboards
+[x] ✨ PM2 ecosystem.config.js integration
+[x] ✨ Environment variable injection for database URLs
+
+**Frontend WebSocket Integration (EXTRA):**
+[x] ✨ Socket.IO client CDN integration
+[x] ✨ WebSocket connection manager with auto-reconnect
+[x] ✨ 8 real-time event listeners (parent dashboard)
+[x] ✨ 4 custom event listeners (child tab)
+[x] ✨ Automatic badge count updates
+[x] ✨ Notification system for case events
+[x] ✨ Fallback to polling if WebSocket fails
+
+**Deployment:**
+[x] ✨ Deployed to Live Server (91.99.184.77)
+[x] ✨ PM2 services running (qolae-cm-dashboard + qolae-wscasemanagers)
+[x] ✨ Database connections verified
+[x] ✨ All endpoints operational and tested
+
+✅ PHASE 2B: CASE MANAGERS DASHBOARD - R&D & REPORT WRITING WORKSPACE (75%) 🎉
 Tasks: 36-50
+**Completed:** October 12, 2025
 
-**R&D Workspace Modal:**
-[ ] Medical conditions research checklist
-    - Add/remove conditions dynamically
-    - Notes per condition (rich text)
-    - File attachments per condition
-[ ] Equipment research tracker
-    - Wheelchair/hoist/bed/bathroom categories
-    - Supplier comparison
-    - Cost tracking
-[ ] Case law & guidelines library
-    - NICE guidelines integration
-    - Case precedent search
+**R&D Workspace Modal (research-workspace-modal.ejs):**
+[x] Medical conditions research checklist ✅
+    - Add/remove conditions dynamically (lines 143-253)
+    - Notes per condition (rich text contenteditable)
+    - Research status tracking (Not Started/In Progress/Complete)
+[x] Equipment research tracker ✅
+    - Wheelchair/hoist/bed/bathroom categories (Section 2)
+    - Supplier comparison fields
+    - Cost tracking fields
+[x] Case law & guidelines library ✅
+    - NICE guidelines integration (Section 3)
+    - Case precedent search capability
     - Local authority standards
-[ ] Expert consultation scheduler
-    - OT/wheelchair specialist/medical expert
-    - Calendar integration
+[x] Expert consultation scheduler ✅
+    - OT/wheelchair specialist/medical expert (Section 4)
+    - Date/time scheduling
     - Notes from consultations
-[ ] R&D notes (main rich text editor)
-[ ] Time logging (track R&D hours)
-[ ] "Mark R&D Complete" validation (ensures all checklist items addressed)
+[x] R&D notes (main rich text editor) ✅
+    - Section 5: Research Notes with formatting toolbar
+    - Bold, Italic, Underline, Lists, Headings
+[x] Time logging (track R&D hours) ✅
+    - Session time tracker (auto-calculates)
+    - Manual time logging with date/hours
+[x] "Mark R&D Complete" validation ✅
+    - 4-item completion checklist (must check all before enabling button)
+    - WebSocket stage change integration (moves to Stage 8)
 
-**Report Editor:**
-[ ] 7-section template structure
-    - Executive Summary
-    - Medical Background
-    - Home Environment Assessment
-    - Equipment Needs
-    - Care Package Design
-    - Recommendations
-    - Appendices
-[ ] Rich text editor with formatting toolbar
-[ ] Auto-save every 30 seconds
-[ ] "Insert from R&D" dropdown (pull research into report)
-[ ] Side-by-side medical notes panel (toggle on/off)
-[ ] INA visit media viewer (photos/recordings)
-[ ] Word count tracker (real-time)
-[ ] Section completion indicators
-[ ] Version history (rollback capability)
-[ ] Preview report as PDF
-[ ] Request peer review workflow
-[ ] "Mark Ready for Review" validation
+**Report Editor (report-editor-modal.ejs):**
+[x] 7-section template structure ✅
+    - Executive Summary (editor-1)
+    - Medical Background (editor-2)
+    - Home Environment Assessment (editor-3)
+    - Equipment Needs (editor-4)
+    - Care Package Design (editor-5)
+    - Recommendations (editor-6)
+    - Appendices (editor-7)
+[x] Rich text editor with formatting toolbar ✅
+    - Bold, Italic, Underline, Lists, Headings (lines 187-225)
+    - ContentEditable divs for each section
+[x] Auto-save every 30 seconds ✅
+    - Debounced auto-save with timeout pattern
+    - Visual status indicator ("Saving..." → "Saved")
+[x] "Insert from Research" dropdown ✅
+    - Mini-modal opens with research items (lines 461-525)
+    - Pull medical conditions, equipment, guidelines into report
+[x] Side-by-side medical notes panel (toggle on/off) ✅
+    - Toggle button to show/hide medical notes (lines 245-352)
+    - Search functionality within medical notes
+[x] Word count tracker (real-time) ✅
+    - Shows "X / ~5,000 words" (lines 362-378)
+    - Updates dynamically as user types
+[x] Section completion indicators ✅
+    - ○ pending (empty), ✓ complete (>=50 words)
+    - Auto-updates based on word count threshold
+[x] "Mark Ready for Review" validation ✅
+    - Button enables only when all 7 sections complete
+    - WebSocket stage change integration (moves to Stage 9)
+
+**⏳ PENDING (Future Enhancements):**
+[ ] INA visit media viewer (photos/recordings) - Phase 2C
+[ ] Version history (rollback capability) - Phase 2C
+[ ] Preview report as PDF - Phase 2C
+[ ] Request peer review workflow - Phase 2C
+[ ] File attachments per medical condition - Phase 2C
+[ ] Calendar integration for consultations - Phase 2C (Master Calendar)
+
+**✅ INTEGRATION COMPLETED:**
+[x] Modals included in case-managers-dashboard.ejs (line 432-433)
+[x] Button integration in my-cases-tab.ejs (lines 1372-1374, 1383-1385, 1447-1448)
+[x] Modal opening functions: openResearchWorkspace(casePin), openReportEditor(casePin)
+[x] Workflow gates: R&D unlocks at Stage 7, Report Editor unlocks at Stage 8
+[x] WebSocket integration for stage progression
 
 ⏳ PHASE 2C: CASE MANAGERS DASHBOARD - MASTER CALENDAR INTEGRATION (0%)
 Tasks: 51-65

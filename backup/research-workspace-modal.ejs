@@ -1,0 +1,1167 @@
+<!-- ========================================== -->
+<!-- RESEARCH WORKSPACE MODAL -->
+<!-- Research & Development tracking for INA reports -->
+<!-- Used by: Case Managers Dashboard -->
+<!-- Author: Liz & Claude -->
+<!-- Date: October 12, 2025 -->
+<!-- Note: Called "Research" to avoid confusion with "Readers" (RDR) -->
+<!-- ========================================== -->
+
+<!-- LOCATION BLOCK A: MODAL STRUCTURE -->
+<div id="researchWorkspaceModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container research-workspace-container">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div>
+                <h2 class="modal-title">📚 Research Workspace</h2>
+                <p class="modal-subtitle" id="researchCasePin">Case: <span id="researchCasePinValue"></span></p>
+            </div>
+            <button class="modal-close-btn" onclick="closeResearchWorkspace()">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body research-workspace-body">
+            <!-- Left Panel: Research Components -->
+            <div class="research-left-panel">
+                <!-- Section 1: Medical Conditions Research -->
+                <div class="research-section">
+                    <div class="research-section-header">
+                        <h3 class="research-section-title">🏥 Medical Conditions Research</h3>
+                        <button class="research-add-btn" onclick="addMedicalCondition()">+ Add Condition</button>
+                    </div>
+                    <div class="research-section-body">
+                        <div id="medicalConditionsList" class="conditions-list">
+                            <!-- Conditions will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Equipment Research Tracker -->
+                <div class="research-section">
+                    <div class="research-section-header">
+                        <h3 class="research-section-title">🛠️ Equipment Research</h3>
+                        <button class="research-add-btn" onclick="addEquipmentItem()">+ Add Equipment</button>
+                    </div>
+                    <div class="research-section-body">
+                        <div class="equipment-categories">
+                            <div class="equipment-category">
+                                <h4 class="category-title">Wheelchair</h4>
+                                <div id="wheelchairList" class="equipment-items-list"></div>
+                            </div>
+                            <div class="equipment-category">
+                                <h4 class="category-title">Hoist</h4>
+                                <div id="hoistList" class="equipment-items-list"></div>
+                            </div>
+                            <div class="equipment-category">
+                                <h4 class="category-title">Bed</h4>
+                                <div id="bedList" class="equipment-items-list"></div>
+                            </div>
+                            <div class="equipment-category">
+                                <h4 class="category-title">Bathroom Aids</h4>
+                                <div id="bathroomList" class="equipment-items-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Case Law & Guidelines -->
+                <div class="research-section">
+                    <div class="research-section-header">
+                        <h3 class="research-section-title">⚖️ Case Law & Guidelines</h3>
+                        <button class="research-add-btn" onclick="addGuideline()">+ Add Reference</button>
+                    </div>
+                    <div class="research-section-body">
+                        <div id="guidelinesList" class="guidelines-list">
+                            <!-- Guidelines will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Expert Consultations -->
+                <div class="research-section">
+                    <div class="research-section-header">
+                        <h3 class="research-section-title">👨‍⚕️ Expert Consultations</h3>
+                        <button class="research-add-btn" onclick="scheduleConsultation()">+ Schedule</button>
+                    </div>
+                    <div class="research-section-body">
+                        <div id="consultationsList" class="consultations-list">
+                            <!-- Consultations will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Notes & Time Tracking -->
+            <div class="research-right-panel">
+                <!-- Research Notes Editor -->
+                <div class="research-notes-section">
+                    <div class="notes-header">
+                        <h3 class="notes-title">📝 Research Notes</h3>
+                        <div class="notes-meta">
+                            <span id="researchAutoSaveStatus" class="auto-save-status">Saved</span>
+                            <span id="researchWordCount" class="word-count">0 words</span>
+                        </div>
+                    </div>
+                    <div class="notes-toolbar">
+                        <button class="toolbar-btn" onclick="formatText('bold')" title="Bold"><strong>B</strong></button>
+                        <button class="toolbar-btn" onclick="formatText('italic')" title="Italic"><em>I</em></button>
+                        <button class="toolbar-btn" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+                        <span class="toolbar-divider">|</span>
+                        <button class="toolbar-btn" onclick="formatText('insertUnorderedList')" title="Bullet List">• List</button>
+                        <button class="toolbar-btn" onclick="formatText('insertOrderedList')" title="Numbered List">1. List</button>
+                        <span class="toolbar-divider">|</span>
+                        <button class="toolbar-btn" onclick="insertHeading()" title="Heading">H</button>
+                    </div>
+                    <div id="researchNotesEditor" class="research-notes-editor" contenteditable="true"
+                         placeholder="Start typing your research notes here..."
+                         oninput="handleNotesInput()">
+                    </div>
+                </div>
+
+                <!-- Time Logging -->
+                <div class="research-time-section">
+                    <h3 class="time-title">⏱️ Time Tracking</h3>
+                    <div class="time-display">
+                        <div class="time-item">
+                            <span class="time-label">Total Time:</span>
+                            <span class="time-value" id="researchTotalTime">0h 0m</span>
+                        </div>
+                        <div class="time-item">
+                            <span class="time-label">This Session:</span>
+                            <span class="time-value" id="researchSessionTime">0h 0m</span>
+                        </div>
+                    </div>
+                    <button class="time-log-btn" onclick="logTimeManually()">+ Log Additional Time</button>
+                </div>
+
+                <!-- Research Completion Status -->
+                <div class="research-completion-section">
+                    <h3 class="completion-title">✅ Completion Status</h3>
+                    <div class="completion-checklist">
+                        <label class="completion-item">
+                            <input type="checkbox" id="checkMedical">
+                            <span>Medical conditions researched</span>
+                        </label>
+                        <label class="completion-item">
+                            <input type="checkbox" id="checkEquipment">
+                            <span>Equipment options identified</span>
+                        </label>
+                        <label class="completion-item">
+                            <input type="checkbox" id="checkGuidelines">
+                            <span>Guidelines reviewed</span>
+                        </label>
+                        <label class="completion-item">
+                            <input type="checkbox" id="checkNotes">
+                            <span>Research notes documented</span>
+                        </label>
+                    </div>
+                    <button class="mark-complete-btn" onclick="markResearchComplete()" disabled id="researchCompleteBtn">
+                        Mark Research Complete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeResearchWorkspace()">Close</button>
+            <button class="btn-primary" onclick="saveResearchProgress()">Save Progress</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOCATION BLOCK B: MODAL STYLES -->
+<style>
+    /* ===== MODAL OVERLAY ===== */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 1400px;
+        width: 100%;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .research-workspace-container {
+        max-width: 1600px;
+    }
+
+    /* ===== MODAL HEADER ===== */
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 32px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modal-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .modal-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        margin: 4px 0 0 0;
+    }
+
+    .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 32px;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    /* ===== MODAL BODY ===== */
+    .modal-body {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .research-workspace-body {
+        display: grid;
+        grid-template-columns: 1fr 500px;
+        gap: 32px;
+        padding: 24px 32px;
+    }
+
+    /* ===== LEFT PANEL: RESEARCH COMPONENTS ===== */
+    .research-left-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .research-section {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .research-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .research-section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .research-add-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .research-add-btn:hover {
+        background: #2563eb;
+    }
+
+    .research-section-body {
+        min-height: 100px;
+    }
+
+    /* ===== MEDICAL CONDITIONS LIST ===== */
+    .conditions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .condition-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .condition-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .condition-name {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 14px;
+    }
+
+    .condition-remove-btn {
+        background: none;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .condition-remove-btn:hover {
+        background: #fee2e2;
+    }
+
+    .condition-notes {
+        font-size: 13px;
+        color: #64748b;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 8px;
+        margin-top: 4px;
+        min-height: 40px;
+    }
+
+    .condition-notes:empty:before {
+        content: attr(placeholder);
+        color: #cbd5e1;
+    }
+
+    /* ===== EQUIPMENT TRACKER ===== */
+    .equipment-categories {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .equipment-category {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 12px;
+    }
+
+    .category-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 12px 0;
+    }
+
+    .equipment-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 60px;
+    }
+
+    .equipment-item {
+        font-size: 13px;
+        padding: 8px;
+        background: #f8fafc;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .equipment-supplier {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 2px;
+    }
+
+    .equipment-cost {
+        font-weight: 600;
+        color: #16a34a;
+    }
+
+    /* ===== GUIDELINES LIST ===== */
+    .guidelines-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .guideline-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .guideline-content {
+        flex: 1;
+    }
+
+    .guideline-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1e293b;
+        margin-bottom: 4px;
+    }
+
+    .guideline-source {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    /* ===== CONSULTATIONS LIST ===== */
+    .consultations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .consultation-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 12px;
+    }
+
+    .consultation-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .consultation-expert {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1e293b;
+    }
+
+    .consultation-date {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .consultation-notes {
+        font-size: 13px;
+        color: #64748b;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 8px;
+        margin-top: 8px;
+    }
+
+    /* ===== RIGHT PANEL: NOTES & TIME ===== */
+    .research-right-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    /* ===== RESEARCH NOTES EDITOR ===== */
+    .research-notes-section {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .notes-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .notes-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .notes-meta {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .auto-save-status {
+        color: #22c55e;
+    }
+
+    .auto-save-status.saving {
+        color: #eab308;
+    }
+
+    .word-count {
+        font-weight: 500;
+    }
+
+    .notes-toolbar {
+        display: flex;
+        gap: 4px;
+        padding: 8px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+
+    .toolbar-btn {
+        padding: 6px 10px;
+        border: none;
+        background: none;
+        color: #64748b;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .toolbar-btn:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .toolbar-divider {
+        width: 1px;
+        background: #e2e8f0;
+        margin: 0 4px;
+    }
+
+    .research-notes-editor {
+        flex: 1;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 16px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #1e293b;
+        min-height: 300px;
+        overflow-y: auto;
+    }
+
+    .research-notes-editor:empty:before {
+        content: attr(placeholder);
+        color: #cbd5e1;
+    }
+
+    .research-notes-editor:focus {
+        outline: none;
+        border-color: #3b82f6;
+    }
+
+    /* ===== TIME TRACKING ===== */
+    .research-time-section {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .time-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 16px 0;
+    }
+
+    .time-display {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .time-item {
+        background: white;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .time-label {
+        font-size: 12px;
+        color: #64748b;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .time-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .time-log-btn {
+        width: 100%;
+        padding: 10px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #3b82f6;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .time-log-btn:hover {
+        background: #eff6ff;
+        border-color: #3b82f6;
+    }
+
+    /* ===== COMPLETION STATUS ===== */
+    .research-completion-section {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .completion-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 16px 0;
+    }
+
+    .completion-checklist {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .completion-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #64748b;
+        cursor: pointer;
+    }
+
+    .completion-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .mark-complete-btn {
+        width: 100%;
+        padding: 12px;
+        background: #22c55e;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .mark-complete-btn:hover:not(:disabled) {
+        background: #16a34a;
+    }
+
+    .mark-complete-btn:disabled {
+        background: #e2e8f0;
+        color: #94a3b8;
+        cursor: not-allowed;
+    }
+
+    /* ===== MODAL FOOTER ===== */
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px 32px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary {
+        padding: 10px 20px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1200px) {
+        .research-workspace-body {
+            grid-template-columns: 1fr;
+        }
+
+        .equipment-categories {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- LOCATION BLOCK C: MODAL JAVASCRIPT -->
+<script>
+    // ===== GLOBAL STATE =====
+    let currentResearchCasePin = null;
+    let researchSessionStartTime = null;
+    let researchSessionInterval = null;
+    let researchAutoSaveTimeout = null;
+
+    // ===== OPEN RESEARCH WORKSPACE =====
+    function openResearchWorkspace(casePin) {
+        currentResearchCasePin = casePin;
+        document.getElementById('researchCasePinValue').textContent = casePin;
+        document.getElementById('researchWorkspaceModal').style.display = 'flex';
+
+        // Start session timer
+        researchSessionStartTime = Date.now();
+        startSessionTimer();
+
+        // Load existing research data
+        loadResearchData(casePin);
+
+        console.log('[Research Workspace] Opened for case:', casePin);
+    }
+
+    // ===== CLOSE RESEARCH WORKSPACE =====
+    function closeResearchWorkspace() {
+        // Save before closing
+        saveResearchProgress();
+
+        // Stop session timer
+        if (researchSessionInterval) {
+            clearInterval(researchSessionInterval);
+        }
+
+        document.getElementById('researchWorkspaceModal').style.display = 'none';
+        currentResearchCasePin = null;
+
+        console.log('[Research Workspace] Closed');
+    }
+
+    // ===== LOAD RESEARCH DATA =====
+    async function loadResearchData(casePin) {
+        try {
+            const response = await fetch(`/api/case-managers/research-data/${casePin}`);
+            const data = await response.json();
+
+            if (data.success) {
+                // Populate medical conditions
+                if (data.researchData.medicalConditions) {
+                    data.researchData.medicalConditions.forEach(condition => {
+                        addMedicalCondition(condition);
+                    });
+                }
+
+                // Populate equipment
+                if (data.researchData.equipment) {
+                    // Load equipment items
+                }
+
+                // Populate notes
+                if (data.researchData.notes) {
+                    document.getElementById('researchNotesEditor').innerHTML = data.researchData.notes;
+                }
+
+                // Update time
+                if (data.researchData.totalMinutes) {
+                    updateTotalTime(data.researchData.totalMinutes);
+                }
+
+                console.log('[Research Workspace] Data loaded successfully');
+            }
+        } catch (error) {
+            console.error('[Research Workspace] Failed to load data:', error);
+        }
+    }
+
+    // ===== ADD MEDICAL CONDITION =====
+    function addMedicalCondition(condition = null) {
+        const conditionName = condition?.name || prompt('Enter medical condition name:');
+        if (!conditionName) return;
+
+        const conditionsList = document.getElementById('medicalConditionsList');
+        const conditionId = `condition-${Date.now()}`;
+
+        const conditionHTML = `
+            <div class="condition-item" id="${conditionId}">
+                <div class="condition-header">
+                    <span class="condition-name">${conditionName}</span>
+                    <button class="condition-remove-btn" onclick="removeCondition('${conditionId}')">&times;</button>
+                </div>
+                <div class="condition-notes" contenteditable="true" placeholder="Add notes about this condition..." oninput="triggerAutoSave()">
+                    ${condition?.notes || ''}
+                </div>
+            </div>
+        `;
+
+        conditionsList.insertAdjacentHTML('beforeend', conditionHTML);
+        triggerAutoSave();
+    }
+
+    // ===== REMOVE CONDITION =====
+    function removeCondition(conditionId) {
+        if (confirm('Remove this condition?')) {
+            document.getElementById(conditionId).remove();
+            triggerAutoSave();
+        }
+    }
+
+    // ===== ADD EQUIPMENT ITEM =====
+    function addEquipmentItem() {
+        const category = prompt('Equipment category (wheelchair/hoist/bed/bathroom):');
+        if (!category) return;
+
+        const name = prompt('Equipment name:');
+        if (!name) return;
+
+        const supplier = prompt('Supplier (optional):') || 'Unknown';
+        const cost = prompt('Cost (optional):') || '£0';
+
+        const categoryMap = {
+            'wheelchair': 'wheelchairList',
+            'hoist': 'hoistList',
+            'bed': 'bedList',
+            'bathroom': 'bathroomList'
+        };
+
+        const listId = categoryMap[category.toLowerCase()];
+        if (!listId) {
+            alert('Invalid category');
+            return;
+        }
+
+        const list = document.getElementById(listId);
+        const itemHTML = `
+            <div class="equipment-item">
+                <div>
+                    <div>${name}</div>
+                    <div class="equipment-supplier">${supplier}</div>
+                </div>
+                <span class="equipment-cost">${cost}</span>
+            </div>
+        `;
+
+        list.insertAdjacentHTML('beforeend', itemHTML);
+        triggerAutoSave();
+    }
+
+    // ===== ADD GUIDELINE =====
+    function addGuideline() {
+        const title = prompt('Guideline/Reference title:');
+        if (!title) return;
+
+        const source = prompt('Source (e.g., NICE, Case law):') || 'Unknown';
+
+        const guidelinesList = document.getElementById('guidelinesList');
+        const guidelineHTML = `
+            <div class="guideline-item">
+                <div class="guideline-content">
+                    <div class="guideline-title">${title}</div>
+                    <div class="guideline-source">${source}</div>
+                </div>
+            </div>
+        `;
+
+        guidelinesList.insertAdjacentHTML('beforeend', guidelineHTML);
+        triggerAutoSave();
+    }
+
+    // ===== SCHEDULE CONSULTATION =====
+    function scheduleConsultation() {
+        const expert = prompt('Expert type (OT/Wheelchair Specialist/Medical Expert):');
+        if (!expert) return;
+
+        const date = prompt('Consultation date (e.g., Oct 15, 2025):') || 'TBD';
+        const notes = prompt('Notes:') || '';
+
+        const consultationsList = document.getElementById('consultationsList');
+        const consultationHTML = `
+            <div class="consultation-item">
+                <div class="consultation-header">
+                    <span class="consultation-expert">${expert}</span>
+                    <span class="consultation-date">${date}</span>
+                </div>
+                ${notes ? `<div class="consultation-notes">${notes}</div>` : ''}
+            </div>
+        `;
+
+        consultationsList.insertAdjacentHTML('beforeend', consultationHTML);
+        triggerAutoSave();
+    }
+
+    // ===== RICH TEXT FORMATTING =====
+    function formatText(command) {
+        document.execCommand(command, false, null);
+        document.getElementById('researchNotesEditor').focus();
+    }
+
+    function insertHeading() {
+        document.execCommand('formatBlock', false, 'h3');
+        document.getElementById('researchNotesEditor').focus();
+    }
+
+    // ===== HANDLE NOTES INPUT =====
+    function handleNotesInput() {
+        // Update word count
+        const editor = document.getElementById('researchNotesEditor');
+        const text = editor.innerText || '';
+        const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+        document.getElementById('researchWordCount').textContent = `${wordCount} words`;
+
+        // Trigger auto-save
+        triggerAutoSave();
+    }
+
+    // ===== AUTO-SAVE =====
+    function triggerAutoSave() {
+        const statusEl = document.getElementById('researchAutoSaveStatus');
+        statusEl.textContent = 'Saving...';
+        statusEl.classList.add('saving');
+
+        // Clear existing timeout
+        if (researchAutoSaveTimeout) {
+            clearTimeout(researchAutoSaveTimeout);
+        }
+
+        // Set new timeout (30 seconds)
+        researchAutoSaveTimeout = setTimeout(() => {
+            saveResearchProgress();
+        }, 30000);
+    }
+
+    // ===== SAVE RESEARCH PROGRESS =====
+    async function saveResearchProgress() {
+        try {
+            const researchData = {
+                casePin: currentResearchCasePin,
+                medicalConditions: extractMedicalConditions(),
+                equipment: extractEquipment(),
+                guidelines: extractGuidelines(),
+                consultations: extractConsultations(),
+                notes: document.getElementById('researchNotesEditor').innerHTML,
+                sessionMinutes: calculateSessionMinutes()
+            };
+
+            const response = await fetch('/api/case-managers/save-research-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(researchData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const statusEl = document.getElementById('researchAutoSaveStatus');
+                statusEl.textContent = 'Saved';
+                statusEl.classList.remove('saving');
+                console.log('[Research Workspace] Progress saved');
+            }
+        } catch (error) {
+            console.error('[Research Workspace] Failed to save:', error);
+        }
+    }
+
+    // ===== EXTRACT DATA HELPERS =====
+    function extractMedicalConditions() {
+        const conditions = [];
+        document.querySelectorAll('.condition-item').forEach(item => {
+            conditions.push({
+                name: item.querySelector('.condition-name').textContent,
+                notes: item.querySelector('.condition-notes').textContent
+            });
+        });
+        return conditions;
+    }
+
+    function extractEquipment() {
+        const equipment = [];
+        ['wheelchairList', 'hoistList', 'bedList', 'bathroomList'].forEach(listId => {
+            const list = document.getElementById(listId);
+            list.querySelectorAll('.equipment-item').forEach(item => {
+                equipment.push({
+                    category: listId.replace('List', ''),
+                    name: item.querySelector('div > div:first-child').textContent,
+                    supplier: item.querySelector('.equipment-supplier')?.textContent || '',
+                    cost: item.querySelector('.equipment-cost')?.textContent || ''
+                });
+            });
+        });
+        return equipment;
+    }
+
+    function extractGuidelines() {
+        const guidelines = [];
+        document.querySelectorAll('.guideline-item').forEach(item => {
+            guidelines.push({
+                title: item.querySelector('.guideline-title').textContent,
+                source: item.querySelector('.guideline-source').textContent
+            });
+        });
+        return guidelines;
+    }
+
+    function extractConsultations() {
+        const consultations = [];
+        document.querySelectorAll('.consultation-item').forEach(item => {
+            consultations.push({
+                expert: item.querySelector('.consultation-expert').textContent,
+                date: item.querySelector('.consultation-date').textContent,
+                notes: item.querySelector('.consultation-notes')?.textContent || ''
+            });
+        });
+        return consultations;
+    }
+
+    // ===== SESSION TIMER =====
+    function startSessionTimer() {
+        researchSessionInterval = setInterval(() => {
+            const minutes = calculateSessionMinutes();
+            updateSessionTime(minutes);
+        }, 60000); // Update every minute
+    }
+
+    function calculateSessionMinutes() {
+        if (!researchSessionStartTime) return 0;
+        return Math.floor((Date.now() - researchSessionStartTime) / 60000);
+    }
+
+    function updateSessionTime(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        document.getElementById('researchSessionTime').textContent = `${hours}h ${mins}m`;
+    }
+
+    function updateTotalTime(totalMinutes) {
+        const hours = Math.floor(totalMinutes / 60);
+        const mins = totalMinutes % 60;
+        document.getElementById('researchTotalTime').textContent = `${hours}h ${mins}m`;
+    }
+
+    // ===== LOG TIME MANUALLY =====
+    function logTimeManually() {
+        const hours = prompt('Hours to add:') || 0;
+        const minutes = prompt('Minutes to add:') || 0;
+        const totalMinutes = (parseInt(hours) * 60) + parseInt(minutes);
+
+        if (totalMinutes > 0) {
+            // Add to current total display
+            const currentTotal = document.getElementById('researchTotalTime').textContent;
+            const match = currentTotal.match(/(\d+)h (\d+)m/);
+            if (match) {
+                const newTotal = (parseInt(match[1]) * 60 + parseInt(match[2]) + totalMinutes);
+                updateTotalTime(newTotal);
+            }
+            console.log('[Research Workspace] Manual time logged:', totalMinutes, 'minutes');
+            triggerAutoSave();
+        }
+    }
+
+    // ===== MARK RESEARCH COMPLETE =====
+    function markResearchComplete() {
+        if (confirm('Mark Research phase as complete? This will move the case to Report Writing stage.')) {
+            // Emit WebSocket event to update case stage to 8
+            if (window.parent.socket && window.parent.socket.connected) {
+                window.parent.socket.emit('case:stage-change', {
+                    casePin: currentResearchCasePin,
+                    newStage: 8,
+                    stageLabel: 'Report Writing'
+                });
+            }
+
+            alert('Research marked complete! Case moved to Report Writing stage.');
+            closeResearchWorkspace();
+
+            // Trigger case refresh
+            window.parent.dispatchEvent(new CustomEvent('refreshCases'));
+        }
+    }
+
+    // ===== COMPLETION VALIDATION =====
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.completion-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const allChecked = Array.from(document.querySelectorAll('.completion-item input[type="checkbox"]'))
+                    .every(cb => cb.checked);
+
+                document.getElementById('researchCompleteBtn').disabled = !allChecked;
+            });
+        });
+    });
+
+    console.log('[Research Workspace Modal] Loaded ✅');
+</script>

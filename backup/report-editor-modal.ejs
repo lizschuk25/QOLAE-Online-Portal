@@ -1,0 +1,1012 @@
+<!-- ========================================== -->
+<!-- REPORT EDITOR MODAL -->
+<!-- 7-Section INA Report Editor with auto-save -->
+<!-- Used by: Case Managers Dashboard -->
+<!-- Author: Liz & Claude -->
+<!-- Date: October 12, 2025 -->
+<!-- ========================================== -->
+
+<!-- LOCATION BLOCK A: MODAL STRUCTURE -->
+<div id="reportEditorModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container report-editor-container">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div>
+                <h2 class="modal-title">✍️ Report Editor</h2>
+                <p class="modal-subtitle">
+                    Case: <span id="reportCasePinValue"></span> |
+                    <span id="reportAutoSaveStatus" class="auto-save-status">Saved</span>
+                </p>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="toggleMedicalNotes()" title="Toggle Medical Notes">
+                    📋 Notes
+                </button>
+                <button class="header-btn" onclick="previewReportPDF()" title="Preview as PDF">
+                    👁️ Preview
+                </button>
+                <button class="modal-close-btn" onclick="closeReportEditor()">&times;</button>
+            </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body report-editor-body">
+            <!-- Left Panel: Report Sections -->
+            <div class="report-main-panel">
+                <!-- Section Navigation -->
+                <div class="section-navigation">
+                    <button class="section-nav-btn active" onclick="switchSection(1)" id="nav-section-1">
+                        <span class="section-number">1</span>
+                        <span class="section-name">Executive Summary</span>
+                        <span class="section-status" id="status-1">○</span>
+                    </button>
+                    <button class="section-nav-btn" onclick="switchSection(2)" id="nav-section-2">
+                        <span class="section-number">2</span>
+                        <span class="section-name">Medical Background</span>
+                        <span class="section-status" id="status-2">○</span>
+                    </button>
+                    <button class="section-nav-btn" onclick="switchSection(3)" id="nav-section-3">
+                        <span class="section-number">3</span>
+                        <span class="section-name">Home Environment</span>
+                        <span class="section-status" id="status-3">○</span>
+                    </button>
+                    <button class="section-nav-btn" onclick="switchSection(4)" id="nav-section-4">
+                        <span class="section-number">4</span>
+                        <span class="section-name">Equipment Needs</span>
+                        <span class="section-status" id="status-4">○</span>
+                    </button>
+                    <button class="section-nav-btn" onclick="switchSection(5)" id="nav-section-5">
+                        <span class="section-number">5</span>
+                        <span class="section-name">Care Package</span>
+                        <span class="section-status" id="status-5">○</span>
+                    </button>
+                    <button class="section-nav-btn" onclick="switchSection(6)" id="nav-section-6">
+                        <span class="section-number">6</span>
+                        <span class="section-name">Recommendations</span>
+                        <span class="section-status" id="status-6">○</span>
+                    </button>
+                    <button class="section-nav-btn" onclick="switchSection(7)" id="nav-section-7">
+                        <span class="section-number">7</span>
+                        <span class="section-name">Appendices</span>
+                        <span class="section-status" id="status-7">○</span>
+                    </button>
+                </div>
+
+                <!-- Editor Toolbar -->
+                <div class="editor-toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="formatReport('bold')" title="Bold"><strong>B</strong></button>
+                        <button class="toolbar-btn" onclick="formatReport('italic')" title="Italic"><em>I</em></button>
+                        <button class="toolbar-btn" onclick="formatReport('underline')" title="Underline"><u>U</u></button>
+                    </div>
+                    <span class="toolbar-divider">|</span>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="formatReport('insertUnorderedList')" title="Bullet List">• List</button>
+                        <button class="toolbar-btn" onclick="formatReport('insertOrderedList')" title="Numbered List">1. List</button>
+                    </div>
+                    <span class="toolbar-divider">|</span>
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn" onclick="insertReportHeading()" title="Heading">H</button>
+                        <button class="toolbar-btn" onclick="showInsertFromResearch()" title="Insert from Research">📚 Research</button>
+                    </div>
+                    <span class="toolbar-divider">|</span>
+                    <div class="toolbar-group">
+                        <span class="word-count-display" id="reportWordCount">0 / ~5,000 words</span>
+                    </div>
+                </div>
+
+                <!-- Section Content Areas -->
+                <div class="section-content-container">
+                    <!-- Section 1: Executive Summary -->
+                    <div class="section-content active" id="section-content-1">
+                        <h3 class="section-content-title">Section 1: Executive Summary</h3>
+                        <p class="section-guidance">Provide a high-level overview of the case, key findings, and primary recommendations (250-500 words).</p>
+                        <div class="section-editor" id="editor-1" contenteditable="true"
+                             placeholder="Start writing the executive summary..."
+                             oninput="handleEditorInput(1)">
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Medical Background -->
+                    <div class="section-content" id="section-content-2">
+                        <h3 class="section-content-title">Section 2: Medical Background</h3>
+                        <p class="section-guidance">Detail the client's medical history, diagnoses, current medications, and prognosis.</p>
+                        <div class="section-editor" id="editor-2" contenteditable="true"
+                             placeholder="Document medical background..."
+                             oninput="handleEditorInput(2)">
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Home Environment Assessment -->
+                    <div class="section-content" id="section-content-3">
+                        <h3 class="section-content-title">Section 3: Home Environment Assessment</h3>
+                        <p class="section-guidance">Describe the current home layout, accessibility issues, and environmental factors.</p>
+                        <div class="section-editor" id="editor-3" contenteditable="true"
+                             placeholder="Describe home environment..."
+                             oninput="handleEditorInput(3)">
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Equipment Needs -->
+                    <div class="section-content" id="section-content-4">
+                        <h3 class="section-content-title">Section 4: Equipment Needs</h3>
+                        <p class="section-guidance">Detail required equipment (wheelchair, hoist, bed, bathroom aids) with specifications and justifications.</p>
+                        <div class="section-editor" id="editor-4" contenteditable="true"
+                             placeholder="List and justify equipment needs..."
+                             oninput="handleEditorInput(4)">
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Care Package Design -->
+                    <div class="section-content" id="section-content-5">
+                        <h3 class="section-content-title">Section 5: Care Package Design</h3>
+                        <p class="section-guidance">Outline the proposed care package including daily routines, care hours, and support needs.</p>
+                        <div class="section-editor" id="editor-5" contenteditable="true"
+                             placeholder="Design comprehensive care package..."
+                             oninput="handleEditorInput(5)">
+                        </div>
+                    </div>
+
+                    <!-- Section 6: Recommendations -->
+                    <div class="section-content" id="section-content-6">
+                        <h3 class="section-content-title">Section 6: Recommendations</h3>
+                        <p class="section-guidance">Provide clear, actionable recommendations for the client's care and support.</p>
+                        <div class="section-editor" id="editor-6" contenteditable="true"
+                             placeholder="Provide detailed recommendations..."
+                             oninput="handleEditorInput(6)">
+                        </div>
+                    </div>
+
+                    <!-- Section 7: Appendices -->
+                    <div class="section-content" id="section-content-7">
+                        <h3 class="section-content-title">Section 7: Appendices</h3>
+                        <p class="section-guidance">Include supporting documents, references, photos, and additional materials.</p>
+                        <div class="section-editor" id="editor-7" contenteditable="true"
+                             placeholder="Add appendices and references..."
+                             oninput="handleEditorInput(7)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Medical Notes (Toggleable) -->
+            <div class="medical-notes-panel" id="medicalNotesPanel" style="display: none;">
+                <div class="notes-panel-header">
+                    <h3 class="notes-panel-title">📋 Medical Notes</h3>
+                    <button class="notes-panel-close" onclick="toggleMedicalNotes()">&times;</button>
+                </div>
+                <div class="notes-panel-body">
+                    <div class="notes-search">
+                        <input type="text" class="notes-search-input" placeholder="Search medical notes..."
+                               oninput="searchMedicalNotes(this.value)">
+                    </div>
+                    <div id="medicalNotesContent" class="notes-content">
+                        <!-- Medical notes will be loaded here -->
+                        <p style="color: #64748b; text-align: center; padding: 40px 20px;">
+                            Loading medical notes...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <div class="footer-left">
+                <button class="btn-text" onclick="showVersionHistory()">
+                    🕐 Version History
+                </button>
+                <button class="btn-text" onclick="requestPeerReview()">
+                    👥 Request Review
+                </button>
+            </div>
+            <div class="footer-right">
+                <button class="btn-secondary" onclick="closeReportEditor()">Close</button>
+                <button class="btn-primary" onclick="markReportReady()" id="markReadyBtn" disabled>
+                    Mark Ready for Review
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Insert from Research Modal -->
+<div id="insertResearchModal" class="mini-modal-overlay" style="display: none;">
+    <div class="mini-modal">
+        <div class="mini-modal-header">
+            <h3>Insert from Research</h3>
+            <button onclick="closeInsertResearch()">&times;</button>
+        </div>
+        <div class="mini-modal-body">
+            <div class="research-items-list" id="researchItemsList">
+                <!-- Research items will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LOCATION BLOCK B: MODAL STYLES -->
+<style>
+    /* ===== REPORT EDITOR CONTAINER ===== */
+    .report-editor-container {
+        max-width: 1800px;
+        max-height: 95vh;
+    }
+
+    /* ===== HEADER ACTIONS ===== */
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-btn {
+        padding: 8px 16px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .header-btn:hover {
+        background: #f8fafc;
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+
+    /* ===== REPORT BODY ===== */
+    .report-editor-body {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 0;
+        position: relative;
+    }
+
+    .report-editor-body.with-notes {
+        grid-template-columns: 1fr 400px;
+    }
+
+    /* ===== SECTION NAVIGATION ===== */
+    .section-navigation {
+        display: flex;
+        border-bottom: 2px solid #e2e8f0;
+        background: #f8fafc;
+        overflow-x: auto;
+    }
+
+    .section-nav-btn {
+        flex: 1;
+        min-width: 140px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 12px 16px;
+        border: none;
+        background: none;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .section-nav-btn:hover {
+        background: #eff6ff;
+    }
+
+    .section-nav-btn.active {
+        background: white;
+        border-bottom-color: #3b82f6;
+    }
+
+    .section-number {
+        font-size: 11px;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .section-nav-btn.active .section-number {
+        color: #3b82f6;
+    }
+
+    .section-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    .section-nav-btn.active .section-name {
+        color: #1e293b;
+    }
+
+    .section-status {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 16px;
+    }
+
+    .section-status.complete {
+        color: #22c55e;
+    }
+
+    /* ===== EDITOR TOOLBAR ===== */
+    .editor-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        background: white;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .toolbar-group {
+        display: flex;
+        gap: 4px;
+    }
+
+    .word-count-display {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+        padding: 0 8px;
+    }
+
+    /* ===== SECTION CONTENT ===== */
+    .section-content-container {
+        position: relative;
+        height: calc(90vh - 280px);
+        overflow-y: auto;
+    }
+
+    .section-content {
+        display: none;
+        padding: 32px 40px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .section-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .section-content-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 8px 0;
+    }
+
+    .section-guidance {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0 0 20px 0;
+        padding: 12px;
+        background: #f8fafc;
+        border-left: 3px solid #3b82f6;
+        border-radius: 4px;
+    }
+
+    .section-editor {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 24px;
+        min-height: 400px;
+        font-size: 15px;
+        line-height: 1.8;
+        color: #1e293b;
+    }
+
+    .section-editor:empty:before {
+        content: attr(placeholder);
+        color: #cbd5e1;
+    }
+
+    .section-editor:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* ===== MEDICAL NOTES PANEL ===== */
+    .medical-notes-panel {
+        border-left: 1px solid #e2e8f0;
+        background: #f8fafc;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .notes-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        background: white;
+    }
+
+    .notes-panel-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .notes-panel-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .notes-panel-close:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .notes-panel-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .notes-search {
+        margin-bottom: 16px;
+    }
+
+    .notes-search-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+    .notes-search-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .notes-content {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 16px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #64748b;
+        max-height: calc(90vh - 300px);
+        overflow-y: auto;
+    }
+
+    /* ===== MINI MODAL (Insert from Research) ===== */
+    .mini-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mini-modal {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        max-width: 500px;
+        width: 90%;
+        max-height: 600px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mini-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .mini-modal-header h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .mini-modal-header button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .mini-modal-header button:hover {
+        background: #f1f5f9;
+    }
+
+    .mini-modal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .research-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .research-item {
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .research-item:hover {
+        background: #eff6ff;
+        border-color: #3b82f6;
+    }
+
+    .research-item-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 4px;
+    }
+
+    .research-item-preview {
+        font-size: 12px;
+        color: #64748b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer-left {
+        display: flex;
+        gap: 16px;
+    }
+
+    .footer-right {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-text {
+        padding: 10px 16px;
+        background: none;
+        border: none;
+        font-size: 13px;
+        font-weight: 500;
+        color: #64748b;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-text:hover {
+        background: #f8fafc;
+        color: #3b82f6;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1200px) {
+        .report-editor-body.with-notes {
+            grid-template-columns: 1fr 300px;
+        }
+
+        .section-navigation {
+            overflow-x: scroll;
+        }
+
+        .section-nav-btn {
+            min-width: 120px;
+        }
+    }
+</style>
+
+<!-- LOCATION BLOCK C: MODAL JAVASCRIPT -->
+<script>
+    // ===== GLOBAL STATE =====
+    let currentReportCasePin = null;
+    let currentReportSection = 1;
+    let reportAutoSaveTimeout = null;
+    let sectionWordCounts = [0, 0, 0, 0, 0, 0, 0, 0]; // Index 0 unused, 1-7 for sections
+
+    // ===== OPEN REPORT EDITOR =====
+    function openReportEditor(casePin) {
+        currentReportCasePin = casePin;
+        document.getElementById('reportCasePinValue').textContent = casePin;
+        document.getElementById('reportEditorModal').style.display = 'flex';
+
+        // Load existing report data
+        loadReportData(casePin);
+
+        // Load medical notes
+        loadMedicalNotes(casePin);
+
+        console.log('[Report Editor] Opened for case:', casePin);
+    }
+
+    // ===== CLOSE REPORT EDITOR =====
+    function closeReportEditor() {
+        // Save before closing
+        saveReportProgress();
+
+        document.getElementById('reportEditorModal').style.display = 'none';
+        currentReportCasePin = null;
+        currentReportSection = 1;
+
+        console.log('[Report Editor] Closed');
+    }
+
+    // ===== LOAD REPORT DATA =====
+    async function loadReportData(casePin) {
+        try {
+            const response = await fetch(`/api/case-managers/report-data/${casePin}`);
+            const data = await response.json();
+
+            if (data.success && data.reportData) {
+                // Populate each section
+                for (let i = 1; i <= 7; i++) {
+                    const editorEl = document.getElementById(`editor-${i}`);
+                    if (data.reportData[`section${i}`]) {
+                        editorEl.innerHTML = data.reportData[`section${i}`];
+                        updateSectionStatus(i);
+                    }
+                }
+
+                // Update word counts
+                updateAllWordCounts();
+
+                console.log('[Report Editor] Data loaded successfully');
+            }
+        } catch (error) {
+            console.error('[Report Editor] Failed to load data:', error);
+        }
+    }
+
+    // ===== SWITCH SECTION =====
+    function switchSection(sectionNum) {
+        // Save current section before switching
+        saveReportProgress();
+
+        currentReportSection = sectionNum;
+
+        // Update navigation
+        document.querySelectorAll('.section-nav-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`nav-section-${sectionNum}`).classList.add('active');
+
+        // Update content
+        document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`section-content-${sectionNum}`).classList.add('active');
+
+        // Update word count display for current section
+        updateWordCountDisplay();
+
+        console.log('[Report Editor] Switched to section', sectionNum);
+    }
+
+    // ===== HANDLE EDITOR INPUT =====
+    function handleEditorInput(sectionNum) {
+        // Update word count for this section
+        updateSectionWordCount(sectionNum);
+
+        // Update section status
+        updateSectionStatus(sectionNum);
+
+        // Trigger auto-save
+        triggerReportAutoSave();
+    }
+
+    // ===== UPDATE SECTION WORD COUNT =====
+    function updateSectionWordCount(sectionNum) {
+        const editor = document.getElementById(`editor-${sectionNum}`);
+        const text = editor.innerText || '';
+        const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+        sectionWordCounts[sectionNum] = wordCount;
+
+        if (sectionNum === currentReportSection) {
+            updateWordCountDisplay();
+        }
+    }
+
+    // ===== UPDATE WORD COUNT DISPLAY =====
+    function updateWordCountDisplay() {
+        const totalWords = sectionWordCounts.reduce((sum, count) => sum + count, 0);
+        document.getElementById('reportWordCount').textContent = `${totalWords} / ~5,000 words`;
+    }
+
+    // ===== UPDATE ALL WORD COUNTS =====
+    function updateAllWordCounts() {
+        for (let i = 1; i <= 7; i++) {
+            updateSectionWordCount(i);
+        }
+        updateWordCountDisplay();
+    }
+
+    // ===== UPDATE SECTION STATUS =====
+    function updateSectionStatus(sectionNum) {
+        const editor = document.getElementById(`editor-${sectionNum}`);
+        const text = editor.innerText || '';
+        const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+
+        const statusEl = document.getElementById(`status-${sectionNum}`);
+
+        if (wordCount >= 50) { // Consider section complete if >= 50 words
+            statusEl.textContent = '✓';
+            statusEl.classList.add('complete');
+        } else if (wordCount > 0) {
+            statusEl.textContent = '○';
+            statusEl.classList.remove('complete');
+        } else {
+            statusEl.textContent = '○';
+            statusEl.classList.remove('complete');
+        }
+
+        // Check if all sections complete to enable "Mark Ready" button
+        checkAllSectionsComplete();
+    }
+
+    // ===== CHECK ALL SECTIONS COMPLETE =====
+    function checkAllSectionsComplete() {
+        let allComplete = true;
+        for (let i = 1; i <= 7; i++) {
+            const statusEl = document.getElementById(`status-${i}`);
+            if (!statusEl.classList.contains('complete')) {
+                allComplete = false;
+                break;
+            }
+        }
+
+        document.getElementById('markReadyBtn').disabled = !allComplete;
+    }
+
+    // ===== RICH TEXT FORMATTING =====
+    function formatReport(command) {
+        document.execCommand(command, false, null);
+        document.getElementById(`editor-${currentReportSection}`).focus();
+    }
+
+    function insertReportHeading() {
+        document.execCommand('formatBlock', false, 'h3');
+        document.getElementById(`editor-${currentReportSection}`).focus();
+    }
+
+    // ===== INSERT FROM RESEARCH =====
+    function showInsertFromResearch() {
+        document.getElementById('insertResearchModal').style.display = 'flex';
+        loadResearchItems();
+    }
+
+    function closeInsertResearch() {
+        document.getElementById('insertResearchModal').style.display = 'none';
+    }
+
+    async function loadResearchItems() {
+        try {
+            const response = await fetch(`/api/case-managers/research-data/${currentReportCasePin}`);
+            const data = await response.json();
+
+            if (data.success) {
+                const listEl = document.getElementById('researchItemsList');
+                listEl.innerHTML = '';
+
+                // Add medical conditions
+                if (data.researchData.medicalConditions) {
+                    data.researchData.medicalConditions.forEach(condition => {
+                        addResearchItem('Medical Condition', condition.name, condition.notes);
+                    });
+                }
+
+                // Add equipment
+                if (data.researchData.equipment) {
+                    data.researchData.equipment.forEach(item => {
+                        addResearchItem('Equipment', item.name, `${item.supplier} - ${item.cost}`);
+                    });
+                }
+
+                // Add guidelines
+                if (data.researchData.guidelines) {
+                    data.researchData.guidelines.forEach(guideline => {
+                        addResearchItem('Guideline', guideline.title, guideline.source);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('[Report Editor] Failed to load research items:', error);
+        }
+    }
+
+    function addResearchItem(type, title, preview) {
+        const listEl = document.getElementById('researchItemsList');
+        const itemHTML = `
+            <div class="research-item" onclick="insertResearchContent('${type}: ${title}', '${preview}')">
+                <div class="research-item-title">${type}: ${title}</div>
+                <div class="research-item-preview">${preview}</div>
+            </div>
+        `;
+        listEl.insertAdjacentHTML('beforeend', itemHTML);
+    }
+
+    function insertResearchContent(title, content) {
+        const editor = document.getElementById(`editor-${currentReportSection}`);
+        const insertHTML = `<p><strong>${title}</strong></p><p>${content}</p>`;
+        document.execCommand('insertHTML', false, insertHTML);
+
+        closeInsertResearch();
+        triggerReportAutoSave();
+    }
+
+    // ===== TOGGLE MEDICAL NOTES =====
+    function toggleMedicalNotes() {
+        const panel = document.getElementById('medicalNotesPanel');
+        const body = document.querySelector('.report-editor-body');
+
+        if (panel.style.display === 'none') {
+            panel.style.display = 'flex';
+            body.classList.add('with-notes');
+        } else {
+            panel.style.display = 'none';
+            body.classList.remove('with-notes');
+        }
+    }
+
+    // ===== LOAD MEDICAL NOTES =====
+    async function loadMedicalNotes(casePin) {
+        try {
+            const response = await fetch(`/api/case-managers/medical-notes/${casePin}`);
+            const data = await response.json();
+
+            if (data.success) {
+                const contentEl = document.getElementById('medicalNotesContent');
+                contentEl.innerHTML = data.notes || '<p style="color: #64748b;">No medical notes available.</p>';
+            }
+        } catch (error) {
+            console.error('[Report Editor] Failed to load medical notes:', error);
+        }
+    }
+
+    // ===== SEARCH MEDICAL NOTES =====
+    function searchMedicalNotes(query) {
+        // Simple search highlighting
+        console.log('[Report Editor] Searching medical notes:', query);
+        // TODO: Implement search highlighting
+    }
+
+    // ===== AUTO-SAVE =====
+    function triggerReportAutoSave() {
+        const statusEl = document.getElementById('reportAutoSaveStatus');
+        statusEl.textContent = 'Saving...';
+        statusEl.classList.add('saving');
+
+        // Clear existing timeout
+        if (reportAutoSaveTimeout) {
+            clearTimeout(reportAutoSaveTimeout);
+        }
+
+        // Set new timeout (30 seconds)
+        reportAutoSaveTimeout = setTimeout(() => {
+            saveReportProgress();
+        }, 30000);
+    }
+
+    // ===== SAVE REPORT PROGRESS =====
+    async function saveReportProgress() {
+        try {
+            const reportData = {
+                casePin: currentReportCasePin,
+                section1: document.getElementById('editor-1').innerHTML,
+                section2: document.getElementById('editor-2').innerHTML,
+                section3: document.getElementById('editor-3').innerHTML,
+                section4: document.getElementById('editor-4').innerHTML,
+                section5: document.getElementById('editor-5').innerHTML,
+                section6: document.getElementById('editor-6').innerHTML,
+                section7: document.getElementById('editor-7').innerHTML,
+                totalWords: sectionWordCounts.reduce((sum, count) => sum + count, 0)
+            };
+
+            const response = await fetch('/api/case-managers/save-report-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const statusEl = document.getElementById('reportAutoSaveStatus');
+                statusEl.textContent = 'Saved';
+                statusEl.classList.remove('saving');
+                console.log('[Report Editor] Progress saved');
+            }
+        } catch (error) {
+            console.error('[Report Editor] Failed to save:', error);
+        }
+    }
+
+    // ===== PREVIEW AS PDF =====
+    function previewReportPDF() {
+        alert('PDF Preview - Coming soon!\n\nThis will generate a preview of the report in PDF format.');
+        // TODO: Implement PDF preview
+    }
+
+    // ===== VERSION HISTORY =====
+    function showVersionHistory() {
+        alert('Version History - Coming soon!\n\nThis will show all previous versions of the report with rollback capability.');
+        // TODO: Implement version history
+    }
+
+    // ===== REQUEST PEER REVIEW =====
+    function requestPeerReview() {
+        alert('Request Review - Coming soon!\n\nThis will notify a peer to review the report before marking it ready.');
+        // TODO: Implement peer review workflow
+    }
+
+    // ===== MARK REPORT READY =====
+    function markReportReady() {
+        if (confirm('Mark report ready for internal review? This will move the case to the next stage.')) {
+            // Save final version
+            saveReportProgress();
+
+            // Emit WebSocket event to update case stage to 9 (Internal Review)
+            if (window.parent.socket && window.parent.socket.connected) {
+                window.parent.socket.emit('case:stage-change', {
+                    casePin: currentReportCasePin,
+                    newStage: 9,
+                    stageLabel: 'Internal Review'
+                });
+            }
+
+            alert('Report marked ready! Case moved to Internal Review stage.');
+            closeReportEditor();
+
+            // Trigger case refresh
+            window.parent.dispatchEvent(new CustomEvent('refreshCases'));
+        }
+    }
+
+    console.log('[Report Editor Modal] Loaded ✅');
+</script>
