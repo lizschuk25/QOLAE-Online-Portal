@@ -1,0 +1,975 @@
+<!--
+  * QOLAE Readers Compliance Portal
+  * Reader submission form for CV and reference details
+  * Organized by Location Block Protocol
+  * Author: Iris Agent
+  * Date: October 14, 2025
+  *
+  * WORKFLOW STEPS:
+  * 1. Reader login with PIN (from email invitation)
+  * 2. Upload CV (PDF/DOC/DOCX)
+  * 3. Submit Professional Reference Details
+  * 4. Submit Character Reference Details
+  * 5. Review & Submit
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readers Compliance - QOLAE</title>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 0: ALL CSS STYLES -->
+<!-- ========================================== -->
+    <style>
+        /* ===== RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER STYLES ===== */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #693382;
+            font-family: Baskerville, "Baskerville Old Face", serif;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .progress-step.active {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .progress-step.completed {
+            color: #10b981;
+        }
+
+        /* ===== COMPLIANCE CARD ===== */
+        .compliance-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* ===== FORM STYLES ===== */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* ===== FILE UPLOAD STYLES ===== */
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            background: #f9fafb;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-upload-text {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .file-upload-hint {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-preview {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-preview.visible {
+            display: flex;
+        }
+
+        .file-preview-icon {
+            font-size: 32px;
+        }
+
+        .file-preview-details {
+            flex: 1;
+        }
+
+        .file-preview-name {
+            font-weight: 600;
+            color: #065f46;
+            margin-bottom: 4px;
+        }
+
+        .file-preview-size {
+            font-size: 12px;
+            color: #047857;
+        }
+
+        .file-remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .file-remove-btn:hover {
+            background: #dc2626;
+        }
+
+        /* ===== BUTTON STYLES ===== */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-next {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            justify-content: center;
+        }
+
+        /* ===== MESSAGE STYLES ===== */
+        .success-message {
+            display: none;
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: center;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        .error-message {
+            display: none;
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== REVIEW SECTION ===== */
+        .review-section {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .review-item {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .review-label {
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .review-value {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        /* ===== STEP VISIBILITY ===== */
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            margin-top: 32px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 1: HEADER -->
+<!-- ========================================== -->
+        <div class="header">
+            <h1>📖 Readers Compliance Portal</h1>
+            <p>Complete your compliance submission to access the Readers Dashboard</p>
+        </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 2: PROGRESS TRACKER -->
+<!-- ========================================== -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="progress-step active" id="step1Progress">
+                    <span>1. CV Upload</span>
+                </div>
+                <div class="progress-step" id="step2Progress">
+                    <span>2. Professional Ref</span>
+                </div>
+                <div class="progress-step" id="step3Progress">
+                    <span>3. Character Ref</span>
+                </div>
+                <div class="progress-step" id="step4Progress">
+                    <span>4. Review & Submit</span>
+                </div>
+            </div>
+        </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 3: MESSAGES -->
+<!-- ========================================== -->
+        <div id="successMessage" class="success-message">
+            <strong>✅ Compliance Submitted Successfully!</strong>
+            <p style="margin-top: 8px;">You will be notified when your compliance is approved.</p>
+        </div>
+
+        <div id="errorMessage" class="error-message">
+            <strong>❌ Submission Failed</strong>
+            <p id="errorText" style="margin-top: 8px;"></p>
+        </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 4: STEP 1 - CV UPLOAD -->
+<!-- ========================================== -->
+        <div id="step1" class="step-content active">
+            <div class="compliance-card">
+                <h2 class="section-title">📄 Step 1: Upload Your CV</h2>
+                <p class="section-subtitle">Upload your current CV (PDF, DOC, or DOCX format, max 10MB)</p>
+
+                <div class="file-upload-area" id="fileUploadArea">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">Click to upload or drag & drop</div>
+                    <div class="file-upload-hint">Supported formats: PDF, DOC, DOCX (max 10MB)</div>
+                </div>
+
+                <input type="file" id="cvFileInput" class="file-input" accept=".pdf,.doc,.docx">
+
+                <div class="file-preview" id="filePreview">
+                    <div class="file-preview-icon">📄</div>
+                    <div class="file-preview-details">
+                        <div class="file-preview-name" id="fileName"></div>
+                        <div class="file-preview-size" id="fileSize"></div>
+                    </div>
+                    <button type="button" class="file-remove-btn" id="fileRemoveBtn">Remove</button>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-next" id="step1NextBtn" disabled>
+                    Next: Professional Reference →
+                </button>
+            </div>
+        </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 5: STEP 2 - PROFESSIONAL REFERENCE -->
+<!-- ========================================== -->
+        <div id="step2" class="step-content">
+            <div class="compliance-card">
+                <h2 class="section-title">👔 Step 2: Professional Reference</h2>
+                <p class="section-subtitle">Provide details for a professional referee (supervisor, manager, or colleague)</p>
+
+                <form id="professionalRefForm">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="profRefName" class="form-input" placeholder="e.g., Dr. Sarah Johnson" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Job Title <span class="required">*</span>
+                        </label>
+                        <input type="text" id="profRefTitle" class="form-input" placeholder="e.g., Senior Nurse Manager" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Organisation <span class="required">*</span>
+                        </label>
+                        <input type="text" id="profRefOrganisation" class="form-input" placeholder="e.g., Royal Infirmary Edinburgh" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Email Address <span class="required">*</span>
+                        </label>
+                        <input type="email" id="profRefEmail" class="form-input" placeholder="e.g., sarah.johnson@hospital.nhs.uk" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="profRefPhone" class="form-input" placeholder="e.g., +44 7700 900000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Your Relationship <span class="required">*</span>
+                        </label>
+                        <textarea id="profRefRelationship" class="form-textarea" placeholder="e.g., Sarah was my line manager at Royal Infirmary Edinburgh from 2020-2023" required></textarea>
+                        <div class="help-text">Explain how you know this person and your working relationship</div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button type="button" class="btn btn-secondary" id="step2BackBtn">
+                            ← Back
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" id="step2NextBtn">
+                            Next: Character Reference →
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 6: STEP 3 - CHARACTER REFERENCE -->
+<!-- ========================================== -->
+        <div id="step3" class="step-content">
+            <div class="compliance-card">
+                <h2 class="section-title">👤 Step 3: Character Reference</h2>
+                <p class="section-subtitle">Provide details for a character referee (colleague, mentor, or academic supervisor)</p>
+
+                <form id="characterRefForm">
+                    <div class="form-group">
+                        <label class="form-label">
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="charRefName" class="form-input" placeholder="e.g., Prof. John Smith" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Relationship to You <span class="required">*</span>
+                        </label>
+                        <input type="text" id="charRefRelationship" class="form-input" placeholder="e.g., Academic supervisor during my Master's degree" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Email Address <span class="required">*</span>
+                        </label>
+                        <input type="email" id="charRefEmail" class="form-input" placeholder="e.g., john.smith@university.ac.uk" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Phone Number <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="charRefPhone" class="form-input" placeholder="e.g., +44 7700 900001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            How Long Have You Known Them? <span class="required">*</span>
+                        </label>
+                        <input type="text" id="charRefKnownDuration" class="form-input" placeholder="e.g., 5 years" required>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button type="button" class="btn btn-secondary" id="step3BackBtn">
+                            ← Back
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" id="step3NextBtn">
+                            Next: Review & Submit →
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 7: STEP 4 - REVIEW & SUBMIT -->
+<!-- ========================================== -->
+        <div id="step4" class="step-content">
+            <div class="compliance-card">
+                <h2 class="section-title">✅ Step 4: Review & Submit</h2>
+                <p class="section-subtitle">Please review your information before submitting</p>
+
+                <!-- CV Review -->
+                <div class="review-section">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: #374151;">📄 CV</h3>
+                    <div class="review-item">
+                        <div class="review-label">File Name</div>
+                        <div class="review-value" id="reviewFileName"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">File Size</div>
+                        <div class="review-value" id="reviewFileSize"></div>
+                    </div>
+                </div>
+
+                <!-- Professional Reference Review -->
+                <div class="review-section">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: #374151;">👔 Professional Reference</h3>
+                    <div class="review-item">
+                        <div class="review-label">Name</div>
+                        <div class="review-value" id="reviewProfName"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Job Title</div>
+                        <div class="review-value" id="reviewProfTitle"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Organisation</div>
+                        <div class="review-value" id="reviewProfOrg"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Email</div>
+                        <div class="review-value" id="reviewProfEmail"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Phone</div>
+                        <div class="review-value" id="reviewProfPhone"></div>
+                    </div>
+                </div>
+
+                <!-- Character Reference Review -->
+                <div class="review-section">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: #374151;">👤 Character Reference</h3>
+                    <div class="review-item">
+                        <div class="review-label">Name</div>
+                        <div class="review-value" id="reviewCharName"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Relationship</div>
+                        <div class="review-value" id="reviewCharRel"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Email</div>
+                        <div class="review-value" id="reviewCharEmail"></div>
+                    </div>
+                    <div class="review-item">
+                        <div class="review-label">Phone</div>
+                        <div class="review-value" id="reviewCharPhone"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" class="btn btn-secondary" id="step4BackBtn">
+                        ← Back
+                    </button>
+                    <button type="button" class="btn btn-primary btn-next" id="submitComplianceBtn">
+                        🚀 Submit Compliance
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>QOLAE HR Compliance Dashboard</p>
+            <p>Your information is secure and GDPR-compliant</p>
+        </div>
+    </div>
+
+<!-- ========================================== -->
+<!-- LOCATION BLOCK 8: JAVASCRIPT - FORM LOGIC -->
+<!-- ========================================== -->
+    <script>
+        // ===== DOM REFERENCES =====
+        const steps = {
+            step1: document.getElementById('step1'),
+            step2: document.getElementById('step2'),
+            step3: document.getElementById('step3'),
+            step4: document.getElementById('step4')
+        };
+
+        const progressSteps = {
+            step1: document.getElementById('step1Progress'),
+            step2: document.getElementById('step2Progress'),
+            step3: document.getElementById('step3Progress'),
+            step4: document.getElementById('step4Progress')
+        };
+
+        const progressFill = document.getElementById('progressFill');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const cvFileInput = document.getElementById('cvFileInput');
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileRemoveBtn = document.getElementById('fileRemoveBtn');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        let currentStep = 1;
+        let uploadedFile = null;
+        let formData = {};
+
+        // Get reader PIN from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const readerPin = urlParams.get('pin') || '<%= typeof readerPin !== "undefined" ? readerPin : "" %>';
+
+        // ===== FILE UPLOAD HANDLING =====
+        fileUploadArea.addEventListener('click', () => cvFileInput.click());
+
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            handleFileUpload(file);
+        });
+
+        cvFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFileUpload(file);
+        });
+
+        function handleFileUpload(file) {
+            // Validate file type
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Please upload PDF, DOC, or DOCX file.');
+                return;
+            }
+
+            // Validate file size (10MB)
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('File size exceeds 10MB. Please upload a smaller file.');
+                return;
+            }
+
+            // Store file
+            uploadedFile = file;
+
+            // Display file preview
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            filePreview.classList.add('visible');
+
+            // Enable next button
+            document.getElementById('step1NextBtn').disabled = false;
+        }
+
+        fileRemoveBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            uploadedFile = null;
+            cvFileInput.value = '';
+            filePreview.classList.remove('visible');
+            document.getElementById('step1NextBtn').disabled = true;
+        });
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // ===== NAVIGATION =====
+        function showStep(stepNumber) {
+            Object.values(steps).forEach(step => step.classList.remove('active'));
+            steps[`step${stepNumber}`].classList.add('active');
+
+            Object.values(progressSteps).forEach(step => {
+                step.classList.remove('active');
+                step.classList.remove('completed');
+            });
+
+            for (let i = 1; i < stepNumber; i++) {
+                progressSteps[`step${i}`].classList.add('completed');
+            }
+            progressSteps[`step${stepNumber}`].classList.add('active');
+
+            const progress = (stepNumber / 4) * 100;
+            progressFill.style.width = progress + '%';
+
+            currentStep = stepNumber;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Step 1 Navigation
+        document.getElementById('step1NextBtn').addEventListener('click', () => {
+            if (uploadedFile) {
+                showStep(2);
+            }
+        });
+
+        // Step 2 Navigation
+        document.getElementById('step2BackBtn').addEventListener('click', () => showStep(1));
+        document.getElementById('step2NextBtn').addEventListener('click', () => {
+            const form = document.getElementById('professionalRefForm');
+            if (form.checkValidity()) {
+                formData.professionalReference = {
+                    name: document.getElementById('profRefName').value,
+                    title: document.getElementById('profRefTitle').value,
+                    organisation: document.getElementById('profRefOrganisation').value,
+                    email: document.getElementById('profRefEmail').value,
+                    phone: document.getElementById('profRefPhone').value,
+                    relationship: document.getElementById('profRefRelationship').value
+                };
+                showStep(3);
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Step 3 Navigation
+        document.getElementById('step3BackBtn').addEventListener('click', () => showStep(2));
+        document.getElementById('step3NextBtn').addEventListener('click', () => {
+            const form = document.getElementById('characterRefForm');
+            if (form.checkValidity()) {
+                formData.characterReference = {
+                    name: document.getElementById('charRefName').value,
+                    relationship: document.getElementById('charRefRelationship').value,
+                    email: document.getElementById('charRefEmail').value,
+                    phone: document.getElementById('charRefPhone').value,
+                    knownDuration: document.getElementById('charRefKnownDuration').value
+                };
+                populateReviewSection();
+                showStep(4);
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Step 4 Navigation
+        document.getElementById('step4BackBtn').addEventListener('click', () => showStep(3));
+
+        // ===== REVIEW SECTION =====
+        function populateReviewSection() {
+            // CV
+            document.getElementById('reviewFileName').textContent = uploadedFile.name;
+            document.getElementById('reviewFileSize').textContent = formatFileSize(uploadedFile.size);
+
+            // Professional Reference
+            document.getElementById('reviewProfName').textContent = formData.professionalReference.name;
+            document.getElementById('reviewProfTitle').textContent = formData.professionalReference.title;
+            document.getElementById('reviewProfOrg').textContent = formData.professionalReference.organisation;
+            document.getElementById('reviewProfEmail').textContent = formData.professionalReference.email;
+            document.getElementById('reviewProfPhone').textContent = formData.professionalReference.phone;
+
+            // Character Reference
+            document.getElementById('reviewCharName').textContent = formData.characterReference.name;
+            document.getElementById('reviewCharRel').textContent = formData.characterReference.relationship;
+            document.getElementById('reviewCharEmail').textContent = formData.characterReference.email;
+            document.getElementById('reviewCharPhone').textContent = formData.characterReference.phone;
+        }
+
+        // ===== SUBMISSION =====
+        document.getElementById('submitComplianceBtn').addEventListener('click', async () => {
+            try {
+                const submitBtn = document.getElementById('submitComplianceBtn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '⏳ Submitting...';
+
+                // Create FormData for file upload
+                const submitData = new FormData();
+                submitData.append('cv', uploadedFile);
+                submitData.append('readerPin', readerPin);
+                submitData.append('readerName', '<%= typeof readerName !== "undefined" ? readerName : "" %>');
+                submitData.append('readerEmail', '<%= typeof readerEmail !== "undefined" ? readerEmail : "" %>');
+
+                // Professional reference
+                submitData.append('professionalRefName', formData.professionalReference.name);
+                submitData.append('professionalRefTitle', formData.professionalReference.title);
+                submitData.append('professionalRefOrganisation', formData.professionalReference.organisation);
+                submitData.append('professionalRefEmail', formData.professionalReference.email);
+                submitData.append('professionalRefPhone', formData.professionalReference.phone);
+                submitData.append('professionalRefRelationship', formData.professionalReference.relationship);
+
+                // Character reference
+                submitData.append('characterRefName', formData.characterReference.name);
+                submitData.append('characterRefRelationship', formData.characterReference.relationship);
+                submitData.append('characterRefEmail', formData.characterReference.email);
+                submitData.append('characterRefPhone', formData.characterReference.phone);
+                submitData.append('characterRefKnownDuration', formData.characterReference.knownDuration);
+
+                const response = await fetch('/api/readers/submit-compliance', {
+                    method: 'POST',
+                    body: submitData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    successMessage.classList.add('visible');
+                    errorMessage.classList.remove('visible');
+
+                    // Hide form after success
+                    Object.values(steps).forEach(step => step.style.display = 'none');
+
+                    // Redirect after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/readers-dashboard';
+                    }, 3000);
+                } else {
+                    throw new Error(data.error || 'Submission failed');
+                }
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                errorText.textContent = error.message;
+                errorMessage.classList.add('visible');
+                successMessage.classList.remove('visible');
+
+                const submitBtn = document.getElementById('submitComplianceBtn');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Submit Compliance';
+            }
+        });
+
+        // ===== INITIALIZATION =====
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('📖 Readers Compliance Portal initialized');
+            console.log('Reader PIN:', readerPin);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "QOLAE-HRCompliance-Dashboard",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "hrc_server.js",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "@fastify/formbody": "^8.0.2",
+    "@fastify/static": "^8.2.0",
+    "@fastify/view": "^10.0.1",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "fastify": "^5.6.1",
+    "nodemailer": "^6.9.7",
+    "pg": "^8.16.3",
+    "pino-pretty": "^13.0.0"
+  },
+  "scripts": {
+    "start": "node hrc_server.js",
+    "dev": "node --watch hrc_server.js"
+  }
+}

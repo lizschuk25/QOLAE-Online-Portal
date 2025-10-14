@@ -1,8 +1,8 @@
 # Location Block Organization Pattern
 ## Complete Guide for QOLAE-Online-Portal Server Files
 
-**Date:** October 11, 2025  
-**Author:** Liz & Claude  
+**Date:** 11 October 2025  (updated 14th October 2025)
+**Author:** Liz
 **Purpose:** Universal organization pattern for all QOLAE dashboards
 
 ---
@@ -28,9 +28,10 @@ The **Location Block Pattern** organizes code into clear, logical sections that 
 ```
 QOLAE-Online-Portal/
 ├── QOLAE-Admin-Dashboard-Beta1/       (Admin registration & TOB generation)
-├── QOLAE-Lawyers-Dashboard/           (Lawyers workflow - 6 steps)
-├── QOLAE-CaseManagers-Dashboard/      (CM workflow - reader management & CaseManagers Workflow management)
+├── QOLAE-Lawyers-Dashboard/           (Lawyers workflow- 6 steps)
+├── QOLAE-CaseManagers-Dashboard/      (CM workflow & Case Management)
 ├── QOLAE-Readers-Dashboard/           (Readers workflow - INA report review)
+├── QOLAE-HRCompliance-Dashboard/     (HR Compliance for all personnel)
 ├── QOLAE-API-Dashboard/               (Central SSOT API services)
 └── QOLAE Documentation & Trackers/    (Workflow docs)
 ```
@@ -41,6 +42,7 @@ QOLAE-Online-Portal/
 - **Lawyers Dashboard:** `server.js` (Port 3002)
 - **Case Managers Dashboard:** `cm_server.js` (Port 3006)
 - **Readers Dashboard:** `rd_server.js` (Port 3008)
+- **HR Compliance Dashboard:** `hrc_server.js` (Port 3012)
 
 ---
 
@@ -141,17 +143,15 @@ Location Block 3: Reader Registration Routes
   ├─ Generate customized NDA
   └─ Send invitation email
 
-Location Block 4: HR Compliance Review Routes
-  ├─ View pending compliance submissions
-  ├─ Download CVs
-  ├─ Create reference forms
-  ├─ Send reference forms to referees
-  └─ Approve compliance
-
-Location Block 5: Case Management Routes
+Location Block 4: Case Management Routes
   ├─ View all cases
   ├─ Assign reports to readers
   └─ Review corrections
+
+Location Block 5: HR Compliance Integration
+  ├─ Link to HRCompliance Dashboard
+  ├─ Display compliance status badges
+  └─ WebSocket notification handling
 
 Location Block 6: Server Startup
   └─ Starts the server on port 3006
@@ -175,10 +175,10 @@ Location Block 1: Authentication Routes (2FA)
   ├─ Verify code
   └─ Password creation/verification
 
-Location Block 2: HR Compliance Gate
-  ├─ Upload CV
-  ├─ Submit references
-  └─ Check compliance status
+Location Block 2: HR Compliance Integration
+  ├─ Submit compliance to HRCompliance Dashboard
+  ├─ Check compliance status
+  └─ Handle approval notifications
 
 Location Block 3: Main Dashboard Route
   └─ Serves readers-dashboard.ejs
@@ -199,6 +199,59 @@ Location Block 6: Payment & Profile Routes
 
 Location Block 7: Server Startup
   └─ Starts the server on port 3008
+```
+
+#### **HRCompliance hrc_server.js**
+
+```
+Location Block A: Imports & Configuration
+  └─ Sets up HR Compliance Dashboard foundation
+
+Location Block B: Server & Database Setup
+  └─ Connects to qolae_hrcompliance database
+
+Location Block C: Middleware & Plugins
+  └─ CORS, View engine, Static files, Form body parser
+
+Location Block 1: Authentication & Health
+  └─ Health checks, basic routes
+
+Location Block 2: Main Dashboard Route
+  └─ Serves hrCompliance-dashboard.ejs
+
+Location Block 3: New Starters Workflow
+  ├─ Create new starter record
+  ├─ Generate ID PIN
+  ├─ Send invitation email
+  └─ New starter compliance portal
+
+Location Block 4: Reader Registration Workflow
+  ├─ Reader basic info (Name, Email, Phone)
+  ├─ Reader type selection (First Reader vs Second Reader/Medical)
+  ├─ Medical verification (NMC/GMC for Second Readers)
+  ├─ PIN generation
+  └─ Email invitation sending
+
+Location Block 5: Readers Compliance Workflow
+  ├─ Submit compliance data
+  ├─ Upload CV and documents
+  ├─ Submit reference details
+  └─ Check compliance status
+
+Location Block 6: Compliance Review Workflow
+  ├─ View pending compliance submissions
+  ├─ Get compliance details
+  ├─ Update compliance status
+  └─ Approve compliance
+
+Location Block 7: Documents Library Workflow
+  ├─ Upload documents (secure storage)
+  ├─ View documents (no download)
+  ├─ Get document list
+  └─ Audit document access
+
+Location Block 8: Server Startup
+  └─ Starts the server on port 3012
 ```
 
 #### **API fastify_server.js (SSOT)**
@@ -243,22 +296,27 @@ Location Block 6: Server Startup & Shutdown
 
 ### **All QOLAE Dashboards Use the Same Pattern:**
 
-| Location Block | Lawyers | Case Managers | Readers | API SSOT |
-|----------------|---------|---------------|---------|----------|
-| **Block A** | Imports | Imports | Imports | Imports |
-| **Block B** | DB Setup | DB Setup | DB Setup (2 DBs) | DB Setup (All DBs) |
-| **Block C** | Middleware | Middleware | Middleware + JWT | Middleware |
-| **Block 1** | Auth & Routing | Health Checks | 2FA Auth | Root & Health |
-| **Block 2** | Dashboard Route | Dashboard Route | Compliance Gate | Auth Endpoints |
-| **Block 3** | Bootstrap API | Reader Registration | Dashboard Route | Signatures |
-| **Block 4** | Lawyer Data | Compliance Review | NDA Workflow | PDF Processing |
-| **Block 5** | Workflow Modals | Case Management | Report Review | Route Registration |
-| **Block 6** | Startup | Startup | Payment/Profile | Startup/Shutdown |
-| **Block 7** | - | - | Startup | - |
+**Setup Blocks (Always Same):**
+- **Block A**: Imports & Configuration
+- **Block B**: Server & Database Setup  
+- **Block C**: Middleware & Plugins
+
+**Workflow Blocks (Dashboard-Specific):**
+
+| Block | Lawyers | Case Managers | Readers | HR Compliance | API SSOT |
+|-------|---------|---------------|---------|---------------|----------|
+| **1** | Auth & Routing | Health Checks | 2FA Auth | Health Checks | Root & Health |
+| **2** | Dashboard Route | Dashboard Route | Compliance Gate | Dashboard Route | Auth Endpoints |
+| **3** | Bootstrap API | Reader Registration | Dashboard Route | New Starters Workflow | Signatures |
+| **4** | Lawyer Data | Case Management | NDA Workflow | Reader Registration Workflow | PDF Processing |
+| **5** | Workflow Modals | HR Compliance Integration | Report Review | Readers Compliance Workflow | Route Registration |
+| **6** | Startup | Startup | Payment/Profile | Compliance Review Workflow | Startup/Shutdown |
+| **7** | - | - | Startup | Documents Library Workflow | - |
+| **8** | - | - | - | Startup | - |
 
 ### **Key Patterns:**
 1. **Setup blocks (A, B, C)** are always the same across all servers
-2. **Numbered blocks (1-7)** reflect each dashboard's specific workflow
+2. **Numbered blocks (1-8)** reflect each dashboard's specific workflow
 3. **Startup block** is always last
 4. **Consistency** makes it easy to work across different dashboards
 
@@ -437,80 +495,6 @@ server.get('/consentModal', ...);
 
 ---
 
-## ✅ Implementation Checklist
-
-### **For LawyersDashboard server.js:**
-- [x] Location Block A: All imports at top ✅
-- [x] Location Block B: Database connection setup ✅
-- [x] Location Block C: All middleware registration ✅
-- [x] Location Block 1: Authentication & routing ✅
-- [x] Location Block 2: Main dashboard route ✅
-- [x] Location Block 3: Bootstrap API ✅
-- [x] Location Block 4: Lawyer data endpoints ✅
-- [x] Location Block 5: All workflow modal routes ✅
-- [x] Location Block 6: Server startup ✅
-
-### **For CaseManagers cm_server.js:**
-- [x] Location Block A: All imports at top ✅
-- [x] Location Block B: Database connection setup ✅
-- [x] Location Block C: All middleware registration ✅
-- [x] Location Block 1: Health checks ✅
-- [x] Location Block 2: Main dashboard route ✅
-- [ ] Location Block 3: Reader registration routes (in progress)
-- [ ] Location Block 4: HR compliance review routes (planned)
-- [ ] Location Block 5: Case management routes (planned)
-- [x] Location Block 6: Server startup ✅
-
-### **For Readers rd_server.js:**
-- [x] Location Block A: All imports at top ✅
-- [x] Location Block B: Database connection setup (2 DBs) ✅
-- [x] Location Block C: All middleware registration ✅
-- [x] Location Block 1: 2FA authentication routes ✅
-- [ ] Location Block 2: HR compliance gate (planned)
-- [x] Location Block 3: Main dashboard route ✅
-- [ ] Location Block 4: NDA workflow routes (planned)
-- [ ] Location Block 5: Report review routes (planned)
-- [ ] Location Block 6: Payment & profile routes (planned)
-- [x] Location Block 7: Server startup ✅
-
-### **For API fastify_server.js:**
-- [x] Location Block A: All imports at top ✅
-- [x] Location Block B: Database connections ✅
-- [x] Location Block C: All middleware registration ✅
-- [x] Location Block 1: Root & health endpoints ✅
-- [x] Location Block 2: Authentication endpoints ✅
-- [x] Location Block 3: Signature endpoints ✅
-- [x] Location Block 4: PDF processing endpoints ✅
-- [x] Location Block 5: Route module registration ✅
-- [x] Location Block 6: Server startup & shutdown ✅
-
----
-
-## 🚀 Next Steps
-
-### **Completed Dashboards:**
-1. ✅ **Lawyers Dashboard** - Fully implemented with Location Blocks
-2. ✅ **API SSOT** - Fully implemented with Location Blocks
-3. ✅ **Case Managers** - Infrastructure complete, workflows in progress
-4. ✅ **Readers** - Infrastructure complete, views pending
-
-### **Remaining Work:**
-1. **Case Managers Dashboard:**
-   - Complete Location Block 3 (Reader Registration Routes)
-   - Build Location Block 4 (HR Compliance Review Routes)
-   - Build Location Block 5 (Case Management Routes)
-
-2. **Readers Dashboard:**
-   - Build Location Block 2 (HR Compliance Gate views)
-   - Build Location Block 4 (NDA Workflow views)
-   - Build Location Block 5 (Report Review views)
-   - Build Location Block 6 (Payment & Profile views)
-
-3. **Testing:**
-   - Test all dashboards with Location Block pattern
-   - Verify cross-dashboard consistency
-   - Document any new patterns that emerge
-
 ---
 
 ## 💡 Key Takeaway
@@ -523,6 +507,7 @@ Just like your EJS files have clear sections for each workflow card, your server
 - ✅ **Lawyers Dashboard** - Easy to maintain and extend
 - ✅ **Case Managers Dashboard** - Clear structure for reader management
 - ✅ **Readers Dashboard** - Consistent 2FA + compliance workflow
+- ✅ **HR Compliance Dashboard** - Centralized HR compliance management
 - ✅ **API SSOT** - Centralized services, easy to find
 - ✅ **All Dashboards** - Same pattern = easy to work across systems
 
@@ -532,6 +517,7 @@ When everything follows the same pattern, you can navigate your entire system wi
 
 ## 📝 Document History
 
+- **December 2024:** Added QOLAE-HRCompliance-Dashboard and updated architecture
 - **October 11, 2025:** Expanded to cover entire QOLAE-Online-Portal
 - **Previous:** Focused on Lawyers Dashboard and API SSOT only
 - **Author:** Liz & Claude

@@ -159,6 +159,28 @@ module.exports = {
       error_file: '/var/log/pm2/qolae-readers-dashboard-error.log',
       out_file: '/var/log/pm2/qolae-readers-dashboard-out.log',
       log_date_format: 'DD-MM-YYYY HH:mm:ss Z'
+    },
+    {
+      name: 'qolae-hrcompliance',
+      script: 'hrc_server.js',
+      cwd: '/var/www/hrcompliance.qolae.com',
+      instances: 1,
+      exec_mode: 'fork',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3012
+      },
+      // Cache prevention settings
+      watch: false,
+      ignore_watch: ['node_modules', 'logs', '*.log'],
+      max_memory_restart: '200M',
+      restart_delay: 1000,
+      exp_backoff_restart_delay: 100,
+      min_uptime: '10s',
+      max_restarts: 10,
+      error_file: '/var/log/pm2/qolae-hrcompliance-error.log',
+      out_file: '/var/log/pm2/qolae-hrcompliance-out.log',
+      log_date_format: 'DD-MM-YYYY HH:mm:ss Z'
     }
   ]
 };

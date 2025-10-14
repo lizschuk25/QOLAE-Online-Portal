@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QOLAE HR Compliance - Agent Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .agent-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .agent-card.phoenix { border-left-color: #f59e0b; }
+        .agent-card.atlas { border-left-color: #10b981; }
+        .agent-card.iris { border-left-color: #8b5cf6; }
+        .agent-card.sage { border-left-color: #ef4444; }
+        .agent-card.mercury { border-left-color: #06b6d4; }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .agent-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .agent-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-waiting { background: #f1f5f9; color: #64748b; }
+        .status-working { background: #dbeafe; color: #1d4ed8; }
+        .status-testing { background: #fef3c7; color: #d97706; }
+        .status-error { background: #fee2e2; color: #dc2626; }
+        .status-complete { background: #d1fae5; color: #059669; }
+
+        .agent-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #64748b;
+        }
+
+        .tasks-list {
+            margin-bottom: 20px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 0.95em;
+            color: #374151;
+        }
+
+        .task-text.completed {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .agent-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .audio-toggle {
+            width: 40px;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .audio-toggle.active {
+            background: #10b981;
+        }
+
+        .audio-toggle::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .audio-toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .time-info {
+            font-size: 0.9em;
+            color: #64748b;
+        }
+
+        .phase-indicator {
+            background: #f8fafc;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .phase-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .phase-description {
+            color: #64748b;
+            font-size: 1em;
+        }
+
+        .controls-bar {
+            padding: 20px 30px;
+            background: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .global-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .sound-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sound-indicator.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .agents-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .controls-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sound-indicator" id="soundIndicator"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🏢 QOLAE HR Compliance Dashboard</h1>
+            <p>Agent Parallelization Command Center</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTasks">20</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completedTasks">4</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeAgents">0</div>
+                <div class="stat-label">Active Agents</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="timeRemaining">8h</div>
+                <div class="stat-label">Est. Time Left</div>
+            </div>
+        </div>
+
+        <div class="phase-indicator">
+            <div class="phase-title" id="currentPhase">🎉 Phase 1 COMPLETE - Ready for Phase 2!</div>
+            <div class="phase-description" id="phaseDescription">Phoenix foundation is complete! Atlas, Iris, and Sage can now work in parallel. Server online at port 3012.</div>
+        </div>
+
+        <div class="agents-grid">
+            <!-- Phoenix Agent -->
+            <div class="agent-card phoenix">
+                <div class="agent-header">
+                    <div class="agent-name">🔥 Phoenix</div>
+                    <div class="agent-status status-complete" id="phoenix-status">Complete</div>
+                </div>
+                <div class="agent-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="phoenix-progress" style="width: 100%"></div>
+                    </div>
+                    <div class="progress-text" id="phoenix-progress-text">100% Complete ✅</div>
+                </div>
+                <div class="tasks-list">
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="phoenix-1" checked>
+                        <div class="task-text completed" id="phoenix-1-text">Server foundation (hrc_server.js)</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="phoenix-2" checked>
+                        <div class="task-text completed" id="phoenix-2-text">All 5 data models (Assignment, CaseManager, Client, Compliance, Reader)</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="phoenix-3" checked>
+                        <div class="task-text completed" id="phoenix-3-text">NotificationService & database config</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="phoenix-4" checked>
+                        <div class="task-text completed" id="phoenix-4-text">Live Server deployment & /health endpoint tested</div>
+                    </div>
+                </div>
+                <div class="agent-controls">
+                    <div class="audio-controls">
+                        <span style="font-size: 0.9em; color: #64748b;">🔊</span>
+                        <div class="audio-toggle active" id="phoenix-audio"></div>
+                    </div>
+                    <div class="time-info" id="phoenix-time">Est: 3h | Actual: 2h ⚡</div>
+                </div>
+            </div>
+
+            <!-- Atlas Agent -->
+            <div class="agent-card atlas">
+                <div class="agent-header">
+                    <div class="agent-name">🏗️ Atlas</div>
+                    <div class="agent-status status-waiting" id="atlas-status">Waiting</div>
+                </div>
+                <div class="agent-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="atlas-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="atlas-progress-text">0% Complete</div>
+                </div>
+                <div class="tasks-list">
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="atlas-1">
+                        <div class="task-text" id="atlas-1-text">New Starter routes and controller</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="atlas-2">
+                        <div class="task-text" id="atlas-2-text">PIN generation and invitation email</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="atlas-3">
+                        <div class="task-text" id="atlas-3-text">New starter portal view</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="atlas-4">
+                        <div class="task-text" id="atlas-4-text">Document upload and flexible workspace</div>
+                    </div>
+                </div>
+                <div class="agent-controls">
+                    <div class="audio-controls">
+                        <span style="font-size: 0.9em; color: #64748b;">🔊</span>
+                        <div class="audio-toggle" id="atlas-audio"></div>
+                    </div>
+                    <div class="time-info" id="atlas-time">Est: 8h | Actual: 0h</div>
+                </div>
+            </div>
+
+            <!-- Iris Agent -->
+            <div class="agent-card iris">
+                <div class="agent-header">
+                    <div class="agent-name">👁️ Iris</div>
+                    <div class="agent-status status-waiting" id="iris-status">Waiting</div>
+                </div>
+                <div class="agent-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="iris-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="iris-progress-text">0% Complete</div>
+                </div>
+                <div class="tasks-list">
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="iris-1">
+                        <div class="task-text" id="iris-1-text">Readers compliance routes and controller</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="iris-2">
+                        <div class="task-text" id="iris-2-text">CV upload and reference submission</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="iris-3">
+                        <div class="task-text" id="iris-3-text">Readers compliance tracking view</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="iris-4">
+                        <div class="task-text" id="iris-4-text">Reader registration card integration</div>
+                    </div>
+                </div>
+                <div class="agent-controls">
+                    <div class="audio-controls">
+                        <span style="font-size: 0.9em; color: #64748b;">🔊</span>
+                        <div class="audio-toggle" id="iris-audio"></div>
+                    </div>
+                    <div class="time-info" id="iris-time">Est: 8h | Actual: 0h</div>
+                </div>
+            </div>
+
+            <!-- Sage Agent -->
+            <div class="agent-card sage">
+                <div class="agent-header">
+                    <div class="agent-name">🧠 Sage</div>
+                    <div class="agent-status status-waiting" id="sage-status">Waiting</div>
+                </div>
+                <div class="agent-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sage-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="sage-progress-text">0% Complete</div>
+                </div>
+                <div class="tasks-list">
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="sage-1">
+                        <div class="task-text" id="sage-1-text">Compliance review routes and controller</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="sage-2">
+                        <div class="task-text" id="sage-2-text">Reference collection system (phone + email)</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="sage-3">
+                        <div class="task-text" id="sage-3-text">Compliance review modal</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="sage-4">
+                        <div class="task-text" id="sage-4-text">Final approval and activation workflow</div>
+                    </div>
+                </div>
+                <div class="agent-controls">
+                    <div class="audio-controls">
+                        <span style="font-size: 0.9em; color: #64748b;">🔊</span>
+                        <div class="audio-toggle" id="sage-audio"></div>
+                    </div>
+                    <div class="time-info" id="sage-time">Est: 8h | Actual: 0h</div>
+                </div>
+            </div>
+
+            <!-- Mercury Agent -->
+            <div class="agent-card mercury">
+                <div class="agent-header">
+                    <div class="agent-name">⚡ Mercury</div>
+                    <div class="agent-status status-waiting" id="mercury-status">Waiting</div>
+                </div>
+                <div class="agent-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="mercury-progress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="mercury-progress-text">0% Complete</div>
+                </div>
+                <div class="tasks-list">
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="mercury-1">
+                        <div class="task-text" id="mercury-1-text">WebSocket server setup</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="mercury-2">
+                        <div class="task-text" id="mercury-2-text">Cross-dashboard notification system</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="mercury-3">
+                        <div class="task-text" id="mercury-3-text">Integration with CaseManagers and Readers</div>
+                    </div>
+                    <div class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="mercury-4">
+                        <div class="task-text" id="mercury-4-text">End-to-end testing across workflows</div>
+                    </div>
+                </div>
+                <div class="agent-controls">
+                    <div class="audio-controls">
+                        <span style="font-size: 0.9em; color: #64748b;">🔊</span>
+                        <div class="audio-toggle" id="mercury-audio"></div>
+                    </div>
+                    <div class="time-info" id="mercury-time">Est: 8h | Actual: 0h</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-bar">
+            <div class="global-controls">
+                <button class="btn btn-primary" onclick="startAgentWork()">🚀 Start Agent Work</button>
+                <button class="btn btn-secondary" onclick="exportProgress()">📊 Export Progress</button>
+                <button class="btn btn-secondary" onclick="importProgress()">📥 Import Progress</button>
+                <button class="btn btn-danger" onclick="resetAll()">🔄 Reset All</button>
+            </div>
+            <div style="font-size: 0.9em; color: #64748b;">
+                Last Updated: <span id="lastUpdated">Never</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Agent data structure
+        const agents = {
+            phoenix: {
+                name: 'Phoenix',
+                status: 'complete',
+                tasks: 4,
+                completed: 4,
+                estimatedTime: 3,
+                actualTime: 2,
+                dependencies: [],
+                phase: 1
+            },
+            atlas: {
+                name: 'Atlas',
+                status: 'waiting',
+                tasks: 4,
+                completed: 0,
+                estimatedTime: 8,
+                actualTime: 0,
+                dependencies: ['phoenix'],
+                phase: 2
+            },
+            iris: {
+                name: 'Iris',
+                status: 'waiting',
+                tasks: 4,
+                completed: 0,
+                estimatedTime: 8,
+                actualTime: 0,
+                dependencies: ['phoenix'],
+                phase: 2
+            },
+            sage: {
+                name: 'Sage',
+                status: 'waiting',
+                tasks: 4,
+                completed: 0,
+                estimatedTime: 8,
+                actualTime: 0,
+                dependencies: ['phoenix'],
+                phase: 2
+            },
+            mercury: {
+                name: 'Mercury',
+                status: 'waiting',
+                tasks: 4,
+                completed: 0,
+                estimatedTime: 8,
+                actualTime: 0,
+                dependencies: ['atlas', 'iris', 'sage'],
+                phase: 3
+            }
+        };
+
+        // Audio files (placeholder - you can add actual sound files)
+        const sounds = {
+            thinking: 'thinking.mp3',
+            working: 'working.mp3',
+            testing: 'testing.mp3',
+            error: 'error.mp3',
+            success: 'success.mp3',
+            waiting: 'waiting.mp3'
+        };
+
+        // Initialize the tracker
+        function init() {
+            loadProgress();
+            updateDisplay();
+            setupEventListeners();
+            updateLastUpdated();
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('agentProgress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.keys(agents).forEach(agentId => {
+                    if (data[agentId]) {
+                        agents[agentId] = { ...agents[agentId], ...data[agentId] };
+                    }
+                });
+            }
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            localStorage.setItem('agentProgress', JSON.stringify(agents));
+        }
+
+        // Update the display
+        function updateDisplay() {
+            Object.keys(agents).forEach(agentId => {
+                const agent = agents[agentId];
+                
+                // Update status
+                const statusEl = document.getElementById(`${agentId}-status`);
+                statusEl.textContent = agent.status.charAt(0).toUpperCase() + agent.status.slice(1);
+                statusEl.className = `agent-status status-${agent.status}`;
+                
+                // Update progress
+                const progress = (agent.completed / agent.tasks) * 100;
+                document.getElementById(`${agentId}-progress`).style.width = `${progress}%`;
+                document.getElementById(`${agentId}-progress-text`).textContent = `${Math.round(progress)}% Complete`;
+                
+                // Update checkboxes
+                for (let i = 1; i <= agent.tasks; i++) {
+                    const checkbox = document.getElementById(`${agentId}-${i}`);
+                    const text = document.getElementById(`${agentId}-${i}-text`);
+                    
+                    if (i <= agent.completed) {
+                        checkbox.checked = true;
+                        text.classList.add('completed');
+                    } else {
+                        checkbox.checked = false;
+                        text.classList.remove('completed');
+                    }
+                }
+                
+                // Update time info
+                document.getElementById(`${agentId}-time`).textContent = 
+                    `Est: ${agent.estimatedTime}h | Actual: ${agent.actualTime}h`;
+            });
+            
+            // Update global stats
+            const totalTasks = Object.values(agents).reduce((sum, agent) => sum + agent.tasks, 0);
+            const completedTasks = Object.values(agents).reduce((sum, agent) => sum + agent.completed, 0);
+            const activeAgents = Object.values(agents).filter(agent => agent.status === 'working').length;
+            
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('activeAgents').textContent = activeAgents;
+            
+            // Update phase
+            updatePhase();
+            
+            saveProgress();
+        }
+
+        // Update current phase
+        function updatePhase() {
+            const workingAgents = Object.values(agents).filter(agent => agent.status === 'working');
+            const completedAgents = Object.values(agents).filter(agent => agent.status === 'complete');
+            
+            if (workingAgents.length === 0 && completedAgents.length === 0) {
+                document.getElementById('currentPhase').textContent = 'Phase 1: Foundation';
+                document.getElementById('phaseDescription').textContent = 'Phoenix is building the database foundation. Other agents are waiting.';
+            } else if (workingAgents.some(agent => agent.phase === 1)) {
+                document.getElementById('currentPhase').textContent = 'Phase 1: Foundation';
+                document.getElementById('phaseDescription').textContent = 'Phoenix is building the database foundation. Other agents are waiting.';
+            } else if (workingAgents.some(agent => agent.phase === 2)) {
+                document.getElementById('currentPhase').textContent = 'Phase 2: Workflow Development';
+                document.getElementById('phaseDescription').textContent = 'Atlas, Iris, and Sage are building workflows in parallel.';
+            } else if (workingAgents.some(agent => agent.phase === 3)) {
+                document.getElementById('currentPhase').textContent = 'Phase 3: Integration';
+                document.getElementById('phaseDescription').textContent = 'Mercury is integrating all workflows and setting up WebSocket communication.';
+            } else {
+                document.getElementById('currentPhase').textContent = 'Project Complete!';
+                document.getElementById('phaseDescription').textContent = 'All agents have completed their tasks. The HR Compliance Dashboard is ready!';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Checkbox listeners
+            Object.keys(agents).forEach(agentId => {
+                for (let i = 1; i <= agents[agentId].tasks; i++) {
+                    const checkbox = document.getElementById(`${agentId}-${i}`);
+                    checkbox.addEventListener('change', () => {
+                        updateTaskCompletion(agentId, i, checkbox.checked);
+                    });
+                }
+                
+                // Audio toggle listeners
+                const audioToggle = document.getElementById(`${agentId}-audio`);
+                audioToggle.addEventListener('click', () => {
+                    audioToggle.classList.toggle('active');
+                });
+            });
+        }
+
+        // Update task completion
+        function updateTaskCompletion(agentId, taskNumber, completed) {
+            const agent = agents[agentId];
+            const currentCompleted = agent.completed;
+            
+            if (completed && taskNumber === agent.completed + 1) {
+                agent.completed++;
+                playSound('success');
+                showSoundIndicator(`${agent.name} completed task ${taskNumber}`);
+            } else if (!completed && taskNumber === agent.completed) {
+                agent.completed--;
+                playSound('error');
+                showSoundIndicator(`${agent.name} marked task ${taskNumber} incomplete`);
+            }
+            
+            updateDisplay();
+        }
+
+        // Play sound (placeholder - you can implement actual audio)
+        function playSound(soundType) {
+            // Check if audio is enabled for the agent
+            const audioToggles = document.querySelectorAll('.audio-toggle.active');
+            if (audioToggles.length === 0) return;
+            
+            // In a real implementation, you would play the actual sound file
+            console.log(`Playing sound: ${soundType}`);
+        }
+
+        // Show sound indicator
+        function showSoundIndicator(message) {
+            const indicator = document.getElementById('soundIndicator');
+            indicator.textContent = message;
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // Start agent work (simulation)
+        function startAgentWork() {
+            // This would trigger actual agent work
+            // For now, we'll simulate Phoenix starting
+            agents.phoenix.status = 'working';
+            updateDisplay();
+            playSound('working');
+            showSoundIndicator('Phoenix has started working on the database foundation');
+        }
+
+        // Export progress
+        function exportProgress() {
+            const data = JSON.stringify(agents, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'agent-progress.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Import progress
+        function importProgress() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const data = JSON.parse(e.target.result);
+                        Object.keys(agents).forEach(agentId => {
+                            if (data[agentId]) {
+                                agents[agentId] = { ...agents[agentId], ...data[agentId] };
+                            }
+                        });
+                        updateDisplay();
+                        showSoundIndicator('Progress imported successfully');
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Reset all progress
+        function resetAll() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                Object.keys(agents).forEach(agentId => {
+                    agents[agentId].completed = 0;
+                    agents[agentId].status = 'waiting';
+                    agents[agentId].actualTime = 0;
+                });
+                updateDisplay();
+                showSoundIndicator('All progress has been reset');
+            }
+        }
+
+        // Update last updated timestamp
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleString();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Update timestamp every minute
+        setInterval(updateLastUpdated, 60000);
+    </script>
+</body>
+</html>
