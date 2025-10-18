@@ -168,6 +168,80 @@ export default async function newStarterRoutes(fastify, options) {
   }, NewStarterController.sendReminder);
 
   // ==============================================
+  // AUTHENTICATION ROUTES (2FA Workflow)
+  // ==============================================
+
+  /**
+   * POST /api/new-starter/verify-pin
+   * Verify PIN and start 2FA process (Step 1 of 3)
+   * Body: { pin }
+   */
+  fastify.post('/api/new-starter/verify-pin', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['pin'],
+        properties: {
+          pin: { type: 'string', pattern: '^NS-[A-Z]{2}\\d{6}$' }
+        }
+      }
+    }
+  }, NewStarterController.verifyPIN);
+
+  /**
+   * POST /api/new-starter/send-otp
+   * Generate and email 6-digit OTP (Step 2 of 3)
+   * Body: { newStarterId }
+   */
+  fastify.post('/api/new-starter/send-otp', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['newStarterId'],
+        properties: {
+          newStarterId: { type: 'number' }
+        }
+      }
+    }
+  }, NewStarterController.sendOTP);
+
+  /**
+   * POST /api/new-starter/verify-otp
+   * Verify OTP code (Step 2.5 of 3)
+   * Body: { newStarterId, otp }
+   */
+  fastify.post('/api/new-starter/verify-otp', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['newStarterId', 'otp'],
+        properties: {
+          newStarterId: { type: 'number' },
+          otp: { type: 'string', minLength: 6, maxLength: 6 }
+        }
+      }
+    }
+  }, NewStarterController.verifyOTP);
+
+  /**
+   * POST /api/new-starter/create-password
+   * Complete authentication setup (Step 3 of 3)
+   * Body: { newStarterId, password }
+   */
+  fastify.post('/api/new-starter/create-password', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['newStarterId', 'password'],
+        properties: {
+          newStarterId: { type: 'number' },
+          password: { type: 'string', minLength: 12 }
+        }
+      }
+    }
+  }, NewStarterController.createPassword);
+
+  // ==============================================
   // HEALTH CHECK FOR NEW STARTER ROUTES
   // ==============================================
   fastify.get('/api/new-starter/health', async (request, reply) => {

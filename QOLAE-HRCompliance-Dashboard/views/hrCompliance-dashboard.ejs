@@ -602,8 +602,246 @@
           <button class="top-tab" onclick="showNewStarterTab('all')">All</button>
         </div>
 
-        <div id="new-starter-content">
-          <p>New Starter registration content from Atlas Agent will load here...</p>
+        <!-- NEW STARTER TABS CONTENT -->
+        <div id="new-starter-register-tab" class="new-starter-tab-content">
+          <div class="card">
+            <h3 class="card-title">Register New Starter</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+              Register new Case Managers, administrative staff, or other personnel. They'll receive a PIN and secure login credentials.
+            </p>
+
+            <!-- REGISTRATION FORM -->
+            <form id="newStarterRegistrationForm" onsubmit="registerNewStarter(event)">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <!-- First Name -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    First Name <span style="color: #dc2626;">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="newStarterFirstName"
+                    required
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                    placeholder="e.g., Rachel"
+                  />
+                </div>
+
+                <!-- Last Name -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    Last Name <span style="color: #dc2626;">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="newStarterLastName"
+                    required
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                    placeholder="e.g., Green"
+                  />
+                </div>
+
+                <!-- Email -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    Email Address <span style="color: #dc2626;">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="newStarterEmail"
+                    required
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                    placeholder="e.g., rachel.green@qolae.com"
+                  />
+                </div>
+
+                <!-- Phone -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    Phone Number <span style="color: #dc2626;">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="newStarterPhone"
+                    required
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                    placeholder="e.g., +44 7700 900000"
+                  />
+                </div>
+
+                <!-- Role -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    Role <span style="color: #dc2626;">*</span>
+                  </label>
+                  <select
+                    id="newStarterRole"
+                    required
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                  >
+                    <option value="">-- Select Role --</option>
+                    <option value="Case Manager">Case Manager</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Operations">Operations</option>
+                    <option value="Reader">Reader</option>
+                  </select>
+                </div>
+
+                <!-- Department -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    Department
+                  </label>
+                  <input
+                    type="text"
+                    id="newStarterDepartment"
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                    placeholder="e.g., Medical, Legal, Operations"
+                  />
+                </div>
+
+                <!-- Start Date -->
+                <div>
+                  <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    id="newStarterStartDate"
+                    style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                  />
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button
+                  type="button"
+                  onclick="document.getElementById('newStarterRegistrationForm').reset()"
+                  style="padding: 10px 24px; border: 1px solid #d1d5db; border-radius: 6px; background: white; color: #374151; font-weight: 500; cursor: pointer;"
+                >
+                  Clear Form
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  style="padding: 10px 24px;"
+                >
+                  Register New Starter
+                </button>
+              </div>
+            </form>
+
+            <!-- Success Message (Hidden by default) -->
+            <div id="newStarterSuccessMessage" style="display: none; margin-top: 20px; padding: 20px; background: #d1fae5; border: 1px solid #34d399; border-radius: 8px;">
+              <h4 style="margin: 0 0 12px 0; color: #059669; font-size: 18px;">✅ Success! Invitation Email Sent</h4>
+              <div style="display: grid; gap: 8px; margin-bottom: 12px;">
+                <p style="margin: 0; color: #047857;">
+                  <strong>New Starter:</strong> <span id="registeredName"></span>
+                </p>
+                <p style="margin: 0; color: #047857;">
+                  <strong>PIN:</strong> <span id="generatedPIN" style="font-family: monospace; font-size: 16px; background: #f0fdf4; padding: 4px 8px; border-radius: 4px;"></span>
+                </p>
+                <p style="margin: 0; color: #047857;">
+                  <strong>Email:</strong> <span id="registeredEmail"></span>
+                </p>
+              </div>
+              <p style="margin: 0; color: #047857; font-size: 14px; padding-top: 12px; border-top: 1px solid #6ee7b7;">
+                📧 An invitation email with a secure login link has been sent to the new starter.
+              </p>
+            </div>
+
+            <!-- Error Message (Hidden by default) -->
+            <div id="newStarterErrorMessage" style="display: none; margin-top: 20px; padding: 16px; background: #fee2e2; border: 1px solid #f87171; border-radius: 6px;">
+              <h4 style="margin: 0 0 8px 0; color: #dc2626;">❌ Registration Failed</h4>
+              <p id="errorMessageText" style="margin: 0; color: #991b1b;"></p>
+            </div>
+          </div>
+        </div>
+
+        <div id="new-starter-pending-tab" class="new-starter-tab-content" style="display: none;">
+          <div class="card">
+            <h3 class="card-title">Pending New Starters</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">New starters who have been sent invitations but haven't completed compliance yet.</p>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e5e7eb; background: #f9fafb;">
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">PIN</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Name</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Email</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Role</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Sent Date</th>
+                    <th style="text-align: center; padding: 12px; font-weight: 600; color: #374151;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="pending-new-starters-table">
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #9ca3af;">
+                      Loading pending new starters...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="new-starter-approved-tab" class="new-starter-tab-content" style="display: none;">
+          <div class="card">
+            <h3 class="card-title">Approved New Starters</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">New starters who have completed compliance and are now active.</p>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e5e7eb; background: #f9fafb;">
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">PIN</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Name</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Role</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Department</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Approved Date</th>
+                    <th style="text-align: center; padding: 12px; font-weight: 600; color: #374151;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="approved-new-starters-table">
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #9ca3af;">
+                      Loading approved new starters...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="new-starter-all-tab" class="new-starter-tab-content" style="display: none;">
+          <div class="card">
+            <h3 class="card-title">All New Starters</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">Complete list of all registered new starters.</p>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e5e7eb; background: #f9fafb;">
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">PIN</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Name</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Email</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Role</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Status</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: #374151;">Created</th>
+                    <th style="text-align: center; padding: 12px; font-weight: 600; color: #374151;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="all-new-starters-table">
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #9ca3af;">
+                      Loading all new starters...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -808,7 +1046,7 @@
       event.currentTarget.classList.add('active');
     }
 
-    // TOP TABS (NEW STARTERS EXAMPLE)
+    // TOP TABS (NEW STARTERS)
     function showNewStarterTab(tabName) {
       // Update active tab styling
       document.querySelectorAll('#new-starters .top-tab').forEach(tab => {
@@ -816,9 +1054,273 @@
       });
       event.currentTarget.classList.add('active');
 
-      // Load tab content
-      console.log(`Loading ${tabName} tab for New Starters`);
-      // TODO: Load actual content from Atlas Agent
+      // Hide all tab content divs
+      document.querySelectorAll('#new-starters .tab-content').forEach(content => {
+        content.style.display = 'none';
+      });
+
+      // Show selected tab content
+      const tabContentId = `new-starter-${tabName}-tab`;
+      const tabContent = document.getElementById(tabContentId);
+      if (tabContent) {
+        tabContent.style.display = 'block';
+      }
+
+      // Load data for the selected tab
+      if (tabName === 'pending') {
+        loadPendingNewStarters();
+      } else if (tabName === 'approved') {
+        loadApprovedNewStarters();
+      } else if (tabName === 'all') {
+        loadAllNewStarters();
+      }
+    }
+
+    // REGISTER NEW STARTER
+    async function registerNewStarter(event) {
+      event.preventDefault();
+
+      // Get form data
+      const formData = {
+        firstName: document.getElementById('ns-firstName').value.trim(),
+        lastName: document.getElementById('ns-lastName').value.trim(),
+        email: document.getElementById('ns-email').value.trim(),
+        phone: document.getElementById('ns-phone').value.trim(),
+        role: document.getElementById('ns-role').value,
+        department: document.getElementById('ns-department').value.trim(),
+        startDate: document.getElementById('ns-startDate').value,
+        createdBy: 'Liz' // TODO: Get from session
+      };
+
+      // Validation
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.role) {
+        showNewStarterError('Please fill in all required fields (marked with *)');
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        showNewStarterError('Please enter a valid email address');
+        return;
+      }
+
+      try {
+        // Show loading state
+        const submitBtn = document.querySelector('#newStarterRegistrationForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Registering...';
+
+        // Call API
+        const response = await fetch('/api/new-starter/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Show success message with PIN
+          showNewStarterSuccess(result.data.pin, result.data.name, result.data.email);
+
+          // Reset form
+          document.getElementById('newStarterRegistrationForm').reset();
+
+          // Refresh pending list
+          loadPendingNewStarters();
+        } else {
+          showNewStarterError(result.error || 'Failed to register new starter');
+        }
+
+        // Restore button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+
+      } catch (error) {
+        console.error('Error registering new starter:', error);
+        showNewStarterError('Network error. Please try again.');
+
+        // Restore button
+        const submitBtn = document.querySelector('#newStarterRegistrationForm button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Register New Starter';
+      }
+    }
+
+    // Show success message
+    function showNewStarterSuccess(pin, name, email) {
+      const successDiv = document.getElementById('newStarterSuccessMessage');
+      const nameSpan = document.getElementById('registeredName');
+      const pinSpan = document.getElementById('generatedPIN');
+      const emailSpan = document.getElementById('registeredEmail');
+
+      nameSpan.textContent = name;
+      pinSpan.textContent = pin;
+      emailSpan.textContent = email;
+      successDiv.style.display = 'block';
+
+      // Hide error message
+      document.getElementById('newStarterErrorMessage').style.display = 'none';
+
+      // Auto-hide after 10 seconds
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 10000);
+    }
+
+    // Show error message
+    function showNewStarterError(message) {
+      const errorDiv = document.getElementById('newStarterErrorMessage');
+      const errorText = document.getElementById('errorMessageText');
+
+      errorText.textContent = message;
+      errorDiv.style.display = 'block';
+
+      // Hide success message
+      document.getElementById('newStarterSuccessMessage').style.display = 'none';
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    // Load Pending New Starters
+    async function loadPendingNewStarters() {
+      try {
+        const response = await fetch('/api/new-starter/all?status=pending');
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+          const tbody = document.querySelector('#new-starter-pending-tab tbody');
+          tbody.innerHTML = result.data.map(starter => `
+            <tr>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.pin}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.fullName}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.email}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.role}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${formatDate(starter.createdAt)}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
+                <button onclick="sendReminder('${starter.pin}')" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                  Send Reminder
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading pending new starters:', error);
+      }
+    }
+
+    // Load Approved New Starters
+    async function loadApprovedNewStarters() {
+      try {
+        const response = await fetch('/api/new-starter/all?status=approved');
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+          const tbody = document.querySelector('#new-starter-approved-tab tbody');
+          tbody.innerHTML = result.data.map(starter => `
+            <tr>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.pin}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.fullName}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.role}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.department || 'N/A'}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${formatDate(starter.approvedAt)}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
+                <button onclick="viewDetails('${starter.pin}')" style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                  View Details
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading approved new starters:', error);
+      }
+    }
+
+    // Load All New Starters
+    async function loadAllNewStarters() {
+      try {
+        const response = await fetch('/api/new-starter/all');
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+          const tbody = document.querySelector('#new-starter-all-tab tbody');
+          tbody.innerHTML = result.data.map(starter => `
+            <tr>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.pin}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.fullName}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.email}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${starter.role}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">
+                <span style="padding: 4px 12px; background: ${getStatusColor(starter.status)}; color: white; border-radius: 12px; font-size: 12px;">
+                  ${starter.status}
+                </span>
+              </td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb;">${formatDate(starter.createdAt)}</td>
+              <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">
+                <button onclick="viewDetails('${starter.pin}')" style="padding: 6px 12px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                  View
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading all new starters:', error);
+      }
+    }
+
+    // Helper: Format date
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    // Helper: Get status color
+    function getStatusColor(status) {
+      const colors = {
+        'pending': '#f59e0b',
+        'invited': '#3b82f6',
+        'compliance_submitted': '#8b5cf6',
+        'approved': '#10b981',
+        'rejected': '#ef4444'
+      };
+      return colors[status] || '#6b7280';
+    }
+
+    // Send reminder email
+    async function sendReminder(pin) {
+      try {
+        const response = await fetch('/api/new-starter/send-reminder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('Reminder email sent successfully!');
+        } else {
+          alert('Failed to send reminder: ' + result.error);
+        }
+      } catch (error) {
+        console.error('Error sending reminder:', error);
+        alert('Network error. Please try again.');
+      }
+    }
+
+    // View details (placeholder)
+    function viewDetails(pin) {
+      alert('View details for ' + pin + ' - Feature coming soon!');
     }
 
     // READERS TAB SWITCHING

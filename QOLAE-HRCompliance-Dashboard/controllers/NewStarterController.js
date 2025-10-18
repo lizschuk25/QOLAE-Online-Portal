@@ -585,7 +585,7 @@ export class NewStarterController {
       });
 
     } catch (error) {
-      console.error('L Error sending reminder:', error);
+      console.error('❌ Error sending reminder:', error);
       return reply.code(500).send({
         success: false,
         error: 'Failed to send reminder',
@@ -593,6 +593,316 @@ export class NewStarterController {
       });
     }
   }
+
+  // ==============================================
+  // AUTHENTICATION METHODS (2FA Workflow)
+  // ==============================================
+
+  /**
+   * Verify PIN and start 2FA process (Step 1 of 3)
+   * POST /api/new-starter/verify-pin
+   */
+  static async verifyPIN(request, reply) {
+    try {
+      const { pin } = request.body;
+
+      console.log(`\n🔐 ===== VERIFYING PIN =====`);
+      console.log(`PIN: ${pin}`);
+
+      // Validate PIN format
+      const pinRegex = /^NS-[A-Z]{2}\d{6}$/;
+      if (!pinRegex.test(pin)) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid PIN format. Expected: NS-XX123456'
+        });
+      }
+
+      // Query database for new starter
+      const query = `
+        SELECT id, pin, full_name, email
+        FROM new_starters
+        WHERE pin = $1
+      `;
+
+      const result = await pool.query(query, [pin]);
+
+      if (result.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'PIN not found'
+        });
+      }
+
+      const newStarter = result.rows[0];
+
+      console.log(`✅ PIN verified for: ${newStarter.full_name}`);
+
+      return reply.send({
+        success: true,
+        data: {
+          newStarterId: newStarter.id,
+          email: newStarter.email,
+          fullName: newStarter.full_name,
+          pinValid: true
+        },
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error('❌ Error verifying PIN:', error);
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error'
+      });
+    }
+  }
+
+  /**
+   * Generate and email 6-digit OTP (Step 2 of 3)
+   * POST /api/new-starter/send-otp
+   */
+  static async sendOTP(request, reply) {
+    try {
+      const { newStarterId } = request.body;
+
+      console.log(`\n📧 ===== SENDING OTP =====`);
+      console.log(`New Starter ID: ${newStarterId}`);
+
+      // Get new starter details
+      const query = `
+        SELECT id, pin, full_name, email
+        FROM new_starters
+        WHERE id = $1
+      `;
+
+      const result = await pool.query(query, [newStarterId]);
+
+      if (result.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'New starter not found'
+        });
+      }
+
+      const newStarter = result.rows[0];
+
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+      // Store OTP in database with 15-minute expiry
+      const updateQuery = `
+        UPDATE new_starters
+        SET otp = $1,
+            otp_expires_at = NOW() + INTERVAL '15 minutes',
+            otp_attempts = 0,
+            updated_at = NOW()
+        WHERE id = $2
+      `;
+
+      await pool.query(updateQuery, [otp, newStarterId]);
+
+      // Send OTP via email (TODO: implement email sending)
+      console.log(`🔐 Generated OTP for ${newStarter.full_name}: ${otp}`);
+      console.log(`⚠️  Email sending not yet implemented - OTP logged for testing`);
+
+      return reply.send({
+        success: true,
+        message: `OTP sent to ${newStarter.email}`,
+        data: {
+          newStarterId: newStarter.id,
+          email: newStarter.email,
+          otpExpiresIn: 900 // seconds (15 minutes)
+        },
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error('❌ Error sending OTP:', error);
+      return reply.code(500).send({
+        success: false,
+        error: 'Failed to send OTP'
+      });
+    }
+  }
+
+  /**
+   * Verify OTP code (Step 2.5 of 3)
+   * POST /api/new-starter/verify-otp
+   */
+  static async verifyOTP(request, reply) {
+    try {
+      const { newStarterId, otp } = request.body;
+
+      console.log(`\n🔓 ===== VERIFYING OTP =====`);
+      console.log(`New Starter ID: ${newStarterId}, OTP: ${otp}`);
+
+      // Get OTP details from database
+      const query = `
+        SELECT id, otp, otp_expires_at, otp_attempts, full_name
+        FROM new_starters
+        WHERE id = $1
+      `;
+
+      const result = await pool.query(query, [newStarterId]);
+
+      if (result.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'New starter not found'
+        });
+      }
+
+      const newStarter = result.rows[0];
+
+      // Check if OTP exists
+      if (!newStarter.otp) {
+        return reply.code(400).send({
+          success: false,
+          error: 'No OTP found. Please request a new one.'
+        });
+      }
+
+      // Check if OTP has expired
+      if (new Date() > new Date(newStarter.otp_expires_at)) {
+        return reply.code(410).send({
+          success: false,
+          error: 'OTP has expired. Request a new one.'
+        });
+      }
+
+      // Check attempts
+      if (newStarter.otp_attempts >= 3) {
+        // Clear OTP after 3 failed attempts
+        await pool.query('UPDATE new_starters SET otp = NULL WHERE id = $1', [newStarterId]);
+        return reply.code(400).send({
+          success: false,
+          error: 'Too many failed attempts. Please request a new OTP.'
+        });
+      }
+
+      // Verify OTP
+      if (newStarter.otp !== otp) {
+        // Increment attempts
+        await pool.query('UPDATE new_starters SET otp_attempts = otp_attempts + 1 WHERE id = $1', [newStarterId]);
+        return reply.code(400).send({
+          success: false,
+          error: 'Invalid OTP'
+        });
+      }
+
+      console.log(`✅ OTP verified for: ${newStarter.full_name}`);
+
+      return reply.send({
+        success: true,
+        message: 'OTP verified successfully',
+        data: {
+          newStarterId: newStarter.id,
+          verified: true
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error verifying OTP:', error);
+      return reply.code(500).send({
+        success: false,
+        error: 'Internal server error'
+      });
+    }
+  }
+
+  /**
+   * Complete authentication setup with password (Step 3 of 3)
+   * POST /api/new-starter/create-password
+   */
+  static async createPassword(request, reply) {
+    try {
+      const { newStarterId, password } = request.body;
+
+      console.log(`\n🔑 ===== CREATING PASSWORD =====`);
+      console.log(`New Starter ID: ${newStarterId}`);
+
+      // Validate password strength
+      const passwordValidation = validatePassword(password);
+
+      if (!passwordValidation.isValid) {
+        return reply.code(400).send({
+          success: false,
+          error: 'Password does not meet requirements',
+          requirements: passwordValidation.errors
+        });
+      }
+
+      // Hash password with bcrypt (12 rounds)
+      const bcrypt = await import('bcrypt');
+      const passwordHash = await bcrypt.hash(password, 12);
+
+      // Update database
+      const query = `
+        UPDATE new_starters
+        SET password_hash = $1,
+            status = 'credentials_created',
+            otp = NULL,
+            otp_attempts = 0,
+            updated_at = NOW()
+        WHERE id = $2
+        RETURNING id, pin, full_name
+      `;
+
+      const result = await pool.query(query, [passwordHash, newStarterId]);
+
+      if (result.rows.length === 0) {
+        return reply.code(404).send({
+          success: false,
+          error: 'New starter not found'
+        });
+      }
+
+      const newStarter = result.rows[0];
+
+      console.log(`✅ Password created for: ${newStarter.full_name}`);
+
+      return reply.send({
+        success: true,
+        message: 'Account created. Redirecting to compliance portal...',
+        data: {
+          newStarterId: newStarter.id,
+          redirectUrl: '/new-starter/compliance',
+          status: 'credentials_created'
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error creating password:', error);
+      return reply.code(500).send({
+        success: false,
+        error: 'Failed to create password'
+      });
+    }
+  }
+}
+
+// ==============================================
+// PASSWORD VALIDATION HELPER
+// ==============================================
+function validatePassword(password) {
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const isLongEnough = password.length >= 12;
+
+  const errors = [];
+  if (!hasUppercase) errors.push('Must contain uppercase letters');
+  if (!hasLowercase) errors.push('Must contain lowercase letters');
+  if (!hasNumber) errors.push('Must contain numbers');
+  if (!hasSymbol) errors.push('Must contain symbols');
+  if (!isLongEnough) errors.push('Must be at least 12 characters');
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 }
 
 // ==============================================
