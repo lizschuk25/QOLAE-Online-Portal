@@ -28,7 +28,7 @@ The HR Compliance Dashboard (`hrcompliance.qolae.com`) is a **standalone, secure
 - **Email sent**: Invitation email with hyperlinked PIN ID
 - **New starter clicks**: PIN → Access compliance login portal (PIN, 2FA, password creation)
 
-#### **Step 1A.2: New Starter Compliance Documents**
+#### **Step 1A.2: New Starter Compliance Documents** FILLED OUT BY THE APPLICANT!!!!!!!!!!!!!
 - **Application Form**: In-house application form (CV can auto-populate)
 - **Identity Documents**: Passport, driving license, etc.
 - **Utility Bills**: Proof of address

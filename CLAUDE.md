@@ -9,27 +9,23 @@ I started to use ecosystem.config.js for my PM2 process as I was getting a lot o
 
 I have also been trying to use the same idea that Nginx uses with Location blocks for my Files in line with my Lawyers Workflow and now all my workflows as it is then easier to debug and figure out what and where the problems are. So all the steps have all the logic responsible for each step within the workflow steps or should do. This lessens repetition and overbloating of my files. @LocationBlockProtocol.md is in the root of the QOLAE-Online-Portal folder and project.
 
-From today onwards 29th September 2025, I will work step by step with the Lawyers Workflow steps in all my files until this project is completed. It is long overdue and LLMs have destroyed my Codebase on hundreds of ocasions now over the last 10 months!!!! It has become critical that I complete this project in hours rather than days, weeks and months. This project was supposed to be completed in 3 months and now 10 months later I am still grappling with it so I'm extremely frustrated and annoyed!!! 
+From today onwards 29th September 2025, I will work step by step with all Workflow steps in all my files until this project is completed. It is long overdue and LLMs have destroyed my Codebase on hundreds of ocasions now over the last 10 months!!!! It has become critical that I complete this project in hours rather than days, weeks and months. This project was supposed to be completed in 3 months and now 10 months later I am still grappling with it so I'm extremely frustrated and annoyed!!! 
 
 The Admin-Dashboard is fully compliant and working efficiently as of the beginning of August 2025. 
 
 The Lawyers-Dashboard has had hundreds of setbacks. Lately I returned to using the pdf after months of trying to find a suitable autopopulated signature embedding option for my TemplateTOB.pdf. I finally found a way around this in September 2025 after some due diligence research! 
 
-Once the signature issue was resolved with doing the QOLAE-Simulation, last week, other issues cropped up. The signatures were too faint, so I designed a signature canvas html which helped and now my signature has boldness has been resolved. However, trying to get this same modality applied to the Lawyers/users canvas has turned out to be problematic. 
+Once the signature issue was resolved with doing the QOLAE-Simulation, last week, other issues cropped up. The signatures were too faint, so I designed a signature canvas html which helped and now my bold signature is working. However, trying to get this same modality applied to the Lawyers/users canvas has turned out to be problematic. 
 
-Whilst resolving this, other issues cropped up and eventually sent this codebase into meltdown. SO everything crashed and I had to begin again resolving 'relative urls' as opposed to absolute urls that LLMs were insisting on. I have found that LLMs prefer to be very lazy and not deal with problems as they crop up. They prefer to rush ahead and in so doing, this creates future problems. 
+Whilst resolving this, other issues cropped up and eventually sent this codebase into meltdown. SO everything crashed and I had to begin again resolving 'relative urls' as opposed to absolute urls that LLMs were insisting on. I have found that LLMs prefer to be very lazy and not deal with problems as they crop up. They prefer to rush ahead and in so doing, this creates future problems. PLEASE SLOW DOWN WHEN PROBLEM SOLVING AND CHECK IN WITH LIZ
 
 My method is to draw up a daily checklist (as of today 14th October 2025, I now realise that Claude Code has a PlanMode, so I will be actively using this) so that I can keep track of what I'm doing, myself and tick off the boxes. I have to be extremely strict about this. 
 
 Asking for an audit sometimes works and sometimes it doesn't. It seems to be very hit and miss as to how LLMs will show up on any given day. Sometimes its like blazing through my workflow without many issues and other times the set backs are unbearable. Basic communication is misunderstood and I am now trying my best to be very clear with my communication and not give too much information as this seems to confuse LLMs a lot. 
 
-I have designed a Bootstrap SSOT modality in API-Dashboard which is supposed to support all the other subdomains on my Live Server. Yesterday and early hours of this morning, it appears as if the Lawyers Individual Workspace is no longer functioning and the browser is continuously refreshing. I spent over 20 hours yesterday and early hours of this morning getting all the problems resolved, just to get back to the Lawyers Dashboard proper and this issue - of the browser was 2 hours trying to figure it out with no resolution. As such, the priority for today is: 
+I have designed a Bootstrap SSOT modality in API-Dashboard which is supposed to support all the other subdomains on my Live Server. Yesterday and early hours of this morning, it appears as if the Lawyers Individual Workspace is no longer functioning and the browser is continuously refreshing. I spent over 20 hours yesterday and early hours of this morning getting all the problems resolved, just to get back to the Lawyers Dashboard proper and this issue - of the browser was 2 hours trying to figure it out with no resolution. So this will need sorting out, when I got through the plan for the day. 
 
-1. Secure Login: To make sure that Lawyers can log in properly with their own secure password consistently. Right now, there appears to be a set pw and this is not secure from a GDPR point of view, so this needs to be sorted out today, because I think this link is why the Lawyers Dashboard is redirecting to the Template version rather than the Individual Lawyers & Law Firm's workspace. 
-
-2. Once the above has been sorted out, then this should resolve the Lawyers Dashboard and the customised/individual workspace of the Law Firm and the Lawyers. 
-
-The PIN ID generation for Readers, Clients and New Starters is now going to be done by hrcompliance.qolae.com (now for hr, compliance and operations) on my Live Server and here in Cursor's editor QOLAE-HRCompliance-Dashboard
+The PIN ID generation for Readers, Clients and New Starters is now going to be done by hrcompliance.qolae.com (which is HR, Compliance & Operations) on my Live Server and here in Cursor's editor - QOLAE-HRCompliance-Dashboard.
 
 End of today's Journal (14th October 2025)for Claude to go through. 
 
@@ -48,15 +44,14 @@ Claude Code Rules:
 8. DO NOT BE LAZY. NEVER BE LAZY. IF THERE IS A BUG FIND THE ROOT CAUSE AND FIX IT. NO TEMPORARY FIXES. YOU ARE A SENIOR DEVELOPER. NEVER BE LAZY
 9. MAKE ALL FIXES AND CODE CHANGES AS SIMPLE AS HUMANLY POSSIBLE. THEY SHOULD ONLY IMPACT NECESSARY CODE RELEVANT TO THE TASK AND NOTHING ELSE. IT SHOULD IMPACT AS LITTLE CODE AS POSSIBLE. YOUR GOAL IS TO NOT INTRODUCE ANY BUGS. IT'S ALL ABOUT SIMPLICITY
 10.At the end of the session make sure that there is a summary and update in each QOLAE- folder, perhaps README.md of the latest summary update at the top of the file, of what has been achieved and then this "CLAUDE.md" file within each the root QOLAE-Online-Portal is kept overall and simple.  ITs best to place the latest session just below these Claude Code Rules. 
-11. I'm aiming to use Claude Sonnet for most of my creation, designing and building of files as well as uploading to my Live Server, to minimise over doing it with my token expenditure. Only USE CLAUDE OPUS PLANMODE for getting ready for project management and how I want to run each session
+11. I'm aiming to use Claude Haiku 4.5 for most of my creation, designing and building of files as well as uploading to my Live Server, to minimise over doing it with my token expenditure. Only USE CLAUDE Sonnet PLANMODE for getting ready for project management and how I want to run each session
 
 CRITICAL: When debugging, you MUST trace through the ENTIRE code flow step by step. No assumptions. No shortcuts.
 
 Thank you for your understanding. 
----------------------------------------------------------------
+LATEST SESSION SUMMARY (ALWAYS PLACE AT TOP FOR EASY ACCESS AFTER CLAUDE CODE RULES)
+      ---------------------------------------------------------------
 
----
----
 
 # 📅 LATEST SESSION SUMMARY (ALWAYS AT TOP FOR EASY ACCESS)
 

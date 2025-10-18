@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEP 1A: New Starter Registration Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 5px solid #10b981;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .phase-section {
+            margin-bottom: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .phase-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .phase-header:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6d3a8c 100%);
+        }
+
+        .phase-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .phase-toggle {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .phase-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .phase-body {
+            padding: 25px;
+            background: #fafbfc;
+        }
+
+        .phase-body.collapsed {
+            display: none;
+        }
+
+        .progress-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .progress-text {
+            font-size: 0.9em;
+            color: #64748b;
+            text-align: right;
+        }
+
+        .deliverables-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .deliverable-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .deliverable-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left-color: #667eea;
+        }
+
+        .deliverable-item.completed {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+        }
+
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            accent-color: #667eea;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        .deliverable-content {
+            flex: 1;
+        }
+
+        .deliverable-code {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .deliverable-description {
+            color: #64748b;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .deliverable-item.completed .deliverable-code {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .deliverable-item.completed .deliverable-description {
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 30px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .last-updated {
+            text-align: center;
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-in-progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-complete {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 20px;
+                gap: 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .phase-body {
+                padding: 15px;
+            }
+
+            .deliverable-item {
+                padding: 12px;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 STEP 1A: New Starter Registration Workflow</h1>
+            <p>Interactive Tracker for Atlas Agent Deliverables</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-number" id="totalDeliverables">0</div>
+                <div class="stat-label">Total Deliverables</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="completedDeliverables">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="percentComplete">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="remainingDeliverables">0</div>
+                <div class="stat-label">Remaining</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- PHASE 1A.1 -->
+            <div class="phase-section">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div>
+                        <span class="phase-title">🔄 STEP 1A.1: New Starter Registration Form</span>
+                        <span class="status-badge status-pending" id="status-1a1">Pending</span>
+                    </div>
+                    <span class="phase-toggle">▼</span>
+                </div>
+                <div class="phase-body">
+                    <p style="margin-bottom: 15px; color: #64748b; font-size: 0.95em;">
+                        <strong>What it does:</strong> Liz registers a new Case Manager with basic details. System auto-generates a unique PIN.
+                    </p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-1a1" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text-1a1">0 of 12 tasks</div>
+                    </div>
+                    <div class="deliverables-list" id="list-1a1">
+                        <div class="deliverable-item" data-id="1a1-1">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.1 - Database Schema</div>
+                                <div class="deliverable-description">Create qolae_hrcompliance.new_starters table with all required columns and constraints</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-2">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.2 - Controller</div>
+                                <div class="deliverable-description">NewStarterController.js with registerNewStarter() method</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-3">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.3 - PIN Generator</div>
+                                <div class="deliverable-description">generateNewStarterPIN.js utility - NS-LC-123456 format</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-4">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.4 - Email Template</div>
+                                <div class="deliverable-description">sendNewStarterInvitation.js with hyperlinked PIN and QOLAE signature</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-5">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.5 - API Route: Register</div>
+                                <div class="deliverable-description">POST /api/new-starter/create endpoint</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-6">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.6 - API Route: List</div>
+                                <div class="deliverable-description">GET /api/new-starter/all endpoint</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-7">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.7 - Frontend Form</div>
+                                <div class="deliverable-description">Registration form modal in hrCompliance-dashboard.ejs New Starters tab</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-8">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.8 - Display List</div>
+                                <div class="deliverable-description">New Starters list with cards/table and status badges</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-9">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.9 - WebSocket Notification</div>
+                                <div class="deliverable-description">Notify when new starter registered: new_starter_registered event</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-10">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.10 - Server-side Test</div>
+                                <div class="deliverable-description">Test registration endpoint returns correct PIN format</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-11">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.11 - Database Verification</div>
+                                <div class="deliverable-description">Verify PIN uniqueness, email uniqueness, all fields populated</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a1-12">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.1.12 - Email Verification</div>
+                                <div class="deliverable-description">Verify email contains hyperlinked PIN and correct signature</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 1A.2 -->
+            <div class="phase-section">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div>
+                        <span class="phase-title">🔐 STEP 1A.2: New Starter Portal Login</span>
+                        <span class="status-badge status-pending" id="status-1a2">Pending</span>
+                    </div>
+                    <span class="phase-toggle">▼</span>
+                </div>
+                <div class="phase-body">
+                    <p style="margin-bottom: 15px; color: #64748b; font-size: 0.95em;">
+                        <strong>What it does:</strong> New Starter clicks PIN link and creates login credentials (PIN verification, 2FA, password)
+                    </p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-1a2" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text-1a2">0 of 6 tasks</div>
+                    </div>
+                    <div class="deliverables-list" id="list-1a2">
+                        <div class="deliverable-item" data-id="1a2-1">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.2.1 - Portal View</div>
+                                <div class="deliverable-description">new-starter-compliance.ejs with 6-step wizard (PIN → OTP → Password)</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a2-2">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.2.2 - Verify PIN Route</div>
+                                <div class="deliverable-description">POST /api/new-starters/verify-pin endpoint</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a2-3">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.2.3 - Send OTP Route</div>
+                                <div class="deliverable-description">POST /api/new-starters/send-otp endpoint with email OTP</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a2-4">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.2.4 - Verify OTP Route</div>
+                                <div class="deliverable-description">POST /api/new-starters/verify-otp endpoint with expiry check</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a2-5">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.2.5 - Create Password Route</div>
+                                <div class="deliverable-description">POST /api/new-starters/create-password with hashing and redirect</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a2-6">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.2.6 - E2E Test</div>
+                                <div class="deliverable-description">Complete login flow test: PIN → OTP → Password</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 1A.3 -->
+            <div class="phase-section">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div>
+                        <span class="phase-title">📝 STEP 1A.3: New Starter Compliance Submission</span>
+                        <span class="status-badge status-pending" id="status-1a3">Pending</span>
+                    </div>
+                    <span class="phase-toggle">▼</span>
+                </div>
+                <div class="phase-body">
+                    <p style="margin-bottom: 15px; color: #64748b; font-size: 0.95em;">
+                        <strong>What it does:</strong> New Starter uploads all required compliance documents
+                    </p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-1a3" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text-1a3">0 of 10 tasks</div>
+                    </div>
+                    <div class="deliverables-list" id="list-1a3">
+                        <div class="deliverable-item" data-id="1a3-1">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.1 - Compliance Form View</div>
+                                <div class="deliverable-description">new-starter-compliance.ejs with all 9 document sections</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-2">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.2 - Schema Update</div>
+                                <div class="deliverable-description">Update new_starters table with document tracking columns</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-3">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.3 - Documents Table</div>
+                                <div class="deliverable-description">Create new_starter_documents table for file tracking</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-4">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.4 - References Table</div>
+                                <div class="deliverable-description">Create new_starter_references table for contact details</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-5">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.5 - Submit Compliance Route</div>
+                                <div class="deliverable-description">POST /api/new-starters/:id/submit-compliance endpoint</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-6">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.6 - File Storage Utility</div>
+                                <div class="deliverable-description">Save files to central-repository with proper naming</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-7">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.7 - Client-side Validation</div>
+                                <div class="deliverable-description">Validate required fields, file sizes (max 10MB), file types</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-8">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.8 - Upload Progress UI</div>
+                                <div class="deliverable-description">Show upload progress and error handling</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-9">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()" checked>
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.9 - WebSocket Notification</div>
+                                <div class="deliverable-description">Notify Liz: new_starter_compliance_submitted event</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a3-10">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.3.10 - Upload Test</div>
+                                <div class="deliverable-description">Test complete compliance submission and file storage</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHASE 1A.4 -->
+            <div class="phase-section">
+                <div class="phase-header" onclick="togglePhase(this)">
+                    <div>
+                        <span class="phase-title">🔓 STEP 1A.4: Flexible Workspace Access</span>
+                        <span class="status-badge status-pending" id="status-1a4">Pending</span>
+                    </div>
+                    <span class="phase-toggle">▼</span>
+                </div>
+                <div class="phase-body">
+                    <p style="margin-bottom: 15px; color: #64748b; font-size: 0.95em;">
+                        <strong>What it does:</strong> New Starter gets limited workspace access while compliance is reviewed
+                    </p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-1a4" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text-1a4">0 of 7 tasks</div>
+                    </div>
+                    <div class="deliverables-list" id="list-1a4">
+                        <div class="deliverable-item" data-id="1a4-1">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.1 - Access Rules Table</div>
+                                <div class="deliverable-description">Create workspace_access_rules table in qolae_casemanagers database</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a4-2">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.2 - Update New Starter</div>
+                                <div class="deliverable-description">Set workspace_access = 'limited' upon compliance submission</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a4-3">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.3 - Access Middleware</div>
+                                <div class="deliverable-description">Middleware to check workspace access and gate features</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a4-4">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.4 - Features API Route</div>
+                                <div class="deliverable-description">GET /api/workspace/features based on access_rules</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a4-5">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.5 - Frontend Greying</div>
+                                <div class="deliverable-description">Grey out restricted features in CaseManagers Dashboard with tooltips</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a4-6">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.6 - Approval Notification</div>
+                                <div class="deliverable-description">Notify on compliance_approved with feature unlock</div>
+                            </div>
+                        </div>
+                        <div class="deliverable-item" data-id="1a4-7">
+                            <input type="checkbox" class="checkbox-custom" onchange="updateProgress()">
+                            <div class="deliverable-content">
+                                <div class="deliverable-code">1A.4.7 - Access Control Test</div>
+                                <div class="deliverable-description">Test limited access features and unrestricted after approval</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="expandAll()">📂 Expand All</button>
+            <button class="btn btn-secondary" onclick="collapseAll()">📁 Collapse All</button>
+            <button class="btn btn-secondary" onclick="exportProgress()">💾 Save Progress</button>
+            <button class="btn btn-danger" onclick="resetProgress()">🔄 Reset All</button>
+        </div>
+
+        <div class="last-updated" id="lastUpdated">Last updated: Never</div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'step1a-tracker-progress';
+
+        function togglePhase(header) {
+            const body = header.nextElementSibling;
+            const toggle = header.querySelector('.phase-toggle');
+            body.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.phase-body').forEach(body => {
+                body.classList.remove('collapsed');
+                body.previousElementSibling.querySelector('.phase-toggle').classList.remove('collapsed');
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.phase-body').forEach(body => {
+                body.classList.add('collapsed');
+                body.previousElementSibling.querySelector('.phase-toggle').classList.add('collapsed');
+            });
+        }
+
+        function updateProgress() {
+            const phases = ['1a1', '1a2', '1a3', '1a4'];
+            let totalDeliverables = 0;
+            let completedDeliverables = 0;
+
+            phases.forEach(phase => {
+                const list = document.getElementById(`list-${phase}`);
+                const items = list.querySelectorAll('.deliverable-item');
+                const checked = list.querySelectorAll('.deliverable-item input:checked');
+                
+                const phaseTotal = items.length;
+                const phaseCompleted = checked.length;
+                totalDeliverables += phaseTotal;
+                completedDeliverables += phaseCompleted;
+
+                // Update phase progress
+                const progressBar = document.getElementById(`progress-${phase}`);
+                const progressText = document.getElementById(`progress-text-${phase}`);
+                const percentage = (phaseCompleted / phaseTotal) * 100;
+                
+                progressBar.style.width = percentage + '%';
+                progressText.textContent = `${phaseCompleted} of ${phaseTotal} tasks`;
+
+                // Update status badge
+                const statusBadge = document.getElementById(`status-${phase}`);
+                if (phaseCompleted === 0) {
+                    statusBadge.textContent = 'Pending';
+                    statusBadge.className = 'status-badge status-pending';
+                } else if (phaseCompleted < phaseTotal) {
+                    statusBadge.textContent = 'In Progress';
+                    statusBadge.className = 'status-badge status-in-progress';
+                } else {
+                    statusBadge.textContent = 'Complete';
+                    statusBadge.className = 'status-badge status-complete';
+                }
+
+                // Update item styling
+                items.forEach(item => {
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    if (checkbox.checked) {
+                        item.classList.add('completed');
+                    } else {
+                        item.classList.remove('completed');
+                    }
+                });
+            });
+
+            // Update overall stats
+            document.getElementById('totalDeliverables').textContent = totalDeliverables;
+            document.getElementById('completedDeliverables').textContent = completedDeliverables;
+            const percent = totalDeliverables > 0 ? Math.round((completedDeliverables / totalDeliverables) * 100) : 0;
+            document.getElementById('percentComplete').textContent = percent + '%';
+            document.getElementById('remainingDeliverables').textContent = totalDeliverables - completedDeliverables;
+
+            // Save progress
+            saveProgress();
+            updateLastUpdated();
+        }
+
+        function saveProgress() {
+            const data = {};
+            document.querySelectorAll('.deliverable-item').forEach(item => {
+                const id = item.getAttribute('data-id');
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                data[id] = checkbox.checked;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.keys(data).forEach(id => {
+                    const item = document.querySelector(`[data-id="${id}"]`);
+                    if (item) {
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        checkbox.checked = data[id];
+                    }
+                });
+            }
+        }
+
+        function exportProgress() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'step1a-progress.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateProgress();
+            }
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = 
+                'Last updated: ' + now.toLocaleString();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            updateProgress();
+            updateLastUpdated();
+        });
+    </script>
+</body>
+</html>

@@ -158,7 +158,7 @@ const generateReaderInvitationEmail = (reader) => {
 
         <p>Thank you for agreeing to join QOLAE as a ${reader.type === 'first_reader' ? '<strong>First Reader</strong>' : '<strong>Second Reader (Medical Professional)</strong>'}.</p>
 
-        <p>We are delighted to have you on board to review our confidential Initial Needs Assessment (INA) reports. Your expertise will help ensure accuracy, clarity, and professionalism in our client deliverables.</p>
+        <p>We are delighted to have you on board to review our confidential Immediate Needs Assessment reports. Your expertise will help ensure accuracy, clarity, and professionalism in our client deliverables.</p>
 
         <div class="pin-box">
           <h2>Your Unique Reader PIN</h2>

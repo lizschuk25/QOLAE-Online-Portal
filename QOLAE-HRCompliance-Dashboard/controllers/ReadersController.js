@@ -172,25 +172,72 @@ class ReadersController {
       }
 
       // Insert or update reader record
-      const upsertQuery = `
-        INSERT INTO readers (
-          reader_pin, reader_name, email, phone, reader_type,
-          specialization, registration_body, registration_number, registration_verified,
-          payment_rate, status, nda_generated, nda_generated_at, created_by, created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, TRUE, NOW(), 'liz', NOW())
-        ON CONFLICT (reader_pin) DO UPDATE SET
-          reader_name = $2, email = $3, phone = $4, reader_type = $5,
-          specialization = $6, registration_body = $7, registration_number = $8,
-          registration_verified = $9, payment_rate = $10,
-          nda_generated = TRUE, nda_generated_at = NOW(), updated_at = NOW()
-        RETURNING id
-      `;
+      // First, try to update if reader_pin exists
+      const checkExisting = await executeQuery(
+        'SELECT id FROM readers WHERE reader_pin = $1',
+        [readerPin]
+      );
 
-      await executeQuery(upsertQuery, [
-        readerPin, readerName, email, phone || null, readerType,
-        specialization || null, registrationBody || null, registrationNumber || null,
-        registrationVerified || false, paymentRate, 'pending_nda'
-      ]);
+      let upsertQuery, queryParams;
+      
+      if (checkExisting.rows.length > 0) {
+        // Reader exists, update it
+        upsertQuery = `
+          UPDATE readers SET
+            reader_name = $2, email = $3, phone = $4, reader_type = $5,
+            specialization = $6, registration_body = $7, registration_number = $8,
+            registration_verified = $9, payment_rate = $10,
+            nda_generated = TRUE, nda_generated_at = NOW(), updated_at = NOW()
+          WHERE reader_pin = $1
+          RETURNING id
+        `;
+        queryParams = [
+          readerPin, readerName, email, phone || null, readerType,
+          specialization || null, registrationBody || null, registrationNumber || null,
+          registrationVerified || false, paymentRate
+        ];
+      } else {
+        // Check if email already exists for a different reader
+        const emailExists = await executeQuery(
+          'SELECT id FROM readers WHERE email = $1',
+          [email]
+        );
+
+        if (emailExists.rows.length > 0) {
+          // Email exists, update that reader with new PIN
+          upsertQuery = `
+            UPDATE readers SET
+              reader_pin = $1, reader_name = $2, phone = $4, reader_type = $5,
+              specialization = $6, registration_body = $7, registration_number = $8,
+              registration_verified = $9, payment_rate = $10,
+              nda_generated = TRUE, nda_generated_at = NOW(), updated_at = NOW()
+            WHERE email = $3
+            RETURNING id
+          `;
+          queryParams = [
+            readerPin, readerName, email, phone || null, readerType,
+            specialization || null, registrationBody || null, registrationNumber || null,
+            registrationVerified || false, paymentRate
+          ];
+        } else {
+          // Insert new reader
+          upsertQuery = `
+            INSERT INTO readers (
+              reader_pin, reader_name, email, phone, reader_type,
+              specialization, registration_body, registration_number, registration_verified,
+              payment_rate, status, nda_generated, nda_generated_at, created_by, created_at
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, TRUE, NOW(), 'liz', NOW())
+            RETURNING id
+          `;
+          queryParams = [
+            readerPin, readerName, email, phone || null, readerType,
+            specialization || null, registrationBody || null, registrationNumber || null,
+            registrationVerified || false, paymentRate, 'pending_nda'
+          ];
+        }
+      }
+
+      await executeQuery(upsertQuery, queryParams);
 
       console.log(`✓ Reader saved to database`);
 

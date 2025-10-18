@@ -41,15 +41,18 @@
       display: flex;
       align-items: center;
       gap: 30px;
+      flex: 1;
     }
 
     .qolae-logo {
-      height: 100px;
+      height: 150px;
       width: auto;
       background: transparent;
       border-radius: 8px;
-      padding: 10px;
+      padding: 15px;
       transition: all 0.3s ease;
+      flex: 1;
+      max-width: 500px;
     }
 
     .qolae-logo:hover {
@@ -446,7 +449,6 @@
     </div>
     <div class="header-right">
       <div class="notification-bell" onclick="toggleNotifications()">
-        ●
         <span class="notification-badge" id="notificationCount">3</span>
       </div>
       <div class="user-profile" onclick="toggleUserMenu()">
@@ -465,7 +467,6 @@
       <div class="sidebar-section">
         <div class="sidebar-section-title">Main</div>
         <a class="sidebar-nav-item active" onclick="showSection('dashboard-home')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Dashboard Home</span>
         </a>
       </div>
@@ -473,22 +474,18 @@
       <div class="sidebar-section">
         <div class="sidebar-section-title">Personnel Management</div>
         <a class="sidebar-nav-item" onclick="showSection('new-starters')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">New Starters</span>
           <span class="sidebar-nav-badge">2</span>
         </a>
         <a class="sidebar-nav-item" onclick="showSection('readers')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Readers</span>
           <span class="sidebar-nav-badge">5</span>
         </a>
         <a class="sidebar-nav-item" onclick="showSection('compliance-review')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Compliance Review</span>
           <span class="sidebar-nav-badge">3</span>
         </a>
         <a class="sidebar-nav-item" onclick="showSection('case-managers')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Case Managers</span>
         </a>
       </div>
@@ -496,12 +493,10 @@
       <div class="sidebar-section">
         <div class="sidebar-section-title">Operations</div>
         <a class="sidebar-nav-item" onclick="showSection('payments')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Payments & Approvals</span>
           <span class="sidebar-nav-badge">4</span>
         </a>
         <a class="sidebar-nav-item" onclick="showSection('analytics')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Reports & Analytics</span>
         </a>
       </div>
@@ -509,7 +504,6 @@
       <div class="sidebar-section">
         <div class="sidebar-section-title">System</div>
         <a class="sidebar-nav-item" onclick="showSection('settings')">
-          <span class="sidebar-nav-icon">●</span>
           <span class="sidebar-nav-text">Settings</span>
         </a>
       </div>
@@ -927,5 +921,8 @@
       }
     }
   </script>
+
+  <!-- Include Readers Registration Modal Partial -->
+  <%- include('./partials/readersRegistrationModal.ejs') %>
 </body>
 </html>

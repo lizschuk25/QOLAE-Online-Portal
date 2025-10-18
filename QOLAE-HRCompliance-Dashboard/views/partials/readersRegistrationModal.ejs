@@ -1,0 +1,1045 @@
+<!--
+================================================================================
+QOLAE READERS REGISTRATION MODAL - HR COMPLIANCE DASHBOARD (PARTIAL)
+================================================================================
+
+FILE PURPOSE:
+This EJS partial template handles the Reader Registration workflow from HR Compliance Dashboard.
+It provides a 5-step modal workflow to register new readers:
+1. Fill reader details (First/Second Reader + NMC/GMC verification)
+2. Generate PIN and save to qolae_hrcompliance database
+3. Generate customized NDA (from TemplateReadersNDA.pdf)
+4. Preview email with hyperlinked PIN and attached NDA
+5. Send invitation email to reader
+
+WORKFLOW INTEGRATION:
+- Loaded as partial by hrCompliance-dashboard.ejs when "Register Reader" is clicked
+- First Readers: £50/report (grammar and clarity)
+- Second Readers: £75-100/report (medical professionals with NMC/GMC verification)
+- Uses ReadersController.js backend endpoints
+
+LOCATION BLOCK ORGANIZATION:
+- Location Block 0: ALL CSS STYLES
+- Location Block 1: MODAL STRUCTURE
+- Location Block 2: STEP 1 - Reader Details Form
+- Location Block 3: STEP 2 - PIN Generation & Save
+- Location Block 4: STEP 3 - NDA Generation
+- Location Block 5: STEP 4 - Email Preview
+- Location Block 6: STEP 5 - Completion
+- Location Block 7: ALL JAVASCRIPT FUNCTIONS
+
+DEPENDENCIES:
+- Font Awesome 6.0.0 (CDN)
+- Parent: hrCompliance-dashboard.ejs
+- Backend: /api/readers/* endpoints (ReadersController.js)
+- Database: qolae_hrcompliance.readers table
+
+LAST UPDATED: 18-10-2025
+================================================================================
+-->
+
+<!-- =================================================================== -->
+<!-- LOCATION BLOCK 0: ALL CSS STYLES                                    -->
+<!-- =================================================================== -->
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 20px;
+        max-width: 900px;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: scale(0.9) translateY(50px);
+        transition: all 0.3s ease;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-overlay.active .modal {
+        transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        padding: 30px;
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .modal-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+    }
+
+    .modal-content {
+        padding: 30px;
+    }
+
+    .workflow-step {
+        display: none;
+    }
+
+    .workflow-step.active {
+        display: block;
+    }
+
+    .step-header {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .step-number {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .step-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .step-description {
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    .reader-form {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 0.9rem;
+    }
+
+    .form-input, .form-select {
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+
+    .reader-type-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .reader-type-card {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .reader-type-card:hover {
+        border-color: #22c55e;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+    }
+
+    .reader-type-card.selected {
+        border-color: #22c55e;
+        background: rgba(34, 197, 94, 0.05);
+    }
+
+    .reader-type-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .reader-type-title {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .reader-type-rate {
+        color: #22c55e;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .verification-section {
+        display: none;
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .verification-section.active {
+        display: block;
+    }
+
+    .pin-display {
+        background: white;
+        border: 2px solid #22c55e;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .pin-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #22c55e;
+        font-family: monospace;
+        margin: 20px 0;
+    }
+
+    .nda-checkbox {
+        background: rgba(139, 92, 246, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .email-preview {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+    }
+
+    .email-header {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .email-field {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+    }
+
+    .email-body {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+        line-height: 1.6;
+    }
+
+    .workflow-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.95rem;
+        flex: 1;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn-secondary {
+        background: rgba(100, 116, 139, 0.1);
+        color: #64748b;
+        border: 1px solid rgba(100, 116, 139, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(100, 116, 139, 0.2);
+    }
+
+    .completion-summary {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .success-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .completion-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #059669;
+        margin-bottom: 10px;
+    }
+
+    .completion-text {
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+
+        .reader-type-selector {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- =================================================================== -->
+<!-- LOCATION BLOCK 1: MODAL STRUCTURE                                   -->
+<!-- =================================================================== -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>📖</span>
+                <span>Register New Reader</span>
+            </div>
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-content">
+            <!-- =================================================================== -->
+            <!-- LOCATION BLOCK 2: STEP 1 - Reader Details Form                      -->
+            <!-- =================================================================== -->
+            <div class="workflow-step active" id="step1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Reader Details</div>
+                    <div class="step-description">Enter reader information and select reader type</div>
+                </div>
+
+                <div class="reader-form">
+                    <!-- Reader Type Selection -->
+                    <div class="form-group full-width">
+                        <label class="form-label">Select Reader Type *</label>
+                    </div>
+                    <div class="reader-type-selector">
+                        <div class="reader-type-card" onclick="selectReaderType('first_reader')" id="firstReaderCard">
+                            <div class="reader-type-icon">📝</div>
+                            <div class="reader-type-title">First Reader</div>
+                            <div class="reader-type-rate">£50/report</div>
+                            <div style="color: #64748b; font-size: 0.85rem; margin-top: 8px;">Grammar & clarity review</div>
+                        </div>
+                        <div class="reader-type-card" onclick="selectReaderType('second_reader')" id="secondReaderCard">
+                            <div class="reader-type-icon">⚕️</div>
+                            <div class="reader-type-title">Second Reader</div>
+                            <div class="reader-type-rate">£75-100/report</div>
+                            <div style="color: #64748b; font-size: 0.85rem; margin-top: 8px;">Medical professional</div>
+                        </div>
+                    </div>
+
+                    <!-- Basic Details -->
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" class="form-input" id="readerName" placeholder="Enter reader's full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-input" id="readerEmail" placeholder="reader@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" id="readerPhone" placeholder="07123 456789">
+                        </div>
+                    </div>
+
+                    <!-- Medical Professional Verification (Second Reader Only) -->
+                    <div class="verification-section" id="medicalVerification">
+                        <h4 style="color: #1e293b; margin-bottom: 15px;">Medical Professional Verification</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Registration Body *</label>
+                                <select class="form-select" id="registrationBody">
+                                    <option value="">-- Select --</option>
+                                    <option value="NMC">NMC (Nursing & Midwifery Council)</option>
+                                    <option value="GMC">GMC (General Medical Council)</option>
+                                    <option value="Other">Other Professional Body</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Registration Number *</label>
+                                <input type="text" class="form-input" id="registrationNumber" placeholder="e.g. 12A3456E">
+                            </div>
+                        </div>
+                        <button class="action-btn btn-secondary" onclick="verifyMedicalRegistration()" style="margin-top: 10px;">
+                            🔍 Verify Registration
+                        </button>
+                        <div id="verificationStatus" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="action-btn btn-primary" onclick="validateAndGeneratePIN()">
+                        Continue to Generate PIN →
+                    </button>
+                </div>
+            </div>
+
+            <!-- =================================================================== -->
+            <!-- LOCATION BLOCK 3: STEP 2 - PIN Generation & Save                    -->
+            <!-- =================================================================== -->
+            <div class="workflow-step" id="step2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Reader PIN Generated</div>
+                    <div class="step-description">Unique PIN created and saved to database</div>
+                </div>
+
+                <div class="pin-display">
+                    <div style="color: #64748b; margin-bottom: 10px;">Reader PIN</div>
+                    <div class="pin-value" id="generatedPIN">RDR-JS123456</div>
+                    <div style="color: #64748b; font-size: 0.9rem;">This PIN will be used for reader authentication</div>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                    <h4 style="color: #1e293b; margin-bottom: 10px;">✅ Saved to Database:</h4>
+                    <ul style="color: #64748b; line-height: 1.6; margin-left: 20px;">
+                        <li>Reader details stored in qolae_hrcompliance database</li>
+                        <li>PIN format: RDR-{INITIALS}{6-DIGIT}</li>
+                        <li>Status: pending_nda</li>
+                        <li>Payment rate configured</li>
+                    </ul>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="action-btn btn-secondary" onclick="prevStep()">
+                        ← Back to Details
+                    </button>
+                    <button class="action-btn btn-primary" onclick="nextStep()">
+                        Continue to NDA Generation →
+                    </button>
+                </div>
+            </div>
+
+            <!-- =================================================================== -->
+            <!-- LOCATION BLOCK 4: STEP 3 - NDA Generation                           -->
+            <!-- =================================================================== -->
+            <div class="workflow-step" id="step3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Generate Customized NDA</div>
+                    <div class="step-description">Create personalized NDA from template</div>
+                </div>
+
+                <div class="nda-checkbox">
+                    <input type="checkbox" id="readyToGenerateNDA" style="width: 20px; height: 20px; cursor: pointer;" onchange="handleNDACheckbox()">
+                    <label for="readyToGenerateNDA" style="cursor: pointer;">
+                        <strong>Ready to Generate NDA</strong><br>
+                        <span style="color: #64748b; font-size: 0.9rem;">
+                            This will populate TemplateReadersNDA.pdf with reader details and save to central-repository/final-nda/
+                        </span>
+                    </label>
+                </div>
+
+                <div id="ndaGenerationResult" style="display: none;">
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 20px; margin: 20px 0;">
+                        <h4 style="color: #059669; margin-bottom: 10px;">✅ NDA Generated Successfully</h4>
+                        <div style="color: #64748b;">
+                            <strong>File:</strong> <code id="ndaFilePath">/central-repository/final-nda/NDA_RDR-JS123456.pdf</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="action-btn btn-secondary" onclick="prevStep()">
+                        ← Back to PIN
+                    </button>
+                    <button class="action-btn btn-primary" onclick="nextStep()" id="continueEmailBtn" style="display: none;">
+                        Continue to Email Preview →
+                    </button>
+                </div>
+            </div>
+
+            <!-- =================================================================== -->
+            <!-- LOCATION BLOCK 5: STEP 4 - Email Preview                            -->
+            <!-- =================================================================== -->
+            <div class="workflow-step" id="step4">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Email Preview</div>
+                    <div class="step-description">Review invitation email with hyperlinked PIN and attached NDA</div>
+                </div>
+
+                <div class="email-preview">
+                    <div class="email-header">
+                        <div class="email-field">
+                            <strong>To:</strong>
+                            <span id="emailTo">reader@example.com</span>
+                        </div>
+                        <div class="email-field">
+                            <strong>From:</strong>
+                            <span>noreply@qolae.com</span>
+                        </div>
+                        <div class="email-field">
+                            <strong>Subject:</strong>
+                            <span>QOLAE Reader Invitation - Confidential</span>
+                        </div>
+                        <div class="email-field">
+                            <strong>Attachment:</strong>
+                            <span id="emailAttachment">NDA_RDR-JS123456.pdf</span>
+                        </div>
+                    </div>
+
+                    <div class="email-body">
+                        <p>Dear <strong id="emailReaderName">Reader Name</strong>,</p>
+
+                        <p>You have been registered as a reader for <strong>QOLAE (Quality of Life & Excellence Ltd)</strong>.</p>
+
+                        <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                            <p style="margin: 0;"><strong>Your Reader PIN:</strong> <code style="font-size: 18px; color: #22c55e;" id="emailPIN">RDR-JS123456</code></p>
+                        </div>
+
+                        <p><strong>Click here to access the readers portal:</strong></p>
+                        <a href="#" id="portalLink" style="display: inline-block; background: #22c55e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0;">Access Readers Portal</a>
+
+                        <p><strong>Before you can access reports, you must:</strong></p>
+                        <ol>
+                            <li>Review and sign the Non-Disclosure Agreement (NDA) - <em>attached</em></li>
+                            <li>Complete your compliance profile</li>
+                            <li>Wait for approval from HR Compliance team</li>
+                        </ol>
+
+                        <p>The NDA ensures confidentiality of all medical reports you review.</p>
+
+                        <p style="margin-top: 30px;">Best regards,<br><strong>QOLAE HR Compliance Team</strong></p>
+                    </div>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="action-btn btn-secondary" onclick="prevStep()">
+                        ← Back to NDA
+                    </button>
+                    <button class="action-btn btn-primary" onclick="sendInvitation()">
+                        📤 Send Email & Complete Registration
+                    </button>
+                </div>
+            </div>
+
+            <!-- =================================================================== -->
+            <!-- LOCATION BLOCK 6: STEP 5 - Completion                               -->
+            <!-- =================================================================== -->
+            <div class="workflow-step" id="step5">
+                <div class="completion-summary">
+                    <div class="success-icon">✓</div>
+                    <div class="completion-title">Reader Invited Successfully!</div>
+                    <div class="completion-text">
+                        The invitation email has been sent to the reader with their PIN and NDA attachment.
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                    <h4 style="color: #1e293b; margin-bottom: 15px;">Registration Summary</h4>
+                    <div style="color: #64748b; line-height: 1.8;">
+                        <div><strong>Reader PIN:</strong> <code id="summaryPIN"></code></div>
+                        <div><strong>Email:</strong> <span id="summaryEmail"></span></div>
+                        <div><strong>Reader Type:</strong> <span id="summaryType"></span></div>
+                        <div><strong>Status:</strong> <span style="color: #22c55e; font-weight: 600;">Invited</span></div>
+                        <div><strong>Next Step:</strong> Awaiting compliance submission from reader</div>
+                    </div>
+                </div>
+
+                <div class="workflow-actions">
+                    <button class="action-btn btn-primary" onclick="returnToDashboard()">
+                        Return to Dashboard 🎉
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="registerAnotherReader()">
+                        Register Another Reader
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- LOCATION BLOCK 7: ALL JAVASCRIPT FUNCTIONS                          -->
+<!-- =================================================================== -->
+<script>
+    // ===================================================================
+    // Workflow State Management
+    // ===================================================================
+    let currentStep = 1;
+    const totalSteps = 5;
+    let readerData = {
+        readerType: '',
+        readerName: '',
+        email: '',
+        phone: '',
+        registrationBody: '',
+        registrationNumber: '',
+        registrationVerified: false,
+        pin: '',
+        ndaGenerated: false,
+        ndaPath: ''
+    };
+
+    // ===================================================================
+    // Modal Control Functions
+    // ===================================================================
+    function openModal() {
+        document.getElementById('modalOverlay').classList.add('active');
+        currentStep = 1;
+        showStep(currentStep);
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function showStep(step) {
+        document.querySelectorAll('.workflow-step').forEach(s => s.classList.remove('active'));
+        document.getElementById(`step${step}`).classList.add('active');
+    }
+
+    // ===================================================================
+    // Step Navigation Functions
+    // ===================================================================
+    function nextStep() {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    }
+
+    // ===================================================================
+    // Reader Type Selection
+    // ===================================================================
+    function selectReaderType(type) {
+        readerData.readerType = type;
+
+        // Update UI
+        document.querySelectorAll('.reader-type-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+
+        if (type === 'first_reader') {
+            document.getElementById('firstReaderCard').classList.add('selected');
+            document.getElementById('medicalVerification').classList.remove('active');
+        } else {
+            document.getElementById('secondReaderCard').classList.add('selected');
+            document.getElementById('medicalVerification').classList.add('active');
+        }
+    }
+
+    // ===================================================================
+    // Medical Registration Verification (Mock)
+    // ===================================================================
+    async function verifyMedicalRegistration() {
+        const body = document.getElementById('registrationBody').value;
+        const number = document.getElementById('registrationNumber').value;
+
+        if (!body || !number) {
+            alert('Please enter both registration body and number');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/readers/verify-medical-registration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    registrationBody: body,
+                    registrationNumber: number
+                })
+            });
+
+            const result = await response.json();
+            const statusDiv = document.getElementById('verificationStatus');
+
+            if (result.verified) {
+                statusDiv.innerHTML = `
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+                                border-radius: 8px; padding: 12px; color: #059669;">
+                        ✅ Verification Successful: ${result.name || 'Registered Professional'}
+                    </div>
+                `;
+                readerData.registrationVerified = true;
+            } else {
+                statusDiv.innerHTML = `
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
+                                border-radius: 8px; padding: 12px; color: #dc2626;">
+                        ❌ Verification Failed: ${result.error || 'Invalid format'}
+                    </div>
+                `;
+                readerData.registrationVerified = false;
+            }
+        } catch (error) {
+            console.error('Verification error:', error);
+            alert('Verification service error. Please try again.');
+        }
+    }
+
+    // ===================================================================
+    // PIN Generation & Database Save
+    // ===================================================================
+    async function validateAndGeneratePIN() {
+        // Validate required fields
+        const name = document.getElementById('readerName').value;
+        const email = document.getElementById('readerEmail').value;
+
+        if (!name || !email || !readerData.readerType) {
+            alert('Please fill in all required fields and select reader type');
+            return;
+        }
+
+        // If second reader, check verification
+        if (readerData.readerType === 'second_reader' && !readerData.registrationVerified) {
+            alert('Please verify medical registration for Second Readers');
+            return;
+        }
+
+        // Save to readerData object
+        readerData.readerName = name;
+        readerData.email = email;
+        readerData.phone = document.getElementById('readerPhone').value;
+        readerData.registrationBody = document.getElementById('registrationBody').value;
+        readerData.registrationNumber = document.getElementById('registrationNumber').value;
+
+        try {
+            const response = await fetch('/api/readers/generate-pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ readerName: name })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                readerData.pin = result.pin;
+                document.getElementById('generatedPIN').textContent = result.pin;
+                nextStep();
+            } else {
+                alert('Failed to generate PIN: ' + result.error);
+            }
+        } catch (error) {
+            console.error('PIN generation error:', error);
+            alert('Error generating PIN. Please try again.');
+        }
+    }
+
+    // ===================================================================
+    // NDA Generation
+    // ===================================================================
+    async function generateNDA() {
+        const ndaGenerationResult = document.getElementById('ndaGenerationResult');
+        const continueEmailBtn = document.getElementById('continueEmailBtn');
+
+        try {
+            const response = await fetch('/api/readers/generate-nda', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    readerPin: readerData.pin,
+                    readerName: readerData.readerName,
+                    email: readerData.email,
+                    phone: readerData.phone,
+                    readerType: readerData.readerType,
+                    specialization: readerData.registrationBody,
+                    registrationBody: readerData.registrationBody,
+                    registrationNumber: readerData.registrationNumber,
+                    registrationVerified: readerData.registrationVerified
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                readerData.ndaGenerated = true;
+                readerData.ndaPath = result.ndaPath;
+
+                document.getElementById('ndaFilePath').textContent = result.ndaPath;
+                ndaGenerationResult.style.display = 'block';
+                continueEmailBtn.style.display = 'inline-flex';
+            } else {
+                alert('Failed to generate NDA: ' + result.error);
+                document.getElementById('readyToGenerateNDA').checked = false;
+            }
+        } catch (error) {
+            console.error('NDA generation error:', error);
+            alert('Error generating NDA. Please try again.');
+            document.getElementById('readyToGenerateNDA').checked = false;
+        }
+    }
+
+    // ===================================================================
+    // Email Preview Population
+    // ===================================================================
+    function populateEmailPreview() {
+        document.getElementById('emailTo').textContent = readerData.email;
+        document.getElementById('emailReaderName').textContent = readerData.readerName;
+        document.getElementById('emailPIN').textContent = readerData.pin;
+        document.getElementById('emailAttachment').textContent = `NDA_${readerData.pin}.pdf`;
+        document.getElementById('portalLink').href = `https://readers.qolae.com?pin=${readerData.pin}`;
+    }
+
+    // Override showStep to populate email preview on step 4
+    const originalShowStep = showStep;
+    showStep = function(step) {
+        originalShowStep(step);
+        if (step === 4) {
+            populateEmailPreview();
+        }
+    };
+
+    // ===================================================================
+    // Send Invitation Email
+    // ===================================================================
+    async function sendInvitation() {
+        const btn = event.target;
+        btn.textContent = '📤 Sending...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('/api/readers/send-invitation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    readerPin: readerData.pin,
+                    readerName: readerData.readerName,
+                    email: readerData.email
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                // Populate completion summary
+                document.getElementById('summaryPIN').textContent = readerData.pin;
+                document.getElementById('summaryEmail').textContent = readerData.email;
+                document.getElementById('summaryType').textContent =
+                    readerData.readerType === 'first_reader' ? 'First Reader (£50/report)' : 'Second Reader (£75-100/report)';
+
+                nextStep();
+            } else {
+                alert('Failed to send invitation: ' + result.error);
+                btn.textContent = '📤 Send Email & Complete Registration';
+                btn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Send invitation error:', error);
+            alert('Error sending invitation. Please try again.');
+            btn.textContent = '📤 Send Email & Complete Registration';
+            btn.disabled = false;
+        }
+    }
+
+    // ===================================================================
+    // Completion Actions
+    // ===================================================================
+    function returnToDashboard() {
+        closeModal();
+        // Refresh the readers list
+        if (typeof loadPendingReaders === 'function') {
+            loadPendingReaders();
+        }
+    }
+
+    function registerAnotherReader() {
+        // Reset form
+        readerData = {
+            readerType: '',
+            readerName: '',
+            email: '',
+            phone: '',
+            registrationBody: '',
+            registrationNumber: '',
+            registrationVerified: false,
+            pin: '',
+            ndaGenerated: false,
+            ndaPath: ''
+        };
+
+        document.getElementById('readerName').value = '';
+        document.getElementById('readerEmail').value = '';
+        document.getElementById('readerPhone').value = '';
+        document.getElementById('registrationBody').value = '';
+        document.getElementById('registrationNumber').value = '';
+        document.getElementById('verificationStatus').innerHTML = '';
+        document.getElementById('readyToGenerateNDA').checked = false;
+        document.getElementById('ndaGenerationResult').style.display = 'none';
+        document.getElementById('continueEmailBtn').style.display = 'none'; // Hide continue button
+
+        currentStep = 1;
+        showStep(currentStep);
+    }
+
+    // ===================================================================
+    // Event Listeners
+    // ===================================================================
+    // Close modal when clicking overlay
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // ESC key to close modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // Make openModal available globally for parent dashboard
+    window.openReadersRegistrationModal = openModal;
+
+    // ===================================================================
+    // NDA Checkbox Handler
+    // ===================================================================
+    function handleNDACheckbox() {
+        const checkbox = document.getElementById('readyToGenerateNDA');
+        
+        if (checkbox.checked) {
+            // Generate the NDA
+            generateNDA();
+        } else {
+            // Reset if unchecked
+            document.getElementById('ndaGenerationResult').style.display = 'none';
+            document.getElementById('continueEmailBtn').style.display = 'none';
+        }
+    }
+</script>

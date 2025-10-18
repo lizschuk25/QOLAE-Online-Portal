@@ -22,7 +22,7 @@ DATABASE SERVICES:
 **5432**| qolae_admin [socketServer.js (api.qolae.com) → connects to qolae_admin (your SSOT DB).]
 **5432**| qolae_lawyers [socketLawyers.js (api.qolae.com)-> connects to qolae_lawyers (also SSOT DB).]
 
-### **External Access**
+### **External Access** NO EXTERNAL ACCESS WILL BE ALLOWED!!!!!!!! 
 | Service | External URL | Internal Port | Purpose |
 |---------|--------------|---------------|---------|
 | **Admin Dashboard** | https://admin.qolae.com | 3001 | Admin portal & lawyer management |
@@ -46,16 +46,16 @@ DATABASE SERVICES:
 
 3005 - Websocket Lawyers - socketLawyers.js) qolae-wslawyers(api.qolae.com) 
 
-LawyersDashboard and PostgreSQL - qolae_admin, qolae_lawyers, qolae_readers, qolae_casemanagers, qolae_clients
+ PostgreSQL Databases - qolae_admin, qolae_lawyers, qolae_readers(moved across to qolae_hrcompliance), qolae_casemanagers, qolae_clients(move across to qolae_hrcompliance)
 
 3006 - CaseManagers-Dashboard (casemanagers.qolae.com) qolae-cm-dashboard - server.js
-3007 - cm websocket
-3008 - Readers-Dashboard (readers.qolae.com) qolae-readers - 
-3009 - readers Websocket 
+3007 - qolae-wscasemanagers (api.qolae.com) socket_Casemanagers.js
+3008 - Readers-Dashboard (readers.qolae.com) qolae-readers
+3009 - Readers Websocket - qolae-wsreaders (api.qolae.com)  socket_Readers.js
 3010 - Clients-Dashboard (clients.qolae.com) qolae-clients 
-3011 - clients websocket
+3011 - Clients websocket - qolae-wsclients (api.qolae.com) socket_Clients.js
 3012 - hrCompliance-Dashboard (hrcompliance.qolae.com) qolae-hrcompliance
-3013 - hrcompliance websocket (yet to be allocated) 
+3013 - hrcompliance websocket -qolae-wshrcompliance (api.qolae.com) socket_hrcompliance.js
 
 # Standard Web Ports
 80   - HTTP (redirected to HTTPS)
