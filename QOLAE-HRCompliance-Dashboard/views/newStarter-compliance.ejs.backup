@@ -1,19 +1,20 @@
 <!--
   * QOLAE New Starter Compliance Portal
-  * Compliance submission workflow (AFTER 2FA authentication in newStarter-login.ejs)
+  * Complete 2FA authentication + compliance submission workflow
   * Organized by Location Block Protocol
   * Author: Atlas Agent & Claude Code
   * Date: October 19, 2025
   *
-  * PREREQUISITE: User must complete 2FA authentication (PIN → OTP → Password) in newStarter-login.ejs
-  *
-  * COMPLIANCE WORKFLOW STEPS:
-  * Step 1: Application Form (personal details, address, emergency contact)
-  * Step 2: Identity Documents Upload (passport, driver's license, birth certificate)
-  * Step 3: Proof of Address Upload (utility bill or bank statement)
-  * Step 4: Professional Reference Details
-  * Step 5: Character Reference Details
-  * Step 6: Review & Submit
+  * WORKFLOW STEPS:
+  * Step 0: PIN Verification (auto-populated from email link)
+  * Step 1: OTP Verification (6-digit code sent to email)
+  * Step 2: Create Password (first-time authentication)
+  * Step 3: Application Form (personal details, address, emergency contact)
+  * Step 4: Identity Documents Upload (passport, driver's license, birth certificate)
+  * Step 5: Proof of Address Upload (utility bill or bank statement)
+  * Step 6: Professional Reference Details
+  * Step 7: Character Reference Details
+  * Step 8: Review & Submit
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -511,7 +512,7 @@
 <!-- LOCATION BLOCK 1: HEADER -->
 <!-- ========================================== -->
         <div class="header">
-            <h1>New Starter Compliance Portal</h1>
+            <h1>=d New Starter Compliance Portal</h1>
             <p>Welcome to QOLAE! Complete your compliance to start your journey with us</p>
         </div>
 
@@ -529,7 +530,7 @@
 <!-- LOCATION BLOCK 3: MESSAGES -->
 <!-- ========================================== -->
         <div id="successMessage" class="message success-message">
-            <strong> Compliance Submitted Successfully!</strong>
+            <strong> Compliance Submitted Successfully!</strong>
             <p style="margin-top: 8px;">Your submission will be reviewed by our HR team. You'll be notified once approved.</p>
         </div>
 
@@ -543,7 +544,7 @@
 <!-- ========================================== -->
         <div id="step1" class="step-content active">
             <div class="compliance-card">
-                <h2 class="section-title">Step 1: Application Form</h2>
+                <h2 class="section-title">=� Step 1: Application Form</h2>
                 <p class="section-subtitle">Please provide your personal details</p>
 
                 <form id="applicationForm">
@@ -589,7 +590,7 @@
 
                     <div class="btn-actions">
                         <button type="button" class="btn btn-primary btn-next" id="step1NextBtn">
-                            Next: Identity Documents
+                            Next: Identity Documents �
                         </button>
                     </div>
                 </form>
@@ -601,13 +602,13 @@
 <!-- ========================================== -->
         <div id="step2" class="step-content">
             <div class="compliance-card">
-                <h2 class="section-title">Step 2: Identity Documents</h2>
+                <h2 class="section-title">>� Step 2: Identity Documents</h2>
                 <p class="section-subtitle">Upload passport or driver's license + birth certificate</p>
 
                 <div class="file-upload-section">
-                    <h4>Upload Documents (PDF, JPG, PNG - max 5MB each)</h4>
+                    <h4>=� Upload Documents (PDF, JPG, PNG - max 5MB each)</h4>
                     <div class="file-upload-area" id="identityUploadArea">
-                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-icon">=�</div>
                         <div class="file-upload-text">Click to upload or drag & drop</div>
                         <div class="file-upload-hint">Required: Passport/Driver's License + Birth Certificate</div>
                     </div>
@@ -616,9 +617,9 @@
                 </div>
 
                 <div class="btn-actions">
-                    <button type="button" class="btn btn-secondary" id="step2BackBtn">Back</button>
+                    <button type="button" class="btn btn-secondary" id="step2BackBtn">� Back</button>
                     <button type="button" class="btn btn-primary btn-next" id="step2NextBtn" disabled>
-                        Next: Proof of Address
+                        Next: Proof of Address �
                     </button>
                 </div>
             </div>
@@ -629,13 +630,13 @@
 <!-- ========================================== -->
         <div id="step3" class="step-content">
             <div class="compliance-card">
-                <h2 class="section-title">Step 3: Proof of Address</h2>
+                <h2 class="section-title"><� Step 3: Proof of Address</h2>
                 <p class="section-subtitle">Upload recent utility bill or bank statement (dated within 3 months)</p>
 
                 <div class="file-upload-section">
-                    <h4>Upload Documents (PDF, JPG, PNG - max 5MB each)</h4>
+                    <h4>=� Upload Documents (PDF, JPG, PNG - max 5MB each)</h4>
                     <div class="file-upload-area" id="utilityUploadArea">
-                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-icon">=�</div>
                         <div class="file-upload-text">Click to upload or drag & drop</div>
                         <div class="file-upload-hint">Required: Utility bill or bank statement (recent)</div>
                     </div>
@@ -644,9 +645,9 @@
                 </div>
 
                 <div class="btn-actions">
-                    <button type="button" class="btn btn-secondary" id="step3BackBtn">Back</button>
+                    <button type="button" class="btn btn-secondary" id="step3BackBtn">� Back</button>
                     <button type="button" class="btn btn-primary btn-next" id="step3NextBtn" disabled>
-                        Next: Professional Reference
+                        Next: Professional Reference �
                     </button>
                 </div>
             </div>
@@ -657,7 +658,7 @@
 <!-- ========================================== -->
         <div id="step4" class="step-content">
             <div class="compliance-card">
-                <h2 class="section-title">Step 4: Professional Reference</h2>
+                <h2 class="section-title">=T Step 4: Professional Reference</h2>
                 <p class="section-subtitle">Provide details for a professional referee</p>
 
                 <form id="professionalRefForm">
@@ -694,9 +695,9 @@
                     </div>
 
                     <div class="btn-actions">
-                        <button type="button" class="btn btn-secondary" id="step4BackBtn">Back</button>
+                        <button type="button" class="btn btn-secondary" id="step4BackBtn">� Back</button>
                         <button type="button" class="btn btn-primary btn-next" id="step4NextBtn">
-                            Next: Character Reference
+                            Next: Character Reference �
                         </button>
                     </div>
                 </form>
@@ -708,7 +709,7 @@
 <!-- ========================================== -->
         <div id="step5" class="step-content">
             <div class="compliance-card">
-                <h2 class="section-title">Step 5: Character Reference</h2>
+                <h2 class="section-title">=d Step 5: Character Reference</h2>
                 <p class="section-subtitle">Provide details for a character referee</p>
 
                 <form id="characterRefForm">
@@ -740,9 +741,9 @@
                     </div>
 
                     <div class="btn-actions">
-                        <button type="button" class="btn btn-secondary" id="step5BackBtn">Back</button>
+                        <button type="button" class="btn btn-secondary" id="step5BackBtn">� Back</button>
                         <button type="button" class="btn btn-primary btn-next" id="step5NextBtn">
-                            Next: Review & Submit
+                            Next: Review & Submit �
                         </button>
                     </div>
                 </form>
@@ -754,11 +755,11 @@
 <!-- ========================================== -->
         <div id="step6" class="step-content">
             <div class="compliance-card">
-                <h2 class="section-title">Step 6: Review & Submit</h2>
+                <h2 class="section-title"> Step 6: Review & Submit</h2>
                 <p class="section-subtitle">Please review all information before submitting</p>
 
                 <div class="review-section">
-                    <h3>Application Details</h3>
+                    <h3>=� Application Details</h3>
                     <div class="review-item">
                         <div class="review-label">Address</div>
                         <div class="review-value" id="reviewAddress"></div>
@@ -770,7 +771,7 @@
                 </div>
 
                 <div class="review-section">
-                    <h3>Documents Uploaded</h3>
+                    <h3>>� Documents Uploaded</h3>
                     <div class="review-item">
                         <div class="review-label">Identity Documents</div>
                         <div class="review-value" id="reviewIdentityDocs"></div>
@@ -782,7 +783,7 @@
                 </div>
 
                 <div class="review-section">
-                    <h3>Professional Reference</h3>
+                    <h3>=T Professional Reference</h3>
                     <div class="review-item">
                         <div class="review-label">Name & Organisation</div>
                         <div class="review-value" id="reviewProfRef"></div>
@@ -790,7 +791,7 @@
                 </div>
 
                 <div class="review-section">
-                    <h3>Character Reference</h3>
+                    <h3>=d Character Reference</h3>
                     <div class="review-item">
                         <div class="review-label">Name & Relationship</div>
                         <div class="review-value" id="reviewCharRef"></div>
@@ -798,9 +799,9 @@
                 </div>
 
                 <div class="btn-actions">
-                    <button type="button" class="btn btn-secondary" id="step6BackBtn">Back</button>
+                    <button type="button" class="btn btn-secondary" id="step6BackBtn">� Back</button>
                     <button type="button" class="btn btn-primary btn-next" id="submitBtn">
-                        Submit Compliance
+                        =� Submit Compliance
                     </button>
                 </div>
             </div>
@@ -863,50 +864,20 @@
         }
 
         function handleFiles(files, fileArray, listElement) {
-            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-            const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-            const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png'];
-
             files.forEach(file => {
-                // File size validation
-                if (file.size > MAX_FILE_SIZE) {
-                    showValidationError(`${file.name} exceeds 10MB limit. Please compress or split the file.`);
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`${file.name} exceeds 5MB limit`);
                     return;
                 }
-
-                // File type validation
-                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-                if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
-                    showValidationError(`${file.name} - Only PDF, JPG, JPEG, PNG files are allowed.`);
-                    return;
-                }
-
-                // Duplicate file check
-                const isDuplicate = fileArray.some(existingFile =>
-                    existingFile.name === file.name && existingFile.size === file.size
-                );
-                if (isDuplicate) {
-                    showValidationError(`${file.name} has already been uploaded.`);
-                    return;
-                }
-
                 fileArray.push(file);
             });
             renderFileList(fileArray, listElement);
         }
 
-        function showValidationError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;background:#fee2e2;border:2px solid#fca5a5;color:#991b1b;padding:16px 20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);max-width:400px;font-weight:500;';
-            errorDiv.textContent = '❌ ' + message;
-            document.body.appendChild(errorDiv);
-            setTimeout(() => errorDiv.remove(), 5000);
-        }
-
         function renderFileList(fileArray, listElement) {
             listElement.innerHTML = fileArray.map((file, index) => `
                 <div class="file-item">
-                    <div class="file-item-icon">📄</div>
+                    <div class="file-item-icon">=�</div>
                     <div class="file-item-details">
                         <div class="file-item-name">${file.name}</div>
                         <div class="file-item-size">${formatFileSize(file.size)}</div>
@@ -1014,154 +985,55 @@
                 `${formData.characterReference.name} (${formData.characterReference.relationship})`;
         }
 
-        // Submit with upload progress
-        // Validation function for required fields
-        function validateRequiredFields() {
-            const requiredFields = [
-                { id: 'addressLine1', label: 'Address Line 1' },
-                { id: 'city', label: 'City' },
-                { id: 'postcode', label: 'Postcode' },
-                { id: 'emergencyContactName', label: 'Emergency Contact Name' },
-                { id: 'emergencyContactPhone', label: 'Emergency Contact Phone' },
-                { id: 'emergencyContactRelationship', label: 'Emergency Contact Relationship' },
-                { id: 'profRefName', label: 'Professional Reference Name' },
-                { id: 'profRefTitle', label: 'Professional Reference Title' },
-                { id: 'profRefOrganisation', label: 'Professional Reference Organisation' },
-                { id: 'profRefEmail', label: 'Professional Reference Email' },
-                { id: 'profRefPhone', label: 'Professional Reference Phone' },
-                { id: 'profRefRelationship', label: 'Professional Reference Relationship' },
-                { id: 'charRefName', label: 'Character Reference Name' },
-                { id: 'charRefRelationship', label: 'Character Reference Relationship' },
-                { id: 'charRefKnownDuration', label: 'Character Reference Known Duration' },
-                { id: 'charRefEmail', label: 'Character Reference Email' },
-                { id: 'charRefPhone', label: 'Character Reference Phone' }
-            ];
+        // Submit
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            try {
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '� Submitting...';
 
-            // Check all required fields
-            for (const field of requiredFields) {
-                const element = document.getElementById(field.id);
-                if (!element.value.trim()) {
-                    showValidationError(`${field.label} is required. Please complete all required fields.`);
-                    element.focus();
-                    return false;
+                const submitData = new FormData();
+                submitData.append('pin', newStarterPin);
+
+                // Application data
+                Object.keys(formData.application).forEach(key => {
+                    submitData.append(key, formData.application[key]);
+                });
+
+                // Files
+                formData.identityFiles.forEach(file => submitData.append('identityDocuments', file));
+                formData.utilityFiles.forEach(file => submitData.append('utilityBills', file));
+
+                // References
+                Object.keys(formData.professionalReference).forEach(key => {
+                    submitData.append(`professionalReference${key.charAt(0).toUpperCase() + key.slice(1)}`, formData.professionalReference[key]);
+                });
+                Object.keys(formData.characterReference).forEach(key => {
+                    submitData.append(`characterReference${key.charAt(0).toUpperCase() + key.slice(1)}`, formData.characterReference[key]);
+                });
+
+                const response = await fetch('/api/new-starter/submit-compliance', {
+                    method: 'POST',
+                    body: submitData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('successMessage').classList.add('visible');
+                    document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
+                    setTimeout(() => window.location.href = '/new-starter-dashboard', 3000);
+                } else {
+                    throw new Error(data.error || 'Submission failed');
                 }
-            }
 
-            // Check identity documents uploaded
-            if (formData.identityFiles.length === 0) {
-                showValidationError('Please upload at least one identity document (passport, driving licence, etc.)');
-                return false;
-            }
-
-            // Check proof of address uploaded
-            if (formData.utilityFiles.length === 0) {
-                showValidationError('Please upload at least one proof of address document (utility bill, bank statement, etc.)');
-                return false;
-            }
-
-            return true;
-        }
-
-        document.getElementById('submitBtn').addEventListener('click', () => {
-            // Validate before submission
-            if (!validateRequiredFields()) {
-                return; // Stop submission if validation fails
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '📤 Submitting...';
-
-            // Create progress overlay
-            const progressOverlay = document.createElement('div');
-            progressOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
-            progressOverlay.innerHTML = `
-                <div style="background:white;padding:30px;border-radius:12px;min-width:400px;text-align:center;">
-                    <h3 style="margin:0 0 20px 0;color:#374151;">Uploading Compliance Documents</h3>
-                    <div style="background:#e5e7eb;height:24px;border-radius:12px;overflow:hidden;margin-bottom:12px;">
-                        <div id="uploadProgressBar" style="height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0%;transition:width 0.3s;"></div>
-                    </div>
-                    <p id="uploadProgressText" style="margin:0;color:#6b7280;font-size:14px;">Preparing upload... 0%</p>
-                </div>
-            `;
-            document.body.appendChild(progressOverlay);
-
-            const submitData = new FormData();
-            submitData.append('pin', newStarterPin);
-
-            // Application data
-            Object.keys(formData.application).forEach(key => {
-                submitData.append(key, formData.application[key]);
-            });
-
-            // Files
-            formData.identityFiles.forEach(file => submitData.append('identityDocuments', file));
-            formData.utilityFiles.forEach(file => submitData.append('utilityBills', file));
-
-            // References
-            Object.keys(formData.professionalReference).forEach(key => {
-                submitData.append(`professionalReference${key.charAt(0).toUpperCase() + key.slice(1)}`, formData.professionalReference[key]);
-            });
-            Object.keys(formData.characterReference).forEach(key => {
-                submitData.append(`characterReference${key.charAt(0).toUpperCase() + key.slice(1)}`, formData.characterReference[key]);
-            });
-
-            // Use XMLHttpRequest for progress tracking
-            const xhr = new XMLHttpRequest();
-
-            // Upload progress event
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable) {
-                    const percentComplete = Math.round((e.loaded / e.total) * 100);
-                    document.getElementById('uploadProgressBar').style.width = percentComplete + '%';
-                    document.getElementById('uploadProgressText').textContent = `Uploading... ${percentComplete}%`;
-                }
-            });
-
-            // Upload complete
-            xhr.addEventListener('load', () => {
-                progressOverlay.remove();
-                try {
-                    const data = JSON.parse(xhr.responseText);
-
-                    if (xhr.status === 200 && data.success) {
-                        document.getElementById('uploadProgressText').textContent = 'Upload complete! ✅';
-                        document.getElementById('successMessage').classList.add('visible');
-                        document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
-                        setTimeout(() => window.location.href = '/new-starter-dashboard', 3000);
-                    } else {
-                        throw new Error(data.error || 'Submission failed');
-                    }
-                } catch (error) {
-                    console.error('Submission error:', error);
-                    document.getElementById('errorText').textContent = error.message;
-                    document.getElementById('errorMessage').classList.add('visible');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Compliance';
-                }
-            });
-
-            // Error handler
-            xhr.addEventListener('error', () => {
-                progressOverlay.remove();
-                console.error('Network error during upload');
-                document.getElementById('errorText').textContent = 'Network error during upload. Please try again.';
+            } catch (error) {
+                console.error('Submission error:', error);
+                document.getElementById('errorText').textContent = error.message;
                 document.getElementById('errorMessage').classList.add('visible');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Compliance';
-            });
-
-            // Abort handler
-            xhr.addEventListener('abort', () => {
-                progressOverlay.remove();
-                console.error('Upload aborted');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Compliance';
-            });
-
-            // Send the request
-            xhr.open('POST', '/api/new-starter/submit-compliance', true);
-            xhr.send(submitData);
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').textContent = '=� Submit Compliance';
+            }
         });
 
         // Initialize file uploads
@@ -1169,7 +1041,7 @@
         setupFileUpload('utilityUploadArea', 'utilityFileInput', 'utilityFileList', formData.utilityFiles);
 
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('New Starter Compliance Portal initialized');
+            console.log('=d New Starter Compliance Portal initialized');
             console.log('PIN:', newStarterPin);
         });
     </script>

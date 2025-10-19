@@ -34,24 +34,56 @@ const poolConfig = {
 };
 
 // ==============================================
-// CREATE CONNECTION POOL
+// CREATE CONNECTION POOL (HR COMPLIANCE)
 // ==============================================
 const pool = new Pool(poolConfig);
 
 // ==============================================
-// POOL EVENT HANDLERS
+// POOL EVENT HANDLERS (HR COMPLIANCE)
 // ==============================================
 pool.on('connect', (client) => {
   console.log('🔗 New client connected to HR Compliance database');
 });
 
 pool.on('error', (err, client) => {
-  console.error('❌ Unexpected error on idle client:', err);
+  console.error('❌ Unexpected error on idle client (HR Compliance):', err);
   process.exit(-1);
 });
 
 pool.on('remove', (client) => {
   console.log('🔌 Client removed from HR Compliance database pool');
+});
+
+// ==============================================
+// CASE MANAGERS DATABASE CONNECTION POOL
+// ==============================================
+const caseManagersPoolConfig = {
+  connectionString: process.env.CASEMANAGERS_DATABASE_URL,
+
+  // Connection pool settings
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  query_timeout: 10000,
+  application_name: 'QOLAE-HRCompliance-to-CaseManagers'
+};
+
+const caseManagersPool = new Pool(caseManagersPoolConfig);
+
+// ==============================================
+// POOL EVENT HANDLERS (CASE MANAGERS)
+// ==============================================
+caseManagersPool.on('connect', (client) => {
+  console.log('🔗 New client connected to Case Managers database');
+});
+
+caseManagersPool.on('error', (err, client) => {
+  console.error('❌ Unexpected error on idle client (Case Managers):', err);
+});
+
+caseManagersPool.on('remove', (client) => {
+  console.log('🔌 Client removed from Case Managers database pool');
 });
 
 // ==============================================
@@ -161,6 +193,52 @@ export async function healthCheck() {
 }
 
 // ==============================================
+// CASE MANAGERS DATABASE QUERY HELPERS
+// ==============================================
+export async function executeQueryOnCaseManagers(queryText, params = []) {
+  const client = await caseManagersPool.connect();
+
+  try {
+    console.log(`🔍 [CaseManagers DB] Executing query: ${queryText.substring(0, 50)}...`);
+    const result = await client.query(queryText, params);
+    console.log(`✅ [CaseManagers DB] Query executed successfully (${result.rowCount} rows affected)`);
+    return result;
+  } catch (error) {
+    console.error('❌ [CaseManagers DB] Query execution failed:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function executeTransactionOnCaseManagers(queries) {
+  const client = await caseManagersPool.connect();
+
+  try {
+    await client.query('BEGIN');
+    console.log('🔄 [CaseManagers DB] Starting database transaction');
+
+    const results = [];
+    for (const { query, params } of queries) {
+      console.log(`🔍 [CaseManagers DB] Executing transaction query: ${query.substring(0, 50)}...`);
+      const result = await client.query(query, params);
+      results.push(result);
+    }
+
+    await client.query('COMMIT');
+    console.log('✅ [CaseManagers DB] Transaction committed successfully');
+
+    return results;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('❌ [CaseManagers DB] Transaction rolled back due to error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+// ==============================================
 // GRACEFUL SHUTDOWN
 // ==============================================
 export async function closePool() {
@@ -168,25 +246,32 @@ export async function closePool() {
     console.log('🔄 Closing HR Compliance database connection pool...');
     await pool.end();
     console.log('✅ Database connection pool closed successfully');
+
+    console.log('🔄 Closing Case Managers database connection pool...');
+    await caseManagersPool.end();
+    console.log('✅ Case Managers database connection pool closed successfully');
   } catch (error) {
-    console.error('❌ Error closing database pool:', error);
+    console.error('❌ Error closing database pools:', error);
     throw error;
   }
 }
 
 // ==============================================
-// EXPORT POOL FOR DIRECT ACCESS (IF NEEDED)
+// EXPORT POOLS FOR DIRECT ACCESS (IF NEEDED)
 // ==============================================
-export { pool };
+export { pool, caseManagersPool };
 
 // ==============================================
 // DEFAULT EXPORT
 // ==============================================
 export default {
   pool,
+  caseManagersPool,
   testDatabaseConnection,
   executeQuery,
   executeTransaction,
+  executeQueryOnCaseManagers,
+  executeTransactionOnCaseManagers,
   healthCheck,
   closePool
 };

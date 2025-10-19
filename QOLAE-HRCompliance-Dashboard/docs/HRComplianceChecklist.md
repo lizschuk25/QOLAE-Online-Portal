@@ -73,6 +73,14 @@
   - [x] `submitCompliance()` ✅
   - [x] `approveCompliance()` ✅
   - [x] `getAllNewStarters()` ✅
+  - [x] **2FA Authentication System** ✅ *(Completed Oct 19, 2025)*
+    - [x] `verifyPIN()` - Step 1: PIN verification ✅
+    - [x] `sendOTP()` - Step 2: OTP generation (6-digit, 15min expiry) ✅
+    - [x] `verifyOTP()` - Step 3: OTP validation (3 attempts max) ✅
+    - [x] `createPassword()` - Step 4: Password creation (8+ chars, bcrypt hash) ✅
+    - [x] Database columns added: `otp`, `otp_expires_at`, `otp_attempts`, `password_hash` ✅
+    - [x] Status constraint updated: Added `'credentials_created'` ✅
+    - [x] bcrypt package installed for password hashing ✅
 
 ### **✅ API Routes Setup**
 - [x] **Dashboard Routes** (`routes/dashboardRoutes.js`) ✅
@@ -92,6 +100,12 @@
   - [x] `GET /api/new-starter/all` ✅
   - [x] `POST /api/new-starter/approve` ✅
   - [x] `POST /api/new-starter/send-reminder` ✅
+  - [x] **2FA Authentication Routes** ✅ *(Completed Oct 19, 2025)*
+    - [x] `POST /api/new-starter/verify-pin` - PIN verification ✅
+    - [x] `POST /api/new-starter/send-otp` - OTP generation ✅
+    - [x] `POST /api/new-starter/verify-otp` - OTP validation ✅
+    - [x] `POST /api/new-starter/create-password` - Password creation (8+ chars min) ✅
+    - [x] `GET /new-starter-login` - Serves 2FA login page (newStarter-login.ejs) ✅
 - [x] **Readers Compliance Routes** (`routes/readersComplianceRoute.js`) ✅
 - [x] **Compliance Review Routes** (`routes/complianceReviewRoutes.js`) ✅
 

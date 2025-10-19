@@ -19,6 +19,7 @@ import fastifyStatic from '@fastify/static';
 import fastifyView from '@fastify/view';
 import ejs from 'ejs';
 import fastifyFormbody from '@fastify/formbody';
+import fastifyMultipart from '@fastify/multipart';
 import fastifyCors from '@fastify/cors';
 import dotenv from 'dotenv';
 
@@ -78,6 +79,13 @@ await server.register(fastifyCors, {
 
 // 2. Form Body Parser
 await server.register(fastifyFormbody);
+
+// 2.5 Multipart File Upload Handler
+await server.register(fastifyMultipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+});
 
 // 3. Static Files (using assets directory)
 await server.register(fastifyStatic, {

@@ -47,10 +47,10 @@ export async function sendNewStarterInvitation(newStarterData) {
 
     // Portal URL
     const portalUrl = process.env.HRCOMPLIANCE_PORTAL_URL || 'https://hrcompliance.qolae.com';
-    const newStarterPortalUrl = `${portalUrl}/new-starter-compliance?pin=${pin}`;
+    const newStarterPortalUrl = `${portalUrl}/new-starter-login?pin=${pin}`;
 
     // Email subject
-    const subject = `Welcome to QOLAE - Complete Your New Starter Compliance`;
+    const subject = `Thank You for Applying to QOLAE - Next Steps for ${role} Role`;
 
     // Email HTML body
     const htmlBody = `
@@ -132,16 +132,16 @@ export async function sendNewStarterInvitation(newStarterData) {
       </head>
       <body>
         <div class="header">
-          <h1>🎉 Welcome to QOLAE!</h1>
-          <p>We're excited to have you join our team</p>
+          <h1>📋 Thank You for Applying to QOLAE</h1>
+          <p>Next step: Complete your application</p>
         </div>
 
         <div class="content">
           <p>Dear <strong>${name}</strong>,</p>
 
-          <p>Congratulations on your new role as <strong>${role}</strong> at QOLAE!</p>
+          <p>Thank you for applying for the <strong>${role}</strong> position at QOLAE.</p>
 
-          <p>To complete your onboarding, please use the secure portal to submit your compliance documents. This is a simple process that will take approximately 15-20 minutes.</p>
+          <p>To continue with your application, please complete the compliance process by submitting the required documents via our secure portal. This will take approximately 15-20 minutes and is an essential part of our recruitment process.</p>
 
           <div class="pin-box">
             <div class="pin-label">Your Unique Identification PIN</div>
@@ -182,12 +182,12 @@ export async function sendNewStarterInvitation(newStarterData) {
             </div>
           </div>
 
-          <p><strong>Timeline:</strong> Please complete your compliance submission within <strong>7 days</strong> of receiving this email. Once submitted, our HR team will review your documents and contact you if any additional information is needed.</p>
+          <p><strong>Timeline:</strong> Please complete your compliance submission within <strong>7 days</strong> of receiving this email. Once submitted, our HR team will review your application and documents, and we will contact you regarding the next steps.</p>
 
           <p><strong>Questions or Need Help?</strong><br>
           If you have any questions or encounter any issues, please contact our HR team at <a href="mailto:hr@qolae.com">hr@qolae.com</a> or call us at +44 (0) 131 XXX XXXX.</p>
 
-          <p>We look forward to welcoming you to the QOLAE family!</p>
+          <p>Thank you again for your interest in joining QOLAE. We look forward to reviewing your application!</p>
 
           <p>Best regards,<br>
           <strong>QOLAE HR Team</strong></p>
@@ -208,15 +208,15 @@ export async function sendNewStarterInvitation(newStarterData) {
 
     // Plain text fallback
     const textBody = `
-Welcome to QOLAE!
+Thank You for Applying to QOLAE
 
 Dear ${name},
 
-Congratulations on your new role as ${role} at QOLAE!
+Thank you for applying for the ${role} position at QOLAE.
 
 Your Unique Identification PIN: ${pin}
 
-To complete your onboarding, please access your secure portal at:
+To continue with your application, please complete the compliance process by accessing your secure portal at:
 ${newStarterPortalUrl}
 
 You will need to submit the following documents:
@@ -227,9 +227,11 @@ You will need to submit the following documents:
 - Qualifications (copies of certificates, if applicable)
 - DBS/PVG Check information
 
-Please complete your submission within 7 days.
+Please complete your submission within 7 days. Once submitted, our HR team will review your application and we will contact you regarding the next steps.
 
 If you have any questions, contact us at hr@qolae.com or call +44 (0) 131 XXX XXXX.
+
+Thank you again for your interest in joining QOLAE. We look forward to reviewing your application!
 
 Best regards,
 QOLAE HR Team
@@ -284,7 +286,7 @@ export async function sendReminderEmail(newStarterData) {
 
     const { pin, name, email } = newStarterData;
     const portalUrl = process.env.HRCOMPLIANCE_PORTAL_URL || 'https://hrcompliance.qolae.com';
-    const newStarterPortalUrl = `${portalUrl}/new-starter-compliance?pin=${pin}`;
+    const newStarterPortalUrl = `${portalUrl}/new-starter-login?pin=${pin}`;
 
     const subject = `Reminder: Complete Your QOLAE New Starter Compliance`;
 

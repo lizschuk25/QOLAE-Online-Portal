@@ -37,42 +37,30 @@ export default async function newStarterRoutes(fastify, options) {
 
   /**
    * POST /api/new-starter/submit-compliance
-   * Submit compliance documents from new starter portal
-   * Body: { pin, addressLine1, addressLine2, city, postcode, ... }
+   * Submit compliance documents from new starter portal (multipart/form-data)
+   * Body: FormData with pin, addressLine1-2, city, postcode, emergencyContact*,
+   *        professionalReference*, characterReference*, identityDocuments[], utilityBills[]
    */
-  fastify.post('/api/new-starter/submit-compliance', {
-    schema: {
-      body: {
-        type: 'object',
-        required: ['pin'],
-        properties: {
-          pin: { type: 'string' },
-          addressLine1: { type: 'string' },
-          addressLine2: { type: 'string' },
-          city: { type: 'string' },
-          postcode: { type: 'string' },
-          emergencyContactName: { type: 'string' },
-          emergencyContactPhone: { type: 'string' },
-          emergencyContactRelationship: { type: 'string' },
-          professionalReferenceName: { type: 'string' },
-          professionalReferenceTitle: { type: 'string' },
-          professionalReferenceOrganisation: { type: 'string' },
-          professionalReferenceEmail: { type: 'string' },
-          professionalReferencePhone: { type: 'string' },
-          professionalReferenceRelationship: { type: 'string' },
-          characterReferenceName: { type: 'string' },
-          characterReferenceRelationship: { type: 'string' },
-          characterReferenceEmail: { type: 'string' },
-          characterReferencePhone: { type: 'string' },
-          characterReferenceKnownDuration: { type: 'string' }
-        }
-      }
-    }
-  }, NewStarterController.submitCompliance);
+  fastify.post('/api/new-starter/submit-compliance',
+    NewStarterController.submitCompliance
+  );
+
+  /**
+   * GET /new-starter-login
+   * Serve new starter 2FA login page
+   * Query params: pin (auto-populated from email link)
+   */
+  fastify.get('/new-starter-login', async (request, reply) => {
+    return reply.view('newStarter-login.ejs', {
+      portalTitle: 'QOLAE New Starter Login',
+      companyName: 'Quality of Life & Excellence Ltd',
+      year: new Date().getFullYear()
+    });
+  });
 
   /**
    * GET /new-starter-compliance
-   * Serve new starter compliance view
+   * Serve new starter compliance view (authenticated users only)
    * Query params: pin
    */
   fastify.get('/new-starter-compliance', async (request, reply) => {
@@ -235,14 +223,33 @@ export default async function newStarterRoutes(fastify, options) {
         required: ['newStarterId', 'password'],
         properties: {
           newStarterId: { type: 'number' },
-          password: { type: 'string', minLength: 12 }
+          password: { type: 'string', minLength: 8 }
         }
       }
     }
   }, NewStarterController.createPassword);
 
   // ==============================================
-  // HEALTH CHECK FOR NEW STARTER ROUTES
+  // WORKSPACE FEATURES - Access Control Check
+  // ==============================================
+  // GET /api/workspaceFeatures?pin=NS-XX123456
+  // Called by: Case Managers Dashboard on page load
+  // Returns: Feature access levels based on compliance approval status
+  // ==============================================
+  fastify.get('/api/workspaceFeatures', {
+    schema: {
+      querystring: {
+        type: 'object',
+        required: ['pin'],
+        properties: {
+          pin: { type: 'string', pattern: '^NS-' }
+        }
+      }
+    }
+  }, NewStarterController.getWorkspaceFeatures);
+
+  // ==============================================
+  // HEALTH CHECK
   // ==============================================
   fastify.get('/api/new-starter/health', async (request, reply) => {
     return {
@@ -254,7 +261,8 @@ export default async function newStarterRoutes(fastify, options) {
         public: [
           'GET /api/new-starter/verify',
           'POST /api/new-starter/submit-compliance',
-          'GET /new-starter-compliance'
+          'GET /new-starter-compliance',
+          'GET /api/workspaceFeatures'
         ],
         protected: [
           'POST /api/new-starter/create',
